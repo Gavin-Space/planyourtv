@@ -429,6 +429,42 @@ object QuizQuestionCache {
     }
 
     /**
+     * Draws the wrong book: rows whose last answer was WRONG.
+     *
+     * The wrong book is global, so no curriculum scope and no tag filter is
+     * applied — a mistake the child made under any level must come back in the
+     * next practice round, and the child usually replays it from a different
+     * level than the one that produced it.
+     *
+     * These rows stay CONSUMED on purpose. [settleRound] releases every row
+     * reserved by a round back to AVAILABLE, which would quietly drop an
+     * unanswered mistake out of the book, so a wrong re-ask carries no
+     * reservation at all; [writeAnswersLocked] accepts the answer anyway and
+     * the row becomes correct or stays wrong. That also makes an abandoned
+     * round harmless: the book is exactly what it was before the round.
+     */
+    fun reserveWrongForRound(
+        count: Int,
+        scopeKey: String = LOCAL_SCOPE,
+    ): List<CachedQuestion> = synchronized(lock) {
+        if (count <= 0) return emptyList()
+        val db = database() ?: throw CacheException("cache not initialized")
+        val rows = mutableListOf<CachedQuestion>()
+        // Oldest mistake first, and the questions the child missed most often
+        // ahead of the ones missed once, so a short review round hits the worst
+        // offenders instead of whatever happens to sort first.
+        db.rawQuery(
+            "SELECT $SELECT_COLUMNS FROM $TABLE " +
+                "WHERE scope_key = ? AND state = ? AND last_result = ? " +
+                "ORDER BY COALESCE(answered_at, 0) ASC, wrong_count DESC, rowid ASC LIMIT ?",
+            arrayOf(scopeKey, STATE_CONSUMED, RESULT_WRONG, count.toString()),
+        ).use { cursor ->
+            while (cursor.moveToNext()) rows += readQuestion(cursor)
+        }
+        rows
+    }
+
+    /**
      * Custom-tag round path. It keeps the same state machine and
      * `scope_key = local` as course rounds, but selects rows by tag instead of
      * curriculum scope; difficulty never filters an imported tag.
@@ -1188,6 +1224,21 @@ object QuizQuestionCache {
             }.onFailure { Log.e(TAG, "counts failed", it) }.getOrDefault(Counts())
         }
 
+    /**
+     * How many questions the wrong book holds. This is the number the weekly
+     * gate and the web page both key on, and it is deliberately unfiltered by
+     * scope or tag for the same reason as [reserveWrongForRound].
+     */
+    fun wrongCount(scopeKey: String = LOCAL_SCOPE): Int = synchronized(lock) {
+        val db = database() ?: return 0
+        runCatching {
+            db.rawQuery(
+                "SELECT COUNT(*) FROM $TABLE WHERE scope_key = ? AND state = ? AND last_result = ?",
+                arrayOf(scopeKey, STATE_CONSUMED, RESULT_WRONG),
+            ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+        }.onFailure { Log.e(TAG, "wrong count failed", it) }.getOrDefault(0)
+    }
+
     fun availableCount(
         scopeKey: String = LOCAL_SCOPE,
         nowMs: Long = System.currentTimeMillis(),
@@ -1411,9 +1462,17 @@ object QuizQuestionCache {
     ) {
         answers.forEach { answer ->
             val row = findAnswerRow(db, scopeKey, answer) ?: return@forEach
-            val (cacheId, state, lastRoundId, wrongCount) = row
+            // Order follows AnswerRow: wrongCount (Int) comes before lastResult (String?).
+            val (cacheId, state, lastRoundId, wrongCount, lastResult) = row
             if (state == STATE_CONSUMED && lastRoundId == roundId) return@forEach
-            if (state != STATE_RESERVED && !(state == STATE_CONSUMED && lastRoundId.isNullOrBlank())) {
+            // A wrong-book question is drawn straight from CONSUMED/WRONG, so the
+            // mastery rule is: the row may be answered again outside the round
+            // that first recorded the mistake. A correct answer overwrites
+            // last_result, which is what takes the question out of the book.
+            val wrongBookRetry = state == STATE_CONSUMED && lastResult == RESULT_WRONG
+            if (state != STATE_RESERVED && !wrongBookRetry &&
+                !(state == STATE_CONSUMED && lastRoundId.isNullOrBlank())
+            ) {
                 return@forEach
             }
             val values = ContentValues().apply {
@@ -1453,7 +1512,7 @@ object QuizQuestionCache {
             return null
         }
         return db.rawQuery(
-            "SELECT cache_id, state, last_round_id, wrong_count FROM $TABLE " +
+            "SELECT cache_id, state, last_round_id, wrong_count, last_result FROM $TABLE " +
                 "WHERE $selection LIMIT 1",
             args,
         ).use { cursor ->
@@ -1463,6 +1522,7 @@ object QuizQuestionCache {
                 state = cursor.getString(1),
                 lastRoundId = if (cursor.isNull(2)) null else cursor.getString(2),
                 wrongCount = cursor.getInt(3),
+                lastResult = if (cursor.isNull(4)) null else cursor.getString(4),
             )
         }
     }
@@ -1472,6 +1532,7 @@ object QuizQuestionCache {
         val state: String,
         val lastRoundId: String?,
         val wrongCount: Int,
+        val lastResult: String?,
     )
 
     private fun readQuestion(cursor: Cursor): CachedQuestion {

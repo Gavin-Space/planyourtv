@@ -20,7 +20,8 @@ data class QuizLevel(
         .put("scope", scope.encode())
 
     companion object {
-        const val MAX_LEVELS = 6
+        /** No fixed cap: parents can add as many named levels as they like. */
+        const val MAX_LEVELS = Int.MAX_VALUE
         const val MAX_NAME_CODE_POINTS = 10
 
         private val ID_PATTERN = Regex("^[A-Za-z0-9_-]{1,40}$")
@@ -66,9 +67,9 @@ data class QuizLevel(
         }
 
         /**
-         * Parses 0..[MAX_LEVELS] levels. Duplicate scopes are rejected: two
-         * identical levels would be indistinguishable on the TV. Duplicate ids
-         * are rejected as well so editing always addresses one level.
+         * Parses any number of levels (there is no fixed cap). Duplicate scopes
+         * are rejected: two identical levels would be indistinguishable on the TV.
+         * Duplicate ids are rejected as well so editing always addresses one level.
          */
         fun parseList(array: JSONArray?): List<QuizLevel>? {
             if (array == null) return null

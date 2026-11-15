@@ -541,6 +541,7 @@
               <h2 data-i18n="tabBank"></h2>
               <p id="bankCounts" class="muted"></p>
               <p id="bankSourceCounts" class="muted"></p>
+              <p id="wrongBookHint" class="hint hidden"></p>
             </div>
             <div class="head-actions">
               <button id="openBankImport" class="btn secondary small" type="button" data-i18n="bankImport"></button>
@@ -686,6 +687,13 @@
             </button>
           </div>
           <div class="settings-list">
+            <button id="mePolicy" class="setting-row" type="button">
+              <span class="setting-main">
+                <span data-i18n="policyTitle"></span>
+                <span id="mePolicyState" class="setting-value">—</span>
+              </span>
+              <span class="chevron" aria-hidden="true">›</span>
+            </button>
             <button id="meAi" class="setting-row" type="button">
               <span class="setting-main">
                 <span data-i18n="aiTitle"></span>
@@ -753,6 +761,117 @@
           </div>
         </section>
       </section>
+
+      <section id="view-policy" class="view hidden">
+        <section class="card">
+          <h2 data-i18n="policyTitle"></h2>
+          <p class="hint" data-i18n="policyLead"></p>
+
+          <div class="field">
+            <span class="field-label" data-i18n="policyActivationLabel"></span>
+            <div id="policyActivationSeg" class="segmented" role="group" data-i18n-aria="policyActivationLabel">
+              <button type="button" data-policy-activation="auto" aria-pressed="false" data-i18n="policyActivationAuto"></button>
+              <button type="button" data-policy-activation="manual" aria-pressed="true" data-i18n="policyActivationManual"></button>
+            </div>
+            <p id="policyActivationHint" class="hint"></p>
+          </div>
+
+          <div class="settings-list">
+            <label class="setting-row switch-row" for="policyQuizToggle">
+              <span class="setting-main">
+                <span data-i18n="policyQuizToggle"></span>
+                <span class="hint" data-i18n="policyQuizToggleHint"></span>
+              </span>
+              <span class="switch">
+                <input id="policyQuizToggle" type="checkbox">
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+            <label class="setting-row switch-row" for="policySourcesToggle">
+              <span class="setting-main">
+                <span data-i18n="policySourcesToggle"></span>
+                <span class="hint" data-i18n="policySourcesToggleHint"></span>
+              </span>
+              <span class="switch">
+                <input id="policySourcesToggle" type="checkbox">
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2 data-i18n="policyTimeTitle"></h2>
+          <p class="hint" data-i18n="policyTimeLead"></p>
+
+          <div class="field">
+            <span class="field-label" data-i18n="policyWeekday"></span>
+            <div id="policyWeekdayWindows" class="policy-windows"></div>
+            <button id="policyAddWeekday" class="btn secondary small" type="button" data-i18n="policyAddWindow"></button>
+          </div>
+
+          <div class="field">
+            <span class="field-label" data-i18n="policyWeekend"></span>
+            <div id="policyWeekendWindows" class="policy-windows"></div>
+            <button id="policyAddWeekend" class="btn secondary small" type="button" data-i18n="policyAddWindow"></button>
+          </div>
+          <p id="policyWindowHint" class="hint"></p>
+        </section>
+
+        <section class="card">
+          <h2 data-i18n="policyLimitsTitle"></h2>
+          <p class="hint" data-i18n="policyLimitsLead"></p>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="policyDaily" data-i18n="policyDaily"></label>
+              <input id="policyDaily" type="number" inputmode="numeric" min="1" max="1440" step="15" value="60">
+            </div>
+            <div class="field">
+              <label for="policySession" data-i18n="policySession"></label>
+              <input id="policySession" type="number" inputmode="numeric" min="1" max="1440" step="5" value="20">
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="policyRest" data-i18n="policyRest"></label>
+              <input id="policyRest" type="number" inputmode="numeric" min="0" max="1440" step="5" value="0">
+            </div>
+            <div class="field">
+              <label for="policyBuffer" data-i18n="policyBuffer"></label>
+              <input id="policyBuffer" type="number" inputmode="numeric" min="5" max="60" step="5" value="20">
+            </div>
+          </div>
+          <p id="policyLimitsHint" class="hint"></p>
+        </section>
+
+        <section class="card">
+          <h2 data-i18n="policyAppsTitle"></h2>
+          <p class="hint" data-i18n="policyAppsLead"></p>
+
+          <label class="setting-row switch-row" for="policyAppsAll">
+            <span class="setting-main">
+              <span data-i18n="policyAppsAll"></span>
+              <span class="hint" data-i18n="policyAppsAllHint"></span>
+            </span>
+            <span class="switch">
+              <input id="policyAppsAll" type="checkbox">
+              <span class="switch-track" aria-hidden="true"></span>
+            </span>
+          </label>
+
+          <div id="policyAppsList" class="policy-apps hidden"></div>
+          <p id="policyAppsEmpty" class="hint hidden" data-i18n="policyAppsEmpty"></p>
+          <p id="policyAppsHint" class="hint"></p>
+        </section>
+
+        <p id="policyState" class="ok" role="status"></p>
+        <p id="policyError" class="error" role="alert"></p>
+        <div id="policySaveBar" class="sticky-bar">
+          <button id="policySave" class="btn primary" type="button" data-i18n="policySave"></button>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -769,6 +888,13 @@
         <path d="M5 6.5h14M5 12h14M5 17.5h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
       <span data-i18n="tabBank"></span>
+    </button>
+    <button class="nav-item" type="button" data-tab="policy" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M12 3.5v2.2M12 18.3v2.2M3.5 12h2.2M18.3 12h2.2M6 6l1.6 1.6M16.4 16.4 18 18M18 6l-1.6 1.6M7.6 16.4 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span data-i18n="tabPolicy"></span>
     </button>
     <button class="nav-item" type="button" data-tab="me" aria-pressed="false">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -873,6 +999,7 @@
             <button class="choice-chip" type="button" data-provider-preset="minimax" aria-pressed="false">MiniMax</button>
             <button class="choice-chip" type="button" data-provider-preset="longcat" aria-pressed="false">LongCat</button>
             <button class="choice-chip" type="button" data-provider-preset="stepfun" aria-pressed="false">StepFun</button>
+            <button class="choice-chip" type="button" data-provider-preset="workbuddy" aria-pressed="false">WorkBuddy</button>
           </div>
           <p class="hint" data-i18n="providerPresetNote"></p>
           <p class="hint"><a href="https://platform.deepseek.com" target="_blank" rel="noopener" data-i18n="deepseekKeyHint"></a></p>

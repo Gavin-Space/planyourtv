@@ -44,15 +44,39 @@ class QuizLevelTest {
     }
 
     @Test
-    fun parseListAllowsZeroAndRejectsMoreThanTheCap() {
+    fun parseListAllowsAnyNumberOfLevels() {
         assertEquals(emptyList<QuizLevel>(), QuizLevel.parseList(JSONArray()))
         assertNull(QuizLevel.parseList(null))
 
-        val tooMany = JSONArray()
-        repeat(QuizLevel.MAX_LEVELS + 1) { index ->
-            tooMany.put(level("lvl-$index"))
+        // There is no fixed cap: build far more than the old six levels, each with a
+        // distinct scope (duplicate scopes and ids are still rejected).
+        val many = JSONArray()
+        var index = 0
+        for (grade in 1..2) {
+            for (semester in 1..2) {
+                for (scopeType in listOf("MIDTERM", "FINAL", "REVIEW")) {
+                    for (difficulty in listOf(null, "EASY", "MEDIUM", "HARD")) {
+                        val s = QuizAnswerScope.create(
+                            grade = grade,
+                            semester = semester,
+                            subject = "CHINESE",
+                            textbook = "BUBIAN",
+                            scopeType = scopeType,
+                            unitNo = null,
+                            difficulty = difficulty,
+                        )!!
+                        many.put(level("lvl-$index", scope = s))
+                        index++
+                    }
+                }
+            }
         }
-        assertNull(QuizLevel.parseList(tooMany))
+        assertEquals(48, index)
+        val parsed = QuizLevel.parseList(many)
+        assertNotNull(parsed)
+        assertEquals(48, parsed!!.size)
+        assertEquals("lvl-0", parsed[0].id)
+        assertEquals("lvl-47", parsed[47].id)
     }
 
     @Test

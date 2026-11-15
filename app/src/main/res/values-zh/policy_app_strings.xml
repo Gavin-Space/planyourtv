@@ -159,6 +159,7 @@
     <string name="policy_quiz_reason_screen">屏幕未点亮</string>
     <string name="policy_quiz_reason_cache_empty">当前没有可用的题目</string>
     <string name="policy_quiz_reason_cache_insufficient">可用的题目还不够</string>
+    <string name="policy_quiz_reason_wrong_book_overdue">上周的错题还没做完</string>
     <string name="policy_quiz_reason_cache_unavailable">题库缓存暂不可用</string>
     <string name="policy_quiz_reason_source_disabled">答题题库来源已关闭</string>
     <string name="policy_quiz_reason_source_unsupported">当前答题来源暂不可用</string>

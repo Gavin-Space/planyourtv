@@ -137,5 +137,6 @@ object QuizCollectionStore {
     fun normalizedName(name: String): String =
         QuizCollection.normalizeName(name)?.lowercase(Locale.ROOT) ?: ""
 
-    private const val MAX_CUSTOM_LEVELS = 6
+    /** No fixed cap; custom levels are naturally bounded by the number of tags. */
+    private const val MAX_CUSTOM_LEVELS = Int.MAX_VALUE
 }

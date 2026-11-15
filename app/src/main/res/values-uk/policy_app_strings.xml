@@ -159,6 +159,7 @@
     <string name="policy_quiz_reason_screen">екран вимкнено</string>
     <string name="policy_quiz_reason_cache_empty">зараз немає доступних питань</string>
     <string name="policy_quiz_reason_cache_insufficient">доступних питань поки недостатньо</string>
+    <string name="policy_quiz_reason_wrong_book_overdue">помилки минулого тижня ще не виправлено</string>
     <string name="policy_quiz_reason_cache_unavailable">кеш питань недоступний</string>
     <string name="policy_quiz_reason_source_disabled">джерело питань вимкнено</string>
     <string name="policy_quiz_reason_source_unsupported">це джерело питань поки недоступне</string>

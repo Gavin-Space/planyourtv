@@ -159,6 +159,7 @@
     <string name="policy_quiz_reason_screen">экран выключен</string>
     <string name="policy_quiz_reason_cache_empty">сейчас нет доступных вопросов</string>
     <string name="policy_quiz_reason_cache_insufficient">доступных вопросов пока недостаточно</string>
+    <string name="policy_quiz_reason_wrong_book_overdue">ошибки прошлой недели ещё не исправлены</string>
     <string name="policy_quiz_reason_cache_unavailable">кэш вопросов недоступен</string>
     <string name="policy_quiz_reason_source_disabled">источник вопросов отключён</string>
     <string name="policy_quiz_reason_source_unsupported">этот источник вопросов пока недоступен</string>

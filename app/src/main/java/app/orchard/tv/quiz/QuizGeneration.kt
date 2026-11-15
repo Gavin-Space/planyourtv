@@ -415,8 +415,9 @@ object QuizGeneration {
             null
         }
         return item.copy(
-            // 入题时以出题配置为准，避免模型自报难度导致答题范围统计漂移。
-            difficulty = difficulty.ifBlank { item.difficulty },
+            // 难度以模型逐题判断为准：它看过题干本身，比家长在页面上选的一个
+            // 固定档更准。只有模型没给（或给了不认识的词）才退回出题配置。
+            difficulty = item.difficulty.ifBlank { difficulty },
             scopeGrade = answerScope.grade,
             scopeSemester = answerScope.semester,
             scopeSubject = perItem?.first ?: answerScope.subject,

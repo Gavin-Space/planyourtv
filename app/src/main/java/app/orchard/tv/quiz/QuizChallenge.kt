@@ -293,51 +293,127 @@ object QuizChallenge {
      */
     private fun startLocalRound(nowMs: Long, levelId: String?): BeginResult {
         val config = QuizSessionStore.loadChallengeConfig() ?: QuizConfig()
+        val scope = QuizQuestionCache.LOCAL_SCOPE
+        // The wrong book is read once per start: the overdue case decides the
+        // whole round, and the normal case only needs its size to know how many
+        // mistakes to mix in.
+        val book = WrongBookPolicy.state(nowMs)
+        val roundId = QbClient.SESSION_ID_PREFIX + UUID.randomUUID().toString().replace("-", "")
+        // The week ran out with mistakes still unanswered. Practice now serves
+        // the book and nothing else, whatever level was picked, until the child
+        // answers them correctly; that is what "clear it before new questions"
+        // means for the child, and the parent can still clear it from the page.
+        if (book.overdue) {
+            val wrongOnly = try {
+                QuizQuestionCache.reserveWrongForRound(count = config.pullCount)
+            } catch (_: QuizQuestionCache.CacheException) {
+                return BeginResult.Rejected("CACHE_UNAVAILABLE")
+            }
+            if (wrongOnly.isEmpty()) {
+                // The book emptied between the count and the draw, so the gate
+                // just closed. Let the next start take the normal path.
+                WrongBookPolicy.markCleared(nowMs)
+                return BeginResult.Rejected("WRONG_BOOK_OVERDUE")
+            }
+            PolicyFlowTrace.event(
+                "quiz.start.wrongbook",
+                "overdue" to true,
+                "questions" to wrongOnly.size,
+            )
+            return publishLocalRound(nowMs, config, scope, roundId, wrongOnly)
+        }
         // An explicit level that disappeared while the dialog was open must not
         // silently start a different one. Without an id, take the first level
         // that can actually fill a round across course levels and custom tags.
-        val target = resolveLocalLevel(levelId, nowMs) ?: return BeginResult.Rejected("NO_LEVELS")
+        val target = resolveLocalLevel(levelId, nowMs)
         val explicitLevel = !levelId.isNullOrBlank()
-        val scope = QuizQuestionCache.LOCAL_SCOPE
-        val unused = if (target.collectionId != null) {
-            QuizQuestionCache.availableCollectionCount(target.collectionId, nowMs)
-        } else {
-            QuizQuestionCache.availableCount(scope, nowMs, target.scope)
+        if (explicitLevel && target == null) return BeginResult.Rejected("NO_LEVELS")
+        if (target == null && book.count <= 0) return BeginResult.Rejected("NO_LEVELS")
+        val unused = when {
+            target == null -> 0
+            target.collectionId != null ->
+                QuizQuestionCache.availableCollectionCount(target.collectionId, nowMs)
+            else -> QuizQuestionCache.availableCount(scope, nowMs, target.scope)
         }
-        if (unused <= 0) return BeginResult.Rejected("LOCAL_BANK_EMPTY")
+        // At most half a round is review; the rest still comes from the level,
+        // so a long-lived mistake cannot starve the curriculum the parent set.
+        val wrongSlots = if (book.count > 0) min(book.count, config.pullCount / 2) else 0
+        if (unused <= 0 && wrongSlots <= 0) return BeginResult.Rejected("LOCAL_BANK_EMPTY")
         // A level the child explicitly picked must supply the full configured
-        // round. Keep the old clamp only for legacy callers without a level id.
-        if (explicitLevel && unused < config.pullCount) {
+        // round, counting the review slots it brings. Keep the old clamp only
+        // for legacy callers without a level id.
+        if (explicitLevel && unused + wrongSlots < config.pullCount) {
             return BeginResult.Rejected("LOCAL_BANK_INSUFFICIENT")
         }
-        val count = if (explicitLevel) config.pullCount else min(config.pullCount, unused)
+        val count = if (explicitLevel) {
+            config.pullCount
+        } else {
+            min(config.pullCount, unused + wrongSlots)
+        }
         val required = if (explicitLevel) config.pullCount else 1
-        val roundId = QbClient.SESSION_ID_PREFIX + UUID.randomUUID().toString().replace("-", "")
+        val reservedWrong = try {
+            if (wrongSlots > 0) {
+                QuizQuestionCache.reserveWrongForRound(count = wrongSlots)
+            } else {
+                emptyList()
+            }
+        } catch (_: QuizQuestionCache.CacheException) {
+            return BeginResult.Rejected("CACHE_UNAVAILABLE")
+        }
+        val normalCount = (count - reservedWrong.size).coerceAtLeast(0)
+        val normalRequired = (required - reservedWrong.size).coerceAtLeast(0)
         val reserved = try {
-            if (target.collectionId != null) {
+            if (normalCount <= 0) {
+                emptyList()
+            } else if (target?.collectionId != null) {
                 QuizQuestionCache.reserveCollectionForRound(
-                    count = count,
+                    count = normalCount,
                     sessionId = roundId,
                     collectionId = target.collectionId,
-                    minRequired = required,
+                    minRequired = normalRequired.coerceAtLeast(1),
                     nowMs = nowMs,
                 )
             } else {
                 QuizQuestionCache.reserveForRound(
-                    count = count,
+                    count = normalCount,
                     sessionId = roundId,
                     scopeKey = scope,
-                    minRequired = required,
+                    minRequired = normalRequired.coerceAtLeast(1),
                     nowMs = nowMs,
-                    answerScope = target.scope,
+                    answerScope = target?.scope,
                 )
             }
         } catch (_: QuizQuestionCache.CacheException) {
             return BeginResult.Rejected("CACHE_UNAVAILABLE")
         }
-        if (reserved.isEmpty()) return BeginResult.Rejected("LOCAL_BANK_INSUFFICIENT")
+        if (reserved.isEmpty() && reservedWrong.isEmpty()) {
+            return BeginResult.Rejected("LOCAL_BANK_INSUFFICIENT")
+        }
+        if (reservedWrong.isNotEmpty()) {
+            PolicyFlowTrace.event(
+                "quiz.start.wrongbook",
+                "overdue" to false,
+                "questions" to reservedWrong.size,
+            )
+        }
 
-        val published = reserved.map { cached ->
+        val picked = reservedWrong + reserved
+        return publishLocalRound(nowMs, config, scope, roundId, picked)
+    }
+
+    /**
+     * Freezes one draw of cached rows into a RUNNING local round. Both the
+     * normal path and the overdue wrong-book path end here, so a review-only
+     * round still settles and recovers exactly like any other.
+     */
+    private fun publishLocalRound(
+        nowMs: Long,
+        config: QuizConfig,
+        scope: String,
+        roundId: String,
+        picked: List<QuizQuestionCache.CachedQuestion>,
+    ): BeginResult {
+        val published = picked.map { cached ->
             cached.question.copy(
                 cacheId = cached.cacheId,
                 sourceKind = cached.sourceKind,

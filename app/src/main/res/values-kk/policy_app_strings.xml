@@ -159,6 +159,7 @@
     <string name="policy_quiz_reason_screen">экран қосылмаған</string>
     <string name="policy_quiz_reason_cache_empty">қазір қолжетімді сұрақ жоқ</string>
     <string name="policy_quiz_reason_cache_insufficient">қолжетімді сұрақтар әзірге жеткіліксіз</string>
+    <string name="policy_quiz_reason_wrong_book_overdue">өткен аптаның қателері әлі түзетілмеген</string>
     <string name="policy_quiz_reason_cache_unavailable">сұрақтар кэші қолжетімсіз</string>
     <string name="policy_quiz_reason_source_disabled">сұрақ көзі өшірілген</string>
     <string name="policy_quiz_reason_source_unsupported">бұл сұрақ көзі әзірге қолжетімсіз</string>
