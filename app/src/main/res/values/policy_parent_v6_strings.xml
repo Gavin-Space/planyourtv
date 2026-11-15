@@ -11,7 +11,7 @@
 
     <string name="policy_v6_status_off">Off</string>
     <string name="policy_v6_status_local">Local rules active</string>
-    <string name="policy_v6_status_readonly">Bound · Read-only</string>
+    <string name="policy_v6_status_readonly">Rules on the phone · read-only</string>
     <string name="policy_v6_status_pending">Bound · Syncing</string>
     <string name="policy_v6_status_wait_config">Bound · Waiting for config</string>
     <string name="policy_v6_status_rule">Bound · Rule mode</string>
@@ -21,12 +21,12 @@
     <string name="policy_v6_off_body">Press OK to turn on. Set local rules or bind a phone.</string>
 
     <string name="policy_v6_local_title">Local rules</string>
-    <string name="policy_v6_local_note">After binding, rules move to the cloud and this TV becomes read-only.</string>
+    <string name="policy_v6_local_note">Finish setup here the first time. After that, rules live on the phone page (the Guard tab) and the TV only shows a summary.</string>
     <string name="policy_v6_edit_hint">Left/right to adjust; OK/Back when done</string>
     <string name="policy_v6_nav_hint">Up/down to select, OK to edit, Left to go back</string>
     <string name="policy_v6_rail_hint">Up/down to select · OK to confirm · → to open</string>
     <string name="policy_v6_save_failed">Save failed. Try again.</string>
-    <string name="policy_v6_readonly_hint">Read-only. Manage rules on the phone.</string>
+    <string name="policy_v6_readonly_hint">Read-only. Change the rules on the phone page, on the Guard tab. Ending a session still works here.</string>
 
     <string name="policy_v6_migrate_title">Uploading local settings…</string>
     <string name="policy_v6_migrate_body">The TV uploads your local rules and timing settings automatically. No action is needed. When it finishes, TV rules become read-only.</string>

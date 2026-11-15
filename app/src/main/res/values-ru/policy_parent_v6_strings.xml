@@ -10,7 +10,7 @@
 
     <string name="policy_v6_status_off">Выключено</string>
     <string name="policy_v6_status_local">Действуют локальные правила</string>
-    <string name="policy_v6_status_readonly">Привязано · Только чтение</string>
+    <string name="policy_v6_status_readonly">Правила на телефоне · только чтение</string>
     <string name="policy_v6_status_pending">Привязано · Синхронизация</string>
     <string name="policy_v6_status_wait_config">Привязано · Ожидание конфигурации</string>
     <string name="policy_v6_status_rule">Привязано · Режим правил</string>
@@ -20,12 +20,12 @@
     <string name="policy_v6_off_body">Нажмите OK, чтобы включить. Настройте локальные правила или привяжите телефон.</string>
 
     <string name="policy_v6_local_title">Локальные правила</string>
-    <string name="policy_v6_local_note">После привязки правила перейдут в облако, а настройки на телевизоре станут только для чтения.</string>
+    <string name="policy_v6_local_note">Настройка выполняется здесь при первом включении. Дальше правила живут на странице телефона (вкладка «Защита»), а телевизор показывает только сводку.</string>
     <string name="policy_v6_edit_hint">Влево/вправо — изменить; OK/Назад — готово</string>
     <string name="policy_v6_nav_hint">Вверх/вниз — выбор, OK — изменить, влево — назад</string>
     <string name="policy_v6_rail_hint">Вверх/вниз — выбор · OK — подтвердить · → — открыть</string>
     <string name="policy_v6_save_failed">Не удалось сохранить. Повторите.</string>
-    <string name="policy_v6_readonly_hint">Только чтение. Изменяйте правила на телефоне.</string>
+    <string name="policy_v6_readonly_hint">Только чтение. Меняйте правила на странице телефона, вкладка «Защита»; «Завершить этот сеанс» здесь по-прежнему работает.</string>
 
     <string name="policy_v6_migrate_title">Загрузка локальных настроек…</string>
     <string name="policy_v6_migrate_body">Телевизор автоматически загружает локальные правила и настройки времени. Действий не требуется. После завершения правила на телевизоре станут доступны только для чтения.</string>

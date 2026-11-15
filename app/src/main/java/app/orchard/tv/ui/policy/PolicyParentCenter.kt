@@ -245,7 +245,11 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     // Once the TV is bound, the local pane stays the familiar rule view but becomes read-only;
     // edits are made on the phone. After the handoff the pane mirrors the cloud copy so a phone
     // edit is visible without reopening the center.
-    val readOnlyLocal = bound
+    //
+    // Rules now live on the web page (the phone's 守护 tab) even when the TV is unbound: the pane
+    // keeps the summary and the emergency actions, and stays editable only during first-time
+    // setup so a parent with no phone can still get the guard running.
+    val readOnlyLocal = bound || !state.setupRequired
     // A DONE handoff means the remote node exists, so its rule copy is what the pane mirrors.
     val displayRemoteRules = readOnlyLocal && handoff == RemoteHandoffState.DONE
     val displayedRules = if (displayRemoteRules) remote?.rules ?: rules else rules
@@ -895,7 +899,9 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     }
 
     fun activateLocalByKey(key: String) {
-        if (readOnlyLocal) return
+        // Ending a running segment is the offline emergency stop, so it still works on a
+        // read-only pane: rules live on the phone, but stopping the child must not need it.
+        if (readOnlyLocal && key != "end-session") return
         when {
             key.endsWith("-remove") -> {
                 val parts = key.split("-")
