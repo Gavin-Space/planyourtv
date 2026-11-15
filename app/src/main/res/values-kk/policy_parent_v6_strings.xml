@@ -10,7 +10,7 @@
 
     <string name="policy_v6_status_off">Өшірулі</string>
     <string name="policy_v6_status_local">Жергілікті ережелер белсенді</string>
-    <string name="policy_v6_status_readonly">Байланысты · Тек оқу</string>
+    <string name="policy_v6_status_readonly">Ережелер телефонда · тек оқу</string>
     <string name="policy_v6_status_pending">Байланысты · Синхрондалуда</string>
     <string name="policy_v6_status_wait_config">Байланысты · Конфигурацияны күту</string>
     <string name="policy_v6_status_rule">Байланысты · Ереже режимі</string>
@@ -20,12 +20,12 @@
     <string name="policy_v6_off_body">Қосу үшін OK басыңыз. Жергілікті ережелерді орнатыңыз немесе телефонды байланыстырыңыз.</string>
 
     <string name="policy_v6_local_title">Жергілікті ережелер</string>
-    <string name="policy_v6_local_note">Байланыстырғаннан кейін ережелер бұлтқа көшеді, теледидардағы параметрлер тек оқуға болатын болады.</string>
+    <string name="policy_v6_local_note">Алғашқы қосу кезінде баптау осы жерде жасалады. Содан кейін ережелер телефондағы бетте («Қорғау» қойындысы) өзгертіледі, теледидар тек қорытындыны көрсетеді.</string>
     <string name="policy_v6_edit_hint">Сол/оң — өзгерту; OK/Артқа — дайын</string>
     <string name="policy_v6_nav_hint">Жоғары/төмен — таңдау, OK — өзгерту, солға — артқа</string>
     <string name="policy_v6_rail_hint">Жоғары/төмен — таңдау · OK — растау · → — ашу</string>
     <string name="policy_v6_save_failed">Сақталмады. Қайталаңыз.</string>
-    <string name="policy_v6_readonly_hint">Тек оқу. Ережелерді телефоннан өзгертіңіз.</string>
+    <string name="policy_v6_readonly_hint">Тек оқу. Ережелерді телефондағы беттің «Қорғау» қойындысында өзгертіңіз; «Осы сеансты аяқтау» осында жұмыс істейді.</string>
 
     <string name="policy_v6_migrate_title">Жергілікті параметрлер жүктелуде…</string>
     <string name="policy_v6_migrate_body">Теледидар жергілікті ережелерді және уақыт параметрлерін автоматты түрде жүктейді. Әрекет қажет емес. Аяқталғаннан кейін теледидардағы ережелер тек оқуға болады.</string>

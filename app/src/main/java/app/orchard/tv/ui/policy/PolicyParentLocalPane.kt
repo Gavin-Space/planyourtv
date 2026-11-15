@@ -364,7 +364,10 @@ internal fun V6LocalPane(
             )
             RuleHint(stringResource(R.string.policy_parent_screen_off_buffer_hint))
 
-            if (sessionActive && !readOnly) {
+            // Ending a running segment is an emergency action, so it stays on the TV even when
+            // the rules themselves are read-only here (the phone losing the network must never
+            // leave a child stuck in a session the parent cannot stop).
+            if (sessionActive) {
                 PolicySectionHeader(stringResource(R.string.policy_parent_section_usage))
                 PolicyActionRow(
                     label = stringResource(
@@ -385,8 +388,8 @@ internal fun V6LocalPane(
                 )
                 Spacer(Modifier.height(8.dp))
             }
-            // Read-only cloud rules have no editing keys, so the key hint (and a second
-            // "edit on the phone" line) would only add noise at the bottom of the pane.
+            // A read-only pane has no editing keys, and its "manage rules on the phone" line is
+            // already the pane summary above, so the key hint would only repeat it here.
             if (!readOnly) {
                 Spacer(Modifier.height(8.dp))
                 BasicText(
@@ -565,7 +568,8 @@ internal fun v6LocalFocusKeys(
     }
     add("rest")
     add("buffer")
-    if (sessionActive && !readOnly) add("end-session")
+    // The emergency stop stays focusable even when the pane is read-only.
+    if (sessionActive) add("end-session")
 }
 
 internal fun isV6ValueKey(key: String): Boolean =

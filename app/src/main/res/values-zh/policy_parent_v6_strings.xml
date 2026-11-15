@@ -10,7 +10,7 @@
 
     <string name="policy_v6_status_off">未开启</string>
     <string name="policy_v6_status_local">本地规则守护中</string>
-    <string name="policy_v6_status_readonly">已绑定 · 只读</string>
+    <string name="policy_v6_status_readonly">只读 · 规则在手机上</string>
     <string name="policy_v6_status_pending">已绑定 · 正在同步</string>
     <string name="policy_v6_status_wait_config">已绑定 · 等待配置</string>
     <string name="policy_v6_status_rule">已绑定 · 规则模式</string>
@@ -20,12 +20,12 @@
     <string name="policy_v6_off_body">按 OK 开启儿童模式。开启后可设置本地规则，或绑定手机远程管理。</string>
 
     <string name="policy_v6_local_title">本地规则</string>
-    <string name="policy_v6_local_note">绑定手机后，本地规则会迁移到云端，电视上的设置将变为只读。</string>
+    <string name="policy_v6_local_note">首次开启时在这里完成设置。之后规则在手机网页的「守护」页修改，电视上只显示摘要。</string>
     <string name="policy_v6_edit_hint">左右调整 · OK/返回完成</string>
     <string name="policy_v6_nav_hint">上下选择 · OK 调整 · 左键返回</string>
     <string name="policy_v6_rail_hint">上下选择 · OK 确认 · → 进入</string>
     <string name="policy_v6_save_failed">保存失败，请重试</string>
-    <string name="policy_v6_readonly_hint">只读。请在手机端修改规则。</string>
+    <string name="policy_v6_readonly_hint">只读。请在手机网页的「守护」页修改规则；「结束本次观看」仍可在这里使用。</string>
 
     <string name="policy_v6_migrate_title">正在上传本地配置…</string>
     <string name="policy_v6_migrate_body">电视会自动上传本地规则和计时设置，无需操作。完成后，电视端规则变为只读。</string>

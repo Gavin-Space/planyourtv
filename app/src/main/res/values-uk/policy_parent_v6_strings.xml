@@ -10,7 +10,7 @@
 
     <string name="policy_v6_status_off">Вимкнено</string>
     <string name="policy_v6_status_local">Діють локальні правила</string>
-    <string name="policy_v6_status_readonly">Прив’язано · Лише читання</string>
+    <string name="policy_v6_status_readonly">Правила на телефоні · лише читання</string>
     <string name="policy_v6_status_pending">Прив’язано · Синхронізація</string>
     <string name="policy_v6_status_wait_config">Прив’язано · Очікування конфігурації</string>
     <string name="policy_v6_status_rule">Прив’язано · Режим правил</string>
@@ -20,12 +20,12 @@
     <string name="policy_v6_off_body">Натисніть OK, щоб увімкнути. Налаштуйте локальні правила або прив’яжіть телефон.</string>
 
     <string name="policy_v6_local_title">Локальні правила</string>
-    <string name="policy_v6_local_note">Після прив’язки правила перейдуть у хмару, а налаштування на телевізорі стануть лише для читання.</string>
+    <string name="policy_v6_local_note">Налаштування виконується тут під час першого ввімкнення. Далі правила живуть на сторінці телефона (вкладка «Захист»), а телевізор показує лише підсумок.</string>
     <string name="policy_v6_edit_hint">Вліво/вправо — змінити; OK/Назад — готово</string>
     <string name="policy_v6_nav_hint">Вгору/вниз — вибір, OK — змінити, вліво — назад</string>
     <string name="policy_v6_rail_hint">Вгору/вниз — вибір · OK — підтвердити · → — відкрити</string>
     <string name="policy_v6_save_failed">Не вдалося зберегти. Повторіть.</string>
-    <string name="policy_v6_readonly_hint">Лише читання. Змінюйте правила на телефоні.</string>
+    <string name="policy_v6_readonly_hint">Лише читання. Змінюйте правила на сторінці телефона, вкладка «Захист»; «Завершити цей сеанс» тут і далі працює.</string>
 
     <string name="policy_v6_migrate_title">Завантаження локальних налаштувань…</string>
     <string name="policy_v6_migrate_body">Телевізор автоматично завантажує локальні правила й налаштування часу. Дій не потрібно. Після завершення правила на телевізорі стануть лише для читання.</string>

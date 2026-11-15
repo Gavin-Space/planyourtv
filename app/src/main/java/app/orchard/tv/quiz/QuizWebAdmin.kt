@@ -1,14 +1,22 @@
 package app.orchard.tv.quiz
 
 import android.content.Context
+import app.orchard.tv.policy.LocalPolicyRuntime
 import app.orchard.tv.policy.ManualSessionLimits
+import app.orchard.tv.policy.PolicyInstalledApps
 import app.orchard.tv.policy.PolicyModeCoordinator
+import app.orchard.tv.policy.SourceEntrySettings
 import fi.iki.elonen.NanoHTTPD
 import fi.iki.elonen.NanoHTTPD.IHTTPSession
 import fi.iki.elonen.NanoHTTPD.Method
 import fi.iki.elonen.NanoHTTPD.Response
 import org.json.JSONObject
+import com.planyourtv.policy.Activation
+import com.planyourtv.policy.LocalRules
+import com.planyourtv.policy.LocalRulesError
+import com.planyourtv.policy.LocalTimeWindow
 import com.planyourtv.policy.PolicyMode
+import com.planyourtv.policy.SessionState
 import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizBankImport
 import com.planyourtv.policy.quiz.QuizCollection
@@ -64,7 +72,7 @@ object QuizWebAdmin {
             session.method == Method.GET && path == "/api/quiz/status" -> {
                 json(Response.Status.OK, QuizWeb.statusJson())
             }
-            path.startsWith("/api/quiz/") -> api(session, path)
+            path.startsWith("/api/quiz/") -> api(context, session, path)
             else -> null
         }
     }
@@ -76,7 +84,7 @@ object QuizWebAdmin {
             path == "/quiz.css" ||
             path.startsWith("/api/quiz/")
 
-    private fun api(session: IHTTPSession, path: String): Response {
+    private fun api(context: Context, session: IHTTPSession, path: String): Response {
         // NanoHTTPD 2.3.1 leaves a POST body on the keep-alive stream when the
         // handler never reads it, so the next request would start with "{}POST"
         // and fail with "HTTP verb {}POST unhandled". Read the body once per
@@ -121,6 +129,10 @@ object QuizWebAdmin {
                 session.method == Method.GET && path == "/api/quiz/admin/sync" -> syncStatus(session)
                 session.method == Method.POST && path == "/api/quiz/admin/sync/retry" -> syncRetry(session)
                 session.method == Method.POST && path == "/api/quiz/admin/sync/use-remote" -> syncUseRemote(session)
+                session.method == Method.GET && path == "/api/quiz/admin/policy" -> readPolicy(session)
+                session.method == Method.POST && path == "/api/quiz/admin/policy" -> savePolicy(session)
+                session.method == Method.GET && path == "/api/quiz/admin/policy/apps" ->
+                    readPolicyApps(context, session)
                 else -> error(Response.Status.NOT_FOUND, "NOT_FOUND")
             }
         } finally {
@@ -449,6 +461,7 @@ object QuizWebAdmin {
         body.put("localBankActive", state.localBankActive)
         body.put("bankState", state.bankState)
         body.put("bank", bankCountsJson(state.bankCounts))
+        body.put("wrongBook", wrongBookJson(WrongBookPolicy.state(System.currentTimeMillis())))
         body.put("activeScopeAvailable", state.activeScopeAvailable)
         body.put("syncState", QuizSessionStore.loadSyncState().encode())
         body.put("cloudManaged", QuizConfigSync.isCloudManaged())
@@ -1056,8 +1069,15 @@ object QuizWebAdmin {
         ) {
             return error(Response.Status.INTERNAL_ERROR, "CACHE_UNAVAILABLE")
         }
+        // A parent clearing the last mistake is a manual reset of the weekly
+        // cycle, so the next seven days may serve new questions again.
+        val clearedAt = System.currentTimeMillis()
+        if (QuizQuestionCache.wrongCount(QuizQuestionCache.LOCAL_SCOPE) <= 0) {
+            WrongBookPolicy.markCleared(clearedAt)
+        }
         val state = QuizRuntime.refresh()
         val sourceCounts = QuizQuestionCache.sourceCounts(QuizQuestionCache.LOCAL_SCOPE)
+        val book = WrongBookPolicy.state(clearedAt)
         return json(
             Response.Status.OK,
             JSONObject()
@@ -1069,7 +1089,8 @@ object QuizWebAdmin {
                         .put("course", sourceCounts.course)
                         .put("custom", sourceCounts.custom),
                 )
-                .put("bankState", state.bankState),
+                .put("bankState", state.bankState)
+                .put("wrongBook", wrongBookJson(book)),
         )
     }
 
@@ -1201,11 +1222,6 @@ object QuizWebAdmin {
             val knownTags = QuizCollectionStore.collections().mapTo(HashSet()) { it.id }
             if (customLevels?.any { it.collectionId !in knownTags } == true) {
                 return error(Response.Status.BAD_REQUEST, "INVALID_CUSTOM_LEVEL")
-            }
-            val courseCount = levels?.size ?: QuizAnswerScopeStore.levels().size
-            val customCount = customLevels?.size ?: QuizCollectionStore.customLevels().size
-            if (courseCount + customCount > QuizLevel.MAX_LEVELS) {
-                return error(Response.Status.BAD_REQUEST, "TOO_MANY_LEVELS")
             }
         }
         val previousScopeSignature = if (levels != null) {
@@ -1341,6 +1357,218 @@ object QuizWebAdmin {
         adminError(session)?.let { return it }
         return json(Response.Status.OK, providerJson())
     }
+
+    /**
+     * The keys that describe a rule set. A POST without any of them is a switch-only request
+     * (or a toggle-only one), and that must not touch the stored rules: after a switch the
+     * current rules belong to the newly selected mode, so writing them back would copy the
+     * previous mode's windows into the other set.
+     */
+    private val RULE_KEYS = arrayOf(
+        "weekdayWindows",
+        "weekendWindows",
+        "autoDailyLimitMinutes",
+        "sessionLimitMinutes",
+        "restMinutes",
+        "sessionScreenOffBufferMinutes",
+        "allowedPackages",
+        "studyPackages",
+    )
+
+    /**
+     * The parent rules moved here from the TV's parent center: the web page is the only place a
+     * parent edits windows, limits and app scope. The TV keeps only what cannot leave the device
+     * (first PIN, recovery code, guard permissions, pairing, emergency unlock).
+     */
+    private fun readPolicy(session: IHTTPSession): Response {
+        adminError(session)?.let { return it }
+        return json(Response.Status.OK, policyJson())
+    }
+
+    private fun savePolicy(session: IHTTPSession): Response {
+        adminError(session)?.let { return it }
+        val body = jsonBody(session) ?: return error(Response.Status.BAD_REQUEST, "INVALID_JSON")
+        val state = LocalPolicyRuntime.state.value
+
+        // A running session is device-owned: changing the rules mid-session would move the
+        // goalposts for the child who is already playing, and switching activation would end it.
+        if (state.sessionState == SessionState.ACTIVE) {
+            return error(Response.Status.CONFLICT, "SESSION_RUNNING")
+        }
+
+        // Validate against the set the request targets before touching anything: a rejected
+        // edit must not leave the TV on the other activation with its rules half-applied.
+        // A switch-only request carries no rule keys, and writing the rules read back after the
+        // switch would copy the previous mode's windows into the newly selected mode, so the
+        // rules are only written when the body really describes them.
+        val targetActivation = activationOf(body.optString("activation", ""))
+        val activation = targetActivation ?: state.activation
+        val rules: LocalRules? = if (RULE_KEYS.any { body.has(it) }) {
+            val base = LocalPolicyRuntime.currentRuleSets?.rulesFor(activation)
+                ?: LocalRules.defaultsFor(activation)
+            val parsed = parseRules(body, base)
+                ?: return error(Response.Status.BAD_REQUEST, "INVALID_RULES")
+            val validation = parsed.validationError()
+            if (validation != LocalRulesError.NONE) {
+                return error(Response.Status.BAD_REQUEST, "RULES_" + validation.name)
+            }
+            if (!parsed.isUsable) return error(Response.Status.BAD_REQUEST, "RULES_NO_WINDOW")
+            parsed
+        } else {
+            null
+        }
+
+        // Switch before the write: the switch swaps in the other stored rule set, so the rules
+        // below land in the set the parent just selected.
+        if (targetActivation != null && targetActivation != state.activation) {
+            if (!PolicyModeCoordinator.setLocalActivation(targetActivation)) {
+                return error(Response.Status.CONFLICT, "ACTIVATION_REJECTED")
+            }
+        }
+
+        if (rules != null && !LocalPolicyRuntime.setRules(rules)) {
+            return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
+        }
+
+        body.optBooleanOrNull("quizEnabled")?.let { enabled ->
+            when (QuizSettings.setEnabled(enabled)) {
+                QuizSettings.SetResult.SessionRunning ->
+                    return error(Response.Status.CONFLICT, "SESSION_RUNNING")
+                QuizSettings.SetResult.StorageError ->
+                    return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
+                QuizSettings.SetResult.Changed -> Unit
+            }
+        }
+        body.optBooleanOrNull("sourceEntriesVisible")?.let { visible ->
+            if (!SourceEntrySettings.setVisible(visible)) {
+                return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
+            }
+        }
+        return json(Response.Status.OK, policyJson())
+    }
+
+    /** The app list only the TV can enumerate (PackageManager); the page renders it. */
+    private fun readPolicyApps(context: Context, session: IHTTPSession): Response {
+        adminError(session)?.let { return it }
+        val apps = PolicyInstalledApps.scan(context)
+        val list = JSONArray()
+        apps.forEach { app ->
+            list.put(JSONObject().put("packageName", app.packageName).put("label", app.label))
+        }
+        val rules = LocalPolicyRuntime.currentRules
+            ?: LocalRules.defaultsFor(LocalPolicyRuntime.state.value.activation)
+        return json(
+            Response.Status.OK,
+            JSONObject()
+                .put("ok", true)
+                .put("apps", list)
+                .put("allowedPackages", JSONArray(rules.allowedPackages.sorted()))
+                .put("studyPackages", JSONArray(rules.studyPackages.sorted()))
+                .put("usesAppSelection", rules.usesAppSelection),
+        )
+    }
+
+    private fun policyJson(): JSONObject {
+        val state = LocalPolicyRuntime.state.value
+        val rules = LocalPolicyRuntime.currentRules ?: LocalRules.defaultsFor(state.activation)
+        return JSONObject()
+            .put("ok", true)
+            .put("mode", state.mode.name)
+            .put("source", state.source.name)
+            .put("activation", state.activation.name)
+            .put("sessionState", state.sessionState.name)
+            .put("setupRequired", state.setupRequired)
+            .put("quizEnabled", QuizSessionStore.enabled())
+            .put("sourceEntriesVisible", SourceEntrySettings.isVisible())
+            .put("rules", rulesJson(rules))
+            .put(
+                "limits",
+                JSONObject()
+                    .put("maxWindowsPerDay", LocalRules.MAX_WINDOWS_PER_DAY)
+                    .put("maxDailyMinutes", LocalRules.MAX_DAILY_MINUTES)
+                    .put("maxRestMinutes", LocalRules.MAX_REST_MINUTES)
+                    .put("maxAllowedPackages", LocalRules.MAX_ALLOWED_PACKAGES)
+                    .put("minSessionBufferMinutes", LocalRules.MIN_SESSION_BUFFER_MINUTES)
+                    .put("maxSessionBufferMinutes", LocalRules.MAX_SESSION_BUFFER_MINUTES)
+                    .put("defaultSessionBufferMinutes", LocalRules.DEFAULT_SESSION_BUFFER_MINUTES),
+            )
+    }
+
+    private fun rulesJson(rules: LocalRules): JSONObject = JSONObject()
+        .put("weekdayWindows", windowsJson(rules.weekdayWindows))
+        .put("weekendWindows", windowsJson(rules.weekendWindows))
+        .put("autoDailyLimitMinutes", rules.autoDailyLimitMinutes)
+        .put("sessionLimitMinutes", rules.sessionLimitMinutes)
+        .put("restMinutes", rules.restMinutes)
+        .put("sessionScreenOffBufferMinutes", rules.sessionScreenOffBufferMinutes)
+        .put("allowedPackages", JSONArray(rules.allowedPackages.sorted()))
+        .put("studyPackages", JSONArray(rules.studyPackages.sorted()))
+        .put("usesAppSelection", rules.usesAppSelection)
+        .put("hasStudyMode", rules.hasStudyMode)
+
+    private fun windowsJson(windows: List<LocalTimeWindow>): JSONArray {
+        val array = JSONArray()
+        windows.forEach { window ->
+            array.put(JSONObject().put("start", window.startMinute).put("end", window.endMinute))
+        }
+        return array
+    }
+
+    /** Missing keys keep the stored value, so a partial save never silently resets a rule. */
+    private fun parseRules(body: JSONObject, current: LocalRules): LocalRules? {
+        val weekday = parseWindows(body.optJSONArray("weekdayWindows")) ?: current.weekdayWindows
+        val weekend = parseWindows(body.optJSONArray("weekendWindows")) ?: current.weekendWindows
+        val allowed = parsePackages(body.optJSONArray("allowedPackages")) ?: current.allowedPackages
+        val study = parsePackages(body.optJSONArray("studyPackages")) ?: current.studyPackages
+        return LocalRules(
+            weekdayWindows = weekday,
+            weekendWindows = weekend,
+            autoDailyLimitMinutes = body.optInt(
+                "autoDailyLimitMinutes",
+                current.autoDailyLimitMinutes,
+            ),
+            sessionLimitMinutes = body.optInt("sessionLimitMinutes", current.sessionLimitMinutes),
+            restMinutes = body.optInt("restMinutes", current.restMinutes),
+            sessionScreenOffBufferMinutes = body.optInt(
+                "sessionScreenOffBufferMinutes",
+                current.sessionScreenOffBufferMinutes,
+            ),
+            allowedPackages = allowed,
+            studyPackages = study,
+        )
+    }
+
+    private fun parseWindows(array: JSONArray?): List<LocalTimeWindow>? {
+        if (array == null) return null
+        val windows = ArrayList<LocalTimeWindow>(array.length())
+        for (index in 0 until array.length()) {
+            val item = array.optJSONObject(index) ?: return null
+            if (!item.has("start") || !item.has("end")) return null
+            windows.add(LocalTimeWindow(item.optInt("start"), item.optInt("end")))
+        }
+        return windows
+    }
+
+    private fun parsePackages(array: JSONArray?): Set<String>? {
+        if (array == null) return null
+        val packages = LinkedHashSet<String>(array.length())
+        for (index in 0 until array.length()) {
+            val name = array.optString(index, "").trim()
+            if (name.isEmpty()) return null
+            packages.add(name)
+        }
+        return packages
+    }
+
+    private fun activationOf(raw: String): Activation? = when (raw.trim().uppercase(Locale.ROOT)) {
+        "AUTO" -> Activation.AUTO
+        "MANUAL" -> Activation.MANUAL
+        else -> null
+    }
+
+    /** Absent and JSON null both mean "leave it alone"; only an explicit boolean writes. */
+    private fun JSONObject.optBooleanOrNull(key: String): Boolean? =
+        if (has(key) && !isNull(key)) optBoolean(key) else null
 
     private fun setConsent(session: IHTTPSession): Response {
         adminError(session)?.let { return it }
@@ -1633,6 +1861,18 @@ object QuizWebAdmin {
             .put("wrong", counts.wrong)
             .put("legacy", counts.legacy)
             .put("expired", counts.expired)
+
+    /**
+     * The weekly wrong-book cycle as the page needs it: how many mistakes are
+     * waiting, whether the week already ran out (practice is review-only), and
+     * how many days the grace period has left.
+     */
+    private fun wrongBookJson(book: WrongBookPolicy.State): JSONObject =
+        JSONObject()
+            .put("count", book.count)
+            .put("overdue", book.overdue)
+            .put("daysLeft", book.daysLeft)
+            .put("mixing", book.mixing)
 
     /**
      * The ordered levels plus a per-level availability count. The phone list
