@@ -85,9 +85,10 @@ PlanYourTV 是一个**桌面级儿童时间管理 App**：它替代电视自带�
 时间用完不是死锁，而是给孩子一个「自己挣时间」的出口：
 
 - 锁屏上弹出答题挑战；开始前可以选择答题范围，确认面板会写明年级、学科、学期、教材、范围和「单选」。
-- 每轮 **5–50 道题（5 道一档，默认 5 道）**，每题默认 **60 秒**；家长可以设计最多 **6 个答题关卡**，孩子在电视上滚动选择。
+- 每轮 **5–50 道题（5 道一档，默认 5 道）**，每题默认 **60 秒**；家长可以设计**不限数量**的答题关卡，孩子在电视上滚动选择。
 - **难度计分**：简单 / 中等 / 困难分别设置答对奖励和答错扣分，结算按净得分计算；可以设置最低解锁分钟和单轮奖励上限。
 - 每题作答后立即显示对错和解析；全部题目答完后统一结算，奖励时长直接进入下一次观看。
+- **错题自动回到练习**：答错的题进入错题本，之后的练习会混进来重做；**答对一次就移出错题本**。若从出现错题算起的滚动 7 天内仍未订正完，练习只会出错题、不再出新题，直到错题本被清空。
 - 答对反馈、语音提示和大号金色时间，让答题更像游戏而不是惩罚；不再需要配置答案展示时长。
 - 题目、答案和答题进度只保存在电视上，不会上传。
 
@@ -105,9 +106,9 @@ PlanYourTV 是一个**桌面级儿童时间管理 App**：它替代电视自带�
 
 - **六位家长 PIN**：首次开启会生成一次性恢复码，请拍照保存；忘记 PIN 可用恢复码重置。默认 PIN 会显示风险提示，请先修改。
 - **临时解锁**：家长可以短时间接管电视，家长使用时间不计入孩子的额度。
-- **电视端家长中心**：在电视上直接调整规则、学习 App、计时和答题设置。
+- **电视端家长中心（只保留最必要的部分）**：首次开启的 PIN 与一次性恢复码、手机配对二维码、守护权限与默认桌面、自动更新，以及应急「结束本次观看」。日常规则统一在手机/网页端修改，电视上只显示当前规则的摘要。
 - **自动更新（可选）**：支持静默安装的电视可在家长中心开启自动更新；新版本会在后台下载，并在其他 App 停留一段时间后安装，设置和题库保留。其他电视仍可在控制中心手动下载安装。
-- **手机局域网设置页**：电视运行时，同一 Wi-Fi 下的手机可以打开设置页，管理规则、题库、错题、壁纸和 App 布局；不需要账号，也不经过公网。
+- **手机局域网设置页**：电视运行时，同一 Wi-Fi 下的手机可以打开设置页，管理规则、题库、错题、壁纸和 App 布局；不需要账号，也不经过公网。规则（时间段、每日/单次额度、休息、息屏缓冲、可用 App）也在这里的「守护」页修改。
 - **Aerial 桌面体验**：App 网格、文件夹、壁纸、屏保、控制中心、HDMI 信号源和按键声音都保留；支持 `standard` 和 `guard` 两种构建。控制中心的「信号源设置」可以选择要显示的信号源、是否随 HDMI-CEC 设备开机自动切换，以及开机时进入哪个信号源。
 - **Home Guard**：在固件强行把 Home 键交给自带桌面的电视上，通过无障碍服务守住 PlanYourTV 的入口。
 - **五种界面语言**：简体中文、英语、俄语、乌克兰语、哈萨克语。
@@ -283,10 +284,10 @@ Built on [Aerial](https://github.com/pengchujin/aerial-tv) 1.93 (MIT). Current c
 - **Rules that run themselves** — weekday/weekend windows, daily quota, per-session cap, rest breaks, automatic lock screen and countdown.
 - **App-level scope** — only the entertainment apps selected by the parent are allowed during a timed session; learning apps are never timed and are available through Study mode on the lock screen.
 - **Study mode** — shows only the configured learning apps; no timer, no quota, no PIN.
-- **Quiz unlock** — the child picks an answer scope, then answers 5–50 questions (5-question steps, default 5; 60 seconds each). Easy / medium / hard questions carry separate rewards and deductions; a settable minimum net score gates the unlock and a per-round cap limits the payout. Parents can design up to six named levels, and every answer gets feedback and an explanation.
+- **Quiz unlock** — the child picks an answer scope, then answers 5–50 questions (5-question steps, default 5; 60 seconds each). Easy / medium / hard questions carry separate rewards and deductions; a settable minimum net score gates the unlock and a per-round cap limits the payout. Parents can design any number of named levels, and every answer gets feedback and an explanation.
 - **Local question bank, manual import + AI generation (optional)** — 5,500 built-in first-semester midterm questions for grades 1–9 across Chinese, math, English, science and junior-high subjects, including a separate SWU (XINANDA) primary-math set. A parent can also import a `.json` / `.txt` file or paste single-choice questions on the phone page, choose or create a tag, and preview duplicates and free space; imported tags can become custom levels. AI generation targets real textbook units (302 books, 2205 nodes, 1970 units) and supports 20 / 30 / 50-question batches through the parent's own OpenAI-compatible provider (DeepSeek by default; the parent creates the key); the API key stays on the TV.
-- **Question bank and wrong-answer management** — filters, deduplication, capacity management, wrong-answer review and selective clearing.
-- **Parent controls** — six-digit PIN, one-time recovery code, temporary parent override, TV parent center, and a LAN phone settings page. Switching between automatic and manual modes requires an explicit confirmation that explains how the timing rules change.
+- **Question bank and wrong-answer management** — filters, deduplication, capacity management, wrong-answer review and selective clearing. A missed question goes into the wrong book and is mixed back into later practice rounds; answering it correctly once removes it. If the book still holds mistakes seven days (rolling, counted from the first mistake) after they appeared, practice serves only the book and no new questions until it is cleared.
+- **Parent controls** — six-digit PIN, one-time recovery code, temporary parent override, and a LAN phone settings page that now owns the rules: time windows, daily and per-session limits, rest, screen-off buffer and the allowed app scope. The TV parent center keeps only what cannot leave the device (first PIN, recovery code, pairing QR, guard permissions, auto update) plus an emergency stop for a running session. Switching between automatic and manual modes requires an explicit confirmation that explains how the timing rules change.
 - **Optional phone shell** — a separate Android 7.0+ app that scans the TV's Parent Center QR code and opens the same page in a browser shell, so it does not need scanning again. It is not a TV APK; download it at <https://planyourtv.me/download/planyourtv-parent.apk> and install it on the phone.
 - **Updates and inputs** — optional background auto update on TVs that allow silent installs, keeping settings and question bank, plus configurable input visibility, HDMI-CEC switching and boot input in Control Center.
 - **Aerial desktop experience** — app grid, folders, wallpapers, screensaver, control center, HDMI sources, Home Guard, `standard`/`guard` flavors and five UI languages.
