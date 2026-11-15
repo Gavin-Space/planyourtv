@@ -127,6 +127,7 @@
       providerPresetHintLongCat: "例：LongCat-Flash-Chat / LongCat-2.5。模型更新较快，以 /models 返回为准。",
       providerPresetHintStepFun: "例：step-3.5-flash / step-5-preview。Step Plan 订阅需使用不同的服务地址。",
       providerPresetHintCustom: "填写服务商提供的模型 ID，以服务商控制台或 /models 为准。",
+      providerPresetHintWorkBuddy: "WorkBuddy 还没有公开的接口地址，这里只是占位。请从 WorkBuddy 控制台复制服务地址和模型名再填入。",
       saveProvider: "保存 AI 设置",
       testProvider: "测试连接",
       providerReady: "AI 出题已配置",
@@ -200,7 +201,7 @@
       genCount: "题目数量",
       genOptions: "每题选项数",
       genDifficulty: "难度",
-      difficultyAny: "由模型决定",
+      difficultyAny: "由模型逐题判断",
       difficultyEasy: "简单",
       difficultyMedium: "中等",
       difficultyHard: "较难",
@@ -429,6 +430,7 @@
       providerPresetHintLongCat: "e.g. LongCat-Flash-Chat / LongCat-2.5. Model IDs change quickly; check /models.",
       providerPresetHintStepFun: "e.g. step-3.5-flash / step-5-preview. Step Plan subscriptions use a different host.",
       providerPresetHintCustom: "Enter the model ID from the provider console or /models.",
+      providerPresetHintWorkBuddy: "WorkBuddy has no public endpoint yet, so this chip only opens the field. Copy the URL and model name from your WorkBuddy console.",
       saveProvider: "Save AI settings",
       testProvider: "Test connection",
       providerReady: "AI questions configured",
@@ -502,7 +504,7 @@
       genCount: "Number of questions",
       genOptions: "Options per question",
       genDifficulty: "Difficulty",
-      difficultyAny: "Model decides",
+      difficultyAny: "Model grades each question",
       difficultyEasy: "Easy",
       difficultyMedium: "Medium",
       difficultyHard: "Hard",
@@ -731,6 +733,7 @@
       providerPresetHintLongCat: "Например, LongCat-Flash-Chat / LongCat-2.5. ID моделей часто меняются; смотрите /models.",
       providerPresetHintStepFun: "Например, step-3.5-flash / step-5-preview. Для подписки Step Plan используется другой адрес.",
       providerPresetHintCustom: "Укажите ID модели из консоли сервиса или /models.",
+      providerPresetHintWorkBuddy: "У WorkBuddy пока нет публичного адреса, поэтому кнопка только открывает поле. Скопируйте адрес и имя модели из консоли WorkBuddy.",
       saveProvider: "Сохранить настройки ИИ",
       testProvider: "Проверить подключение",
       providerReady: "ИИ-вопросы настроены",
@@ -804,7 +807,7 @@
       genCount: "Количество вопросов",
       genOptions: "Вариантов на вопрос",
       genDifficulty: "Сложность",
-      difficultyAny: "Выберет модель",
+      difficultyAny: "Модель оценивает каждый вопрос",
       difficultyEasy: "Легко",
       difficultyMedium: "Средне",
       difficultyHard: "Сложно",
@@ -1033,6 +1036,7 @@
       providerPresetHintLongCat: "Наприклад, LongCat-Flash-Chat / LongCat-2.5. ID моделей часто змінюються; дивіться /models.",
       providerPresetHintStepFun: "Наприклад, step-3.5-flash / step-5-preview. Для підписки Step Plan використовується інша адреса.",
       providerPresetHintCustom: "Укажіть ID моделі з консолі сервісу або /models.",
+      providerPresetHintWorkBuddy: "У WorkBuddy поки немає публічної адреси, тому кнопка лише відкриває поле. Скопіюйте адресу та назву моделі з консолі WorkBuddy.",
       saveProvider: "Зберегти налаштування ШІ",
       testProvider: "Перевірити з'єднання",
       providerReady: "ШІ-питання налаштовано",
@@ -1106,7 +1110,7 @@
       genCount: "Кількість питань",
       genOptions: "Варіантів на питання",
       genDifficulty: "Складність",
-      difficultyAny: "Обере модель",
+      difficultyAny: "Модель оцінює кожне питання",
       difficultyEasy: "Легко",
       difficultyMedium: "Середньо",
       difficultyHard: "Складно",
@@ -1335,6 +1339,7 @@
       providerPresetHintLongCat: "Мысалы, LongCat-Flash-Chat / LongCat-2.5. Модель ID-лері жиі өзгереді; /models қараңыз.",
       providerPresetHintStepFun: "Мысалы, step-3.5-flash / step-5-preview. Step Plan жазылымы басқа мекенжайды қолданады.",
       providerPresetHintCustom: "Модель ID-ін қызмет консолінен немесе /models арқылы енгізіңіз.",
+      providerPresetHintWorkBuddy: "WorkBuddy-дің ашық мекенжайы әзірге жоқ, сондықтан бұл түйме тек өрісті ашады. Мекенжай мен модель атауын WorkBuddy консолінен көшіріңіз.",
       saveProvider: "AI баптауын сақтау",
       testProvider: "Қосылымды тексеру",
       providerReady: "AI сұрақтары бапталған",
@@ -1408,7 +1413,7 @@
       genCount: "Сұрақ саны",
       genOptions: "Әр сұрақтағы нұсқа саны",
       genDifficulty: "Қиындық",
-      difficultyAny: "Модель таңдайды",
+      difficultyAny: "Модель әр сұрақты бағалайды",
       difficultyEasy: "Оңай",
       difficultyMedium: "Орташа",
       difficultyHard: "Қиын",
@@ -1585,6 +1590,8 @@
       confirmClearUnused: "清空所有未使用的题目？",
       confirmClearAnswered: "清空所有已回答的题目？",
       confirmClearWrong: "清空所有错题记录？",
+      wrongBookMixed: "错题本有 {n} 道题，会混在练习里；{days} 天后仍未订正，练习只会出错题。",
+      wrongBookOverdue: "错题本还剩 {n} 道题，本周的练习只会出这些错题；答对就会移出错题本。",
       confirmClearAll: "清空整个本地题库？此操作不能撤销。",
       clearDone: "已清理。",
       bankFilterAll: "全部",
@@ -1682,6 +1689,8 @@
       confirmClearUnused: "Clear all unused questions?",
       confirmClearAnswered: "Clear all answered questions?",
       confirmClearWrong: "Clear all mistake records?",
+      wrongBookMixed: "{n} mistake(s) in the book will be mixed into practice; if any are still unanswered in {days} day(s), practice will only serve them.",
+      wrongBookOverdue: "{n} mistake(s) left, so practice only serves the wrong book this week. Answering one correctly removes it.",
       confirmClearAll: "Clear the entire local bank? This cannot be undone.",
       clearDone: "Cleared.",
       bankFilterAll: "All",
@@ -1775,6 +1784,8 @@
       clearUnused: "Очистить неиспользованные",
       clearAnswered: "Очистить отвеченные",
       clearWrong: "Очистить ошибки",
+      wrongBookMixed: "В книге ошибок {n} — они будут подмешиваться в тренировку; если через {days} дн. они останутся, тренировка будет только из ошибок.",
+      wrongBookOverdue: "Осталось ошибок: {n}. На этой неделе тренировка идёт только по книге ошибок; верный ответ убирает вопрос из неё.",
       clearAll: "Очистить весь банк",
       confirmClearUnused: "Очистить все неиспользованные вопросы?",
       confirmClearAnswered: "Очистить все отвеченные вопросы?",
@@ -1872,6 +1883,8 @@
       clearUnused: "Очистити невикористані",
       clearAnswered: "Очистити відповіді",
       clearWrong: "Очистити помилки",
+      wrongBookMixed: "У книзі помилок {n} — вони домішуватимуться до тренування; якщо за {days} дн. вони залишаться, тренування буде лише з помилок.",
+      wrongBookOverdue: "Залишилося помилок: {n}. Цього тижня тренування йде лише за книгою помилок; правильна відповідь прибирає питання з неї.",
       clearAll: "Очистити весь банк",
       confirmClearUnused: "Очистити всі невикористані питання?",
       confirmClearAnswered: "Очистити всі відповіді?",
@@ -1969,6 +1982,8 @@
       clearUnused: "Пайдаланылмағанды тазалау",
       clearAnswered: "Жауаптарды тазалау",
       clearWrong: "Қателерді тазалау",
+      wrongBookMixed: "Қателер кітабында {n} сұрақ бар — олар жаттығуға араласады; {days} күннен кейін де жауапталмаса, жаттығу тек қателерден болады.",
+      wrongBookOverdue: "Қателер кітабында {n} сұрақ қалды, осы аптада жаттығу тек солардан болады; дұрыс жауап оны кітаптан алады.",
       clearAll: "Бүкіл банкті тазалау",
       confirmClearUnused: "Барлық пайдаланылмаған сұрақты тазалау керек пе?",
       confirmClearAnswered: "Барлық жауапталған сұрақты тазалау керек пе?",
@@ -2440,10 +2455,10 @@
       levelNoneLabel: "未设置关卡",
       levelListTitle: "关卡",
       levelListLead: "电视上按这里的顺序显示关卡，孩子用遥控上下选择。",
-      levelListCount: "{n}/{max}",
+      levelListCount: "{n}",
       levelEmptyTitle: "还没有设置关卡",
       levelEmptyText: "添加一个答题范围，孩子就能在电视上像选关一样答题。",
-      levelMaxHint: "最多设置 {n} 个关卡。",
+      levelMaxHint: "关卡数量不限。",
       levelUndo: "撤销",
       levelDeleted: "已删除「{name}」",
       levelSaved: "关卡已保存",
@@ -2473,10 +2488,10 @@
       levelNoneLabel: "No levels",
       levelListTitle: "Levels",
       levelListLead: "The TV lists the levels in this order so your child can pick one with the remote.",
-      levelListCount: "{n}/{max}",
+      levelListCount: "{n}",
       levelEmptyTitle: "No levels yet",
       levelEmptyText: "Add an answer range so your child can pick it on the TV like a game level.",
-      levelMaxHint: "Up to {n} levels.",
+      levelMaxHint: "No limit on the number of levels.",
       levelUndo: "Undo",
       levelDeleted: "Deleted “{name}”",
       levelSaved: "Level saved",
@@ -2506,10 +2521,10 @@
       levelNoneLabel: "Уровни не заданы",
       levelListTitle: "Уровни",
       levelListLead: "На ТВ уровни показываются в этом порядке; ребёнок выбирает их пультом.",
-      levelListCount: "{n}/{max}",
+      levelListCount: "{n}",
       levelEmptyTitle: "Уровней пока нет",
       levelEmptyText: "Добавьте диапазон вопросов, чтобы ребёнок мог выбрать его на ТВ как уровень игры.",
-      levelMaxHint: "Можно добавить не больше {n} уровней.",
+      levelMaxHint: "Количество уровней не ограничено.",
       levelUndo: "Отменить",
       levelDeleted: "Удалён уровень «{name}»",
       levelSaved: "Уровень сохранён",
@@ -2539,10 +2554,10 @@
       levelNoneLabel: "Рівні не налаштовані",
       levelListTitle: "Рівні",
       levelListLead: "На ТБ рівні показуються в цьому порядку; дитина вибирає їх пультом.",
-      levelListCount: "{n}/{max}",
+      levelListCount: "{n}",
       levelEmptyTitle: "Рівнів ще немає",
       levelEmptyText: "Додайте діапазон питань, щоб дитина могла вибрати його на ТБ як рівень гри.",
-      levelMaxHint: "Можна додати щонайбільше {n} рівнів.",
+      levelMaxHint: "Кількість рівнів необмежена.",
       levelUndo: "Скасувати",
       levelDeleted: "Видалено рівень «{name}»",
       levelSaved: "Рівень збережено",
@@ -2572,10 +2587,10 @@
       levelNoneLabel: "Деңгейлер орнатылмаған",
       levelListTitle: "Деңгейлер",
       levelListLead: "ТВ-де деңгейлер осы ретпен көрсетіледі; бала оны қашықтан басқару пультімен таңдайды.",
-      levelListCount: "{n}/{max}",
+      levelListCount: "{n}",
       levelEmptyTitle: "Деңгейлер әзірге жоқ",
       levelEmptyText: "Бала ТВ-де ойын деңгейі ретінде таңдай алатындай сұрақ ауқымын қосыңыз.",
-      levelMaxHint: "Ең көбі {n} деңгей қосуға болады.",
+      levelMaxHint: "Деңгейлер саны шектелмеген.",
       levelUndo: "Қайтару",
       levelDeleted: "«{name}» деңгейі жойылды",
       levelSaved: "Деңгей сақталды",
@@ -2829,8 +2844,8 @@
       customLevelTagRequired: "请选择标签。",
       customLevelSaved: "自定义关卡已保存。",
       customLevelDeleted: "自定义关卡已删除。",
-      levelsTotalHint: "关卡 {used} / {max}",
-      customLevelCombined: "课程与自定义关卡合计 {used} / {max}。",
+      levelsTotalHint: "共 {used} 个关卡",
+      customLevelCombined: "课程与自定义关卡合计 {used} 个。",
       maintenanceSourceLabel: "清理范围",
       maintenanceSourceCourse: "课程/AI",
       maintenanceSourceCustom: "自定义",
@@ -2851,7 +2866,7 @@
       err_INVALID_CUSTOM_LEVEL: "自定义关卡配置不正确。",
       err_INVALID_IMPORT: "导入内容有错误，请按提示修改。",
       err_TOO_MANY_ITEMS: "一次最多导入 200 道题。",
-      err_TOO_MANY_LEVELS: "课程关卡和自定义关卡合计最多 6 个。",
+      err_TOO_MANY_LEVELS: "关卡保存失败，请重试。",
       err_INVALID_INDEX: "题目位置不正确，请重新解析。",
       importAiPrompt: `你是题库整理助手。请把我给你的题目资料整理成学习机能导入的 JSON，只输出 JSON。只整理单选题。
 
@@ -3005,8 +3020,8 @@
       customLevelTagRequired: "Choose a tag.",
       customLevelSaved: "Custom level saved.",
       customLevelDeleted: "Custom level deleted.",
-      levelsTotalHint: "Levels {used} / {max}",
-      customLevelCombined: "Course and custom levels: {used} / {max}.",
+      levelsTotalHint: "{used} levels in total",
+      customLevelCombined: "Course and custom levels: {used} in total.",
       maintenanceSourceLabel: "Clear scope",
       maintenanceSourceCourse: "Course/AI",
       maintenanceSourceCustom: "Custom",
@@ -3027,7 +3042,7 @@
       err_INVALID_CUSTOM_LEVEL: "The custom level settings are invalid.",
       err_INVALID_IMPORT: "The import contains errors; fix them using the messages.",
       err_TOO_MANY_ITEMS: "At most 200 questions can be imported at once.",
-      err_TOO_MANY_LEVELS: "Course and custom levels together cannot exceed 6.",
+      err_TOO_MANY_LEVELS: "Could not save levels. Please try again.",
       err_INVALID_INDEX: "The question position is invalid; parse the import again.",
       importAiPrompt: `You organize question banks. Turn the material I give you into JSON that a study device can import. Output only JSON. Include single-choice questions only.
 
@@ -3181,8 +3196,8 @@ Material to organize:
       customLevelTagRequired: "Выберите тег.",
       customLevelSaved: "Свой уровень сохранён.",
       customLevelDeleted: "Свой уровень удалён.",
-      levelsTotalHint: "Уровни {used} / {max}",
-      customLevelCombined: "Курсовые и свои уровни: {used} / {max}.",
+      levelsTotalHint: "Всего уровней: {used}",
+      customLevelCombined: "Курсовые и свои уровни: всего {used}.",
       maintenanceSourceLabel: "Область очистки",
       maintenanceSourceCourse: "Курс/ИИ",
       maintenanceSourceCustom: "Свои",
@@ -3203,7 +3218,7 @@ Material to organize:
       err_INVALID_CUSTOM_LEVEL: "Неверная настройка своего уровня.",
       err_INVALID_IMPORT: "В импортируемых данных есть ошибки. Исправьте их по подсказкам.",
       err_TOO_MANY_ITEMS: "Не более 200 вопросов за один раз.",
-      err_TOO_MANY_LEVELS: "Всего можно создать не более 6 курсовых и своих уровней.",
+      err_TOO_MANY_LEVELS: "Не удалось сохранить уровни. Повторите попытку.",
       err_INVALID_INDEX: "Неверная позиция вопроса. Проверьте импорт заново.",
       importAiPrompt: `Ты помощник по упорядочиванию банка вопросов. Преврати присланный материал в JSON, который можно импортировать на учебное устройство. Выводи только JSON. Оставляй только вопросы с одним правильным ответом.
 
@@ -3357,8 +3372,8 @@ Material to organize:
       customLevelTagRequired: "Виберіть тег.",
       customLevelSaved: "Власний рівень збережено.",
       customLevelDeleted: "Власний рівень видалено.",
-      levelsTotalHint: "Рівні {used} / {max}",
-      customLevelCombined: "Курсові та власні рівні: {used} / {max}.",
+      levelsTotalHint: "Усього рівнів: {used}",
+      customLevelCombined: "Курсові та власні рівні: усього {used}.",
       maintenanceSourceLabel: "Область очищення",
       maintenanceSourceCourse: "Курс/ШІ",
       maintenanceSourceCustom: "Власні",
@@ -3379,7 +3394,7 @@ Material to organize:
       err_INVALID_CUSTOM_LEVEL: "Неправильні налаштування власного рівня.",
       err_INVALID_IMPORT: "В імпортованих даних є помилки. Виправте їх за підказками.",
       err_TOO_MANY_ITEMS: "Не більше 200 питань за один раз.",
-      err_TOO_MANY_LEVELS: "Усього можна створити не більше 6 курсових і власних рівнів.",
+      err_TOO_MANY_LEVELS: "Не вдалося зберегти рівні. Спробуйте ще раз.",
       err_INVALID_INDEX: "Неправильна позиція питання. Перевірте імпорт ще раз.",
       importAiPrompt: `Ти помічник з упорядкування банку питань. Перетвори надісланий матеріал на JSON, який можна імпортувати на навчальний пристрій. Виводь лише JSON. Залишай лише питання з однією правильною відповіддю.
 
@@ -3533,8 +3548,8 @@ Material to organize:
       customLevelTagRequired: "Тег таңдаңыз.",
       customLevelSaved: "Жеке деңгей сақталды.",
       customLevelDeleted: "Жеке деңгей жойылды.",
-      levelsTotalHint: "Деңгейлер {used} / {max}",
-      customLevelCombined: "Курстық және жеке деңгейлер: {used} / {max}.",
+      levelsTotalHint: "Барлығы {used} деңгей",
+      customLevelCombined: "Курстық және жеке деңгейлер: барлығы {used}.",
       maintenanceSourceLabel: "Тазалау аясы",
       maintenanceSourceCourse: "Курс/AI",
       maintenanceSourceCustom: "Жеке",
@@ -3555,7 +3570,7 @@ Material to organize:
       err_INVALID_CUSTOM_LEVEL: "Жеке деңгей баптауы дұрыс емес.",
       err_INVALID_IMPORT: "Импортталған деректерде қателер бар. Нұсқаулар бойынша түзетіңіз.",
       err_TOO_MANY_ITEMS: "Бір ретте ең көбі 200 сұрақ импорттауға болады.",
-      err_TOO_MANY_LEVELS: "Курстық және жеке деңгейлердің барлығы 6-дан аспауы керек.",
+      err_TOO_MANY_LEVELS: "Деңгейлерді сақтау мүмкін болмады. Қайталап көріңіз.",
       err_INVALID_INDEX: "Сұрақ орны дұрыс емес. Импортты қайта тексеріңіз.",
       importAiPrompt: `Сен сұрақ банкін реттеуші көмекшісің. Маған берілген материалды оқу құрылғысына импорттауға болатын JSON-ға айналдыр. Тек JSON шығар. Тек бір дұрыс жауабы бар сұрақтарды ғана қалдыр.
 
@@ -3958,6 +3973,297 @@ Material to organize:
     },
   };
 
+  // Parent rules moved off the TV. The TV keeps only what cannot leave the device
+  // (first PIN, recovery code, guard permissions and pairing), so every daily rule
+  // lives here.
+  const V27_TEXTS = {
+    zh: {
+      tabPolicy: "守护",
+      policyTitle: "时间守护",
+      policyLead: "这些规则以前只能在电视上设置，现在都在这里改。保存后电视立刻生效。",
+      policyActivationLabel: "计量方式",
+      policyActivationAuto: "自动",
+      policyActivationManual: "手动",
+      policyActivationHintAuto: "自动：在时间段内按每日总额度自动开始和暂停。",
+      policyActivationHintManual: "手动：孩子在电视上按一次才开始，一次用完就停。",
+      policyQuizToggle: "答题解锁",
+      policyQuizToggleHint: "开启后，看电视前要先答题换取时间。",
+      policySourcesToggle: "显示题库入口",
+      policySourcesToggleHint: "关闭后，电视上不再显示题库和导入入口。",
+      policyTimeTitle: "允许看电视的时间段",
+      policyTimeLead: "每天最多两段。不在时间段内时，电视只能留在守护页。",
+      policyWeekday: "周一到周五",
+      policyWeekend: "周六和周日",
+      policyAddWindow: "添加时间段",
+      policyWindowStart: "开始",
+      policyWindowEnd: "结束",
+      policyWindowRemove: "删除这段时间",
+      policyNoWindow: "还没有设置时间段，孩子现在无法观看。",
+      policyWindowHint: "时间按 24 小时制填写，例如 17:30 到 21:00。",
+      policyLimitsTitle: "时长限制",
+      policyLimitsLead: "自动模式按每日额度计量；手动模式按每次可用时长计量。",
+      policyDaily: "每日总额度（分钟）",
+      policySession: "每次可用时长（分钟）",
+      policyRest: "两次之间的休息（分钟）",
+      policyBuffer: "关屏后延长（分钟）",
+      policyRestHint: "0 表示不强制休息。",
+      policyBufferHint: "孩子关掉电视后，剩余时间还能保留多久。允许 5–60 分钟。",
+      policyAppsTitle: "允许的电视应用",
+      policyAppsLead: "只列出这台电视上能启动的应用；不允许的应用会被守护页挡住。",
+      policyAppsAll: "允许所有应用",
+      policyAppsAllHint: "打开后不再逐个挑选，所有娱乐应用都受时间限制。",
+      policyAppsEmpty: "正在读取电视上的应用列表…",
+      policyAppsHint: "取消勾选即可禁止某个应用。",
+      policySave: "保存到电视",
+      policySaved: "已保存到电视。",
+      policyLoading: "正在读取电视上的规则…",
+      policyUnavailable: "这台电视当前不是本地守护模式，规则只能在这台电视上查看。",
+      policySessionRunning: "电视上正在计时，结束或暂停后再改规则。",
+      policyInvalidRules: "规则没有保存：时间段不能重叠，开始时间要早于结束时间。",
+      policyInvalidLimits: "规则没有保存：时长超出了允许范围。",
+      policyInvalidApps: "规则没有保存：应用列表无效。",
+      policySavedNothing: "没有需要保存的修改。",
+      policySummary: "{windows} 个时间段 · 每日 {daily} 分钟 · 每次 {session} 分钟",
+      err_RULES_OVERLAPPING_WINDOWS: "时间段重叠了，请调整后再保存。",
+      err_RULES_INVALID_WINDOW: "时间段无效：开始时间要早于结束时间。",
+      err_RULES_TOO_MANY_WINDOWS: "每天最多两段时间。",
+      err_RULES_INVALID_LIMITS: "时长超出了允许范围。",
+      err_RULES_INVALID_ALLOWED_PACKAGES: "允许的应用列表无效。",
+      err_RULES_INVALID_STUDY_PACKAGES: "学习应用列表无效。",
+      err_RULES_NO_WINDOW: "至少要保留一个时间段。",
+      err_ACTIVATION_REJECTED: "电视拒绝了这次切换，请稍后重试。",
+      err_INVALID_RULES: "规则格式不正确，请刷新后重试。",
+    },
+    en: {
+      tabPolicy: "Guard",
+      policyTitle: "Screen time guard",
+      policyLead: "These rules used to live on the TV only. Edit them here and the TV applies them as soon as you save.",
+      policyActivationLabel: "How the quota is metered",
+      policyActivationAuto: "Automatic",
+      policyActivationManual: "Manual",
+      policyActivationHintAuto: "Automatic: inside the allowed windows the TV starts and pauses itself until the daily quota is used up.",
+      policyActivationHintManual: "Manual: the child starts each segment on the TV, and it stops when that segment runs out.",
+      policyQuizToggle: "Quiz to unlock",
+      policyQuizToggleHint: "When on, the child answers questions to earn TV time.",
+      policySourcesToggle: "Show the question bank entry",
+      policySourcesToggleHint: "When off, the TV hides the bank and the import entry.",
+      policyTimeTitle: "Allowed viewing windows",
+      policyTimeLead: "Two windows per day at most. Outside them the TV stays on the guard screen.",
+      policyWeekday: "Monday to Friday",
+      policyWeekend: "Saturday and Sunday",
+      policyAddWindow: "Add a window",
+      policyWindowStart: "Start",
+      policyWindowEnd: "End",
+      policyWindowRemove: "Remove this window",
+      policyNoWindow: "No windows yet, so the child cannot watch right now.",
+      policyWindowHint: "Use a 24-hour clock, for example 17:30 to 21:00.",
+      policyLimitsTitle: "Time limits",
+      policyLimitsLead: "Automatic mode counts against the daily quota; manual mode limits each segment.",
+      policyDaily: "Daily quota (minutes)",
+      policySession: "Each segment (minutes)",
+      policyRest: "Rest between segments (minutes)",
+      policyBuffer: "Grace after screen off (minutes)",
+      policyRestHint: "0 means no forced rest.",
+      policyBufferHint: "How long leftover time survives after the child switches the TV off. 5–60 minutes.",
+      policyAppsTitle: "Allowed TV apps",
+      policyAppsLead: "Only apps this TV can launch are listed. Anything unchecked is blocked by the guard screen.",
+      policyAppsAll: "Allow every app",
+      policyAppsAllHint: "When on, nothing is picked individually and every entertainment app is metered.",
+      policyAppsEmpty: "Reading the app list from the TV…",
+      policyAppsHint: "Uncheck an app to block it.",
+      policySave: "Save to the TV",
+      policySaved: "Saved to the TV.",
+      policyLoading: "Reading the rules from the TV…",
+      policyUnavailable: "This TV is not in local guard mode, so the rules can only be read on the TV itself.",
+      policySessionRunning: "The TV is timing right now. End or pause it before changing the rules.",
+      policyInvalidRules: "Not saved: windows cannot overlap and each start must come before its end.",
+      policyInvalidLimits: "Not saved: a limit is outside its allowed range.",
+      policyInvalidApps: "Not saved: the app list is not valid.",
+      policySavedNothing: "Nothing to save.",
+      policySummary: "{windows} windows · {daily} min a day · {session} min each",
+      err_RULES_OVERLAPPING_WINDOWS: "The windows overlap. Adjust them before saving.",
+      err_RULES_INVALID_WINDOW: "A window is invalid: its start must come before its end.",
+      err_RULES_TOO_MANY_WINDOWS: "Two windows per day at most.",
+      err_RULES_INVALID_LIMITS: "A limit is outside its allowed range.",
+      err_RULES_INVALID_ALLOWED_PACKAGES: "The allowed app list is not valid.",
+      err_RULES_INVALID_STUDY_PACKAGES: "The study app list is not valid.",
+      err_RULES_NO_WINDOW: "Keep at least one window.",
+      err_ACTIVATION_REJECTED: "The TV rejected this switch. Try again in a moment.",
+      err_INVALID_RULES: "The rules are malformed. Refresh and try again.",
+    },
+    ru: {
+      tabPolicy: "Защита",
+      policyTitle: "Ограничение времени",
+      policyLead: "Раньше эти правила задавались только на телевизоре. Меняйте их здесь — телевизор применит их сразу после сохранения.",
+      policyActivationLabel: "Как считается лимит",
+      policyActivationAuto: "Автоматически",
+      policyActivationManual: "Вручную",
+      policyActivationHintAuto: "Автоматически: внутри разрешённых окон телевизор сам запускает и приостанавливает показ, пока не израсходован дневной лимит.",
+      policyActivationHintManual: "Вручную: ребёнок запускает каждый сеанс на телевизоре, и он заканчивается, когда сеанс истекает.",
+      policyQuizToggle: "Разблокировка вопросами",
+      policyQuizToggleHint: "Если включено, ребёнок отвечает на вопросы, чтобы заработать время.",
+      policySourcesToggle: "Показывать вход в банк вопросов",
+      policySourcesToggleHint: "Если выключено, телевизор скрывает банк и импорт.",
+      policyTimeTitle: "Разрешённые интервалы",
+      policyTimeLead: "Не больше двух интервалов в день. Вне их телевизор остаётся на экране защиты.",
+      policyWeekday: "С понедельника по пятницу",
+      policyWeekend: "Суббота и воскресенье",
+      policyAddWindow: "Добавить интервал",
+      policyWindowStart: "Начало",
+      policyWindowEnd: "Конец",
+      policyWindowRemove: "Удалить интервал",
+      policyNoWindow: "Интервалов пока нет, поэтому ребёнок не может смотреть.",
+      policyWindowHint: "Указывайте время в 24-часовом формате, например 17:30–21:00.",
+      policyLimitsTitle: "Лимиты времени",
+      policyLimitsLead: "Автоматический режим считает по дневному лимиту; ручной ограничивает каждый сеанс.",
+      policyDaily: "Дневной лимит (минуты)",
+      policySession: "Один сеанс (минуты)",
+      policyRest: "Отдых между сеансами (минуты)",
+      policyBuffer: "Запас после выключения экрана (минуты)",
+      policyRestHint: "0 — без обязательного отдыха.",
+      policyBufferHint: "Сколько остаток времени живёт после выключения телевизора. 5–60 минут.",
+      policyAppsTitle: "Разрешённые приложения",
+      policyAppsLead: "Показаны только приложения, которые можно запустить на этом телевизоре. Отмеченные снятой галочкой блокируются экраном защиты.",
+      policyAppsAll: "Разрешить все приложения",
+      policyAppsAllHint: "Если включено, отдельный выбор не нужен: все развлекательные приложения под лимитом.",
+      policyAppsEmpty: "Читаем список приложений с телевизора…",
+      policyAppsHint: "Снимите галочку, чтобы запретить приложение.",
+      policySave: "Сохранить на телевизор",
+      policySaved: "Сохранено на телевизоре.",
+      policyLoading: "Читаем правила с телевизора…",
+      policyUnavailable: "Телевизор не в локальном режиме защиты, поэтому правила видны только на нём.",
+      policySessionRunning: "На телевизоре идёт отсчёт. Завершите или приостановите его перед изменением правил.",
+      policyInvalidRules: "Не сохранено: интервалы не должны пересекаться, а начало быть раньше конца.",
+      policyInvalidLimits: "Не сохранено: лимит вне допустимого диапазона.",
+      policyInvalidApps: "Не сохранено: список приложений некорректен.",
+      policySavedNothing: "Нечего сохранять.",
+      policySummary: "{windows} интервалов · {daily} мин в день · {session} мин за сеанс",
+      err_RULES_OVERLAPPING_WINDOWS: "Интервалы пересекаются. Исправьте их перед сохранением.",
+      err_RULES_INVALID_WINDOW: "Интервал неверен: начало должно быть раньше конца.",
+      err_RULES_TOO_MANY_WINDOWS: "Не больше двух интервалов в день.",
+      err_RULES_INVALID_LIMITS: "Лимит вне допустимого диапазона.",
+      err_RULES_INVALID_ALLOWED_PACKAGES: "Список разрешённых приложений некорректен.",
+      err_RULES_INVALID_STUDY_PACKAGES: "Список учебных приложений некорректен.",
+      err_RULES_NO_WINDOW: "Оставьте хотя бы один интервал.",
+      err_ACTIVATION_REJECTED: "Телевизор отклонил переключение. Повторите через минуту.",
+      err_INVALID_RULES: "Правила некорректны. Обновите страницу и повторите.",
+    },
+    uk: {
+      tabPolicy: "Захист",
+      policyTitle: "Обмеження часу",
+      policyLead: "Раніше ці правила задавалися лише на телевізорі. Змінюйте їх тут — телевізор застосує їх одразу після збереження.",
+      policyActivationLabel: "Як рахується ліміт",
+      policyActivationAuto: "Автоматично",
+      policyActivationManual: "Вручну",
+      policyActivationHintAuto: "Автоматично: у дозволених проміжках телевізор сам запускає та призупиняє показ, доки не вичерпано денний ліміт.",
+      policyActivationHintManual: "Вручну: дитина запускає кожен сеанс на телевізорі, і він завершується, коли сеанс вичерпано.",
+      policyQuizToggle: "Розблокування питаннями",
+      policyQuizToggleHint: "Якщо ввімкнено, дитина відповідає на питання, щоб заробити час.",
+      policySourcesToggle: "Показувати вхід до банку питань",
+      policySourcesToggleHint: "Якщо вимкнено, телевізор ховає банк та імпорт.",
+      policyTimeTitle: "Дозволені проміжки",
+      policyTimeLead: "Не більше двох проміжків на день. Поза ними телевізор лишається на екрані захисту.",
+      policyWeekday: "З понеділка до п’ятниці",
+      policyWeekend: "Субота та неділя",
+      policyAddWindow: "Додати проміжок",
+      policyWindowStart: "Початок",
+      policyWindowEnd: "Кінець",
+      policyWindowRemove: "Видалити проміжок",
+      policyNoWindow: "Проміжків ще немає, тому дитина не може дивитися.",
+      policyWindowHint: "Вказуйте час у 24-годинному форматі, наприклад 17:30–21:00.",
+      policyLimitsTitle: "Обмеження часу",
+      policyLimitsLead: "Автоматичний режим рахує за денним лімітом; ручний обмежує кожен сеанс.",
+      policyDaily: "Денний ліміт (хвилини)",
+      policySession: "Один сеанс (хвилини)",
+      policyRest: "Відпочинок між сеансами (хвилини)",
+      policyBuffer: "Запас після вимкнення екрана (хвилини)",
+      policyRestHint: "0 — без обов’язкового відпочинку.",
+      policyBufferHint: "Скільки залишок часу живе після вимкнення телевізора. 5–60 хвилин.",
+      policyAppsTitle: "Дозволені застосунки",
+      policyAppsLead: "Показано лише застосунки, які можна запустити на цьому телевізорі. Зняті позначки блокує екран захисту.",
+      policyAppsAll: "Дозволити всі застосунки",
+      policyAppsAllHint: "Якщо ввімкнено, окремий вибір не потрібен: усі розважальні застосунки під лімітом.",
+      policyAppsEmpty: "Читаємо список застосунків із телевізора…",
+      policyAppsHint: "Зніміть позначку, щоб заборонити застосунок.",
+      policySave: "Зберегти на телевізор",
+      policySaved: "Збережено на телевізорі.",
+      policyLoading: "Читаємо правила з телевізора…",
+      policyUnavailable: "Телевізор не в локальному режимі захисту, тому правила видно лише на ньому.",
+      policySessionRunning: "На телевізорі йде відлік. Завершіть або призупиніть його перед зміною правил.",
+      policyInvalidRules: "Не збережено: проміжки не мають перетинатися, а початок бути раніше кінця.",
+      policyInvalidLimits: "Не збережено: ліміт поза дозволеним діапазоном.",
+      policyInvalidApps: "Не збережено: список застосунків некоректний.",
+      policySavedNothing: "Немає що зберігати.",
+      policySummary: "{windows} проміжків · {daily} хв на день · {session} хв за сеанс",
+      err_RULES_OVERLAPPING_WINDOWS: "Проміжки перетинаються. Виправте їх перед збереженням.",
+      err_RULES_INVALID_WINDOW: "Проміжок некоректний: початок має бути раніше кінця.",
+      err_RULES_TOO_MANY_WINDOWS: "Не більше двох проміжків на день.",
+      err_RULES_INVALID_LIMITS: "Ліміт поза дозволеним діапазоном.",
+      err_RULES_INVALID_ALLOWED_PACKAGES: "Список дозволених застосунків некоректний.",
+      err_RULES_INVALID_STUDY_PACKAGES: "Список навчальних застосунків некоректний.",
+      err_RULES_NO_WINDOW: "Залиште хоча б один проміжок.",
+      err_ACTIVATION_REJECTED: "Телевізор відхилив перемикання. Повторіть за хвилину.",
+      err_INVALID_RULES: "Правила некоректні. Оновіть сторінку та повторіть.",
+    },
+    kk: {
+      tabPolicy: "Қорғау",
+      policyTitle: "Уақыт шектеуі",
+      policyLead: "Бұл ережелер бұрын тек теледидарда ғана орнатылатын. Енді оларды осында өзгертіңіз — теледидар сақтаған бетте қолданады.",
+      policyActivationLabel: "Шектеу қалай есептеледі",
+      policyActivationAuto: "Автоматты",
+      policyActivationManual: "Қолмен",
+      policyActivationHintAuto: "Автоматты: рұқсат етілген аралықта теледидар күндік шектеу таусылғанша өзі қосып, кідіртеді.",
+      policyActivationHintManual: "Қолмен: бала әр сеансты теледидарда өзі қосады, сеанс біткенде тоқтайды.",
+      policyQuizToggle: "Сұрақпен ашу",
+      policyQuizToggleHint: "Қосулы болса, бала уақыт алу үшін сұрақтарға жауап береді.",
+      policySourcesToggle: "Сұрақ банкінің кіреберісін көрсету",
+      policySourcesToggleHint: "Өшірілсе, теледидар банкі мен импортты жасырады.",
+      policyTimeTitle: "Рұқсат етілген аралықтар",
+      policyTimeLead: "Күніне ең көбі екі аралық. Олардан тыс уақытта теледидар қорғау экранында қалады.",
+      policyWeekday: "Дүйсенбі мен жұма",
+      policyWeekend: "Сенбі мен жексенбі",
+      policyAddWindow: "Аралық қосу",
+      policyWindowStart: "Басы",
+      policyWindowEnd: "Соңы",
+      policyWindowRemove: "Осы аралықты жою",
+      policyNoWindow: "Әзірге аралық жоқ, сондықтан бала қазір көре алмайды.",
+      policyWindowHint: "Уақытты 24 сағаттық форматта жазыңыз, мысалы 17:30–21:00.",
+      policyLimitsTitle: "Уақыт шектеулері",
+      policyLimitsLead: "Автоматты режим күндік шектеумен есептейді; қолмен режим әр сеансты шектейді.",
+      policyDaily: "Күндік шектеу (минут)",
+      policySession: "Бір сеанс (минут)",
+      policyRest: "Сеанстар арасындағы демалыс (минут)",
+      policyBuffer: "Экран өшкеннен кейінгі қосымша уақыт (минут)",
+      policyRestHint: "0 — міндетті демалыс жоқ.",
+      policyBufferHint: "Бала теледидарды өшіргеннен кейін қалған уақыт қанша сақталады. 5–60 минут.",
+      policyAppsTitle: "Рұқсат етілген қолданбалар",
+      policyAppsLead: "Тек осы теледидарда ашылатын қолданбалар көрсетіледі. Белгісі алынған қолданбаны қорғау экраны бөгеп тастайды.",
+      policyAppsAll: "Барлық қолданбаға рұқсат",
+      policyAppsAllHint: "Қосулы болса, жеке таңдау қажет емес: барлық ойын-сауық қолданбасы шектеуде.",
+      policyAppsEmpty: "Теледидардан қолданба тізімін оқып жатырмыз…",
+      policyAppsHint: "Қолданбаны бөгеу үшін белгіні алыңыз.",
+      policySave: "Теледидарға сақтау",
+      policySaved: "Теледидарға сақталды.",
+      policyLoading: "Теледидардан ережелерді оқып жатырмыз…",
+      policyUnavailable: "Теледидар жергілікті қорғау режимінде емес, сондықтан ережелер тек онда көрінеді.",
+      policySessionRunning: "Теледидарда санақ жүріп жатыр. Ережені өзгертудің алдында оны аяқтаңыз немесе кідіртіңіз.",
+      policyInvalidRules: "Сақталмады: аралықтар қабаттаспауы керек, басы соңынан бұрын болуы керек.",
+      policyInvalidLimits: "Сақталмады: шектеу рұқсат етілген ауқымнан тыс.",
+      policyInvalidApps: "Сақталмады: қолданба тізімі дұрыс емес.",
+      policySavedNothing: "Сақтайтын өзгеріс жоқ.",
+      policySummary: "{windows} аралық · күніне {daily} минут · әр сеанс {session} минут",
+      err_RULES_OVERLAPPING_WINDOWS: "Аралықтар қабаттасып тұр. Сақтамас бұрын түзетіңіз.",
+      err_RULES_INVALID_WINDOW: "Аралық дұрыс емес: басы соңынан бұрын болуы керек.",
+      err_RULES_TOO_MANY_WINDOWS: "Күніне ең көбі екі аралық.",
+      err_RULES_INVALID_LIMITS: "Шектеу рұқсат етілген ауқымнан тыс.",
+      err_RULES_INVALID_ALLOWED_PACKAGES: "Рұқсат етілген қолданбалар тізімі дұрыс емес.",
+      err_RULES_INVALID_STUDY_PACKAGES: "Оқу қолданбаларының тізімі дұрыс емес.",
+      err_RULES_NO_WINDOW: "Кемінде бір аралық қалдырыңыз.",
+      err_ACTIVATION_REJECTED: "Теледидар бұл ауысуды қабылдамады. Сәл кейінірек қайталаңыз.",
+      err_INVALID_RULES: "Ережелер пішімі дұрыс емес. Бетті жаңартып, қайталаңыз.",
+    },
+  };
+
   const LANGS = ["zh", "en", "ru", "uk", "kk"];
   for (const code of LANGS) {
     Object.assign(
@@ -3970,6 +4276,7 @@ Material to organize:
       V23_TEXTS[code],
       V25_TEXTS[code],
       V26_TEXTS[code],
+      V27_TEXTS[code],
     );
   }
 
@@ -4036,7 +4343,6 @@ Material to organize:
     customLevel: "customLevelEditorPage",
     questions: "questionsPage",
   };
-  const MAX_LEVELS = 6;
   const LEVEL_NAME_MAX = 10;
   const TAG_NAME_MAX = 20;
   const IMPORT_MAX_BYTES = 512 * 1024;
@@ -4146,9 +4452,12 @@ Material to organize:
     expired: "bankStatusExpired",
   };
   const GEN_PREFS_KEY = "quiz.gen.prefs";
+  // The TV's schema-2 "every entertainment app" sentinel (com.planyourtv.policy.ALL_VALID_APP).
+  const ALL_VALID_APP = "all_valid_app";
   const TAB_VIEWS = {
     generate: "view-generate",
     bank: "view-bank",
+    policy: "view-policy",
     me: "view-me",
   };
   const $ = (id) => document.getElementById(id);
@@ -4176,6 +4485,13 @@ Material to organize:
   let cloudManaged = false;
   let bankCapacity = 6000;
   let bankCounts = null;
+  // The guard rules live on the TV; this page only edits a copy and POSTs it back.
+  let policyState = null;
+  let policyApps = null;
+  let policyLoading = false;
+  let policySaving = false;
+  let policyDirty = false;
+  let policyAppsAll = true;
   let providerState = { aiSupported: true, consentAccepted: false, configured: false, baseUrl: "", model: "" };
   let providerMsg = null;
   let pendingGenerate = false;
@@ -4208,6 +4524,9 @@ Material to organize:
   let customLevelSaving = false;
   let customLevelMessageTimer = 0;
   let bankSourceCounts = { course: 0, custom: 0 };
+  // The weekly mistake cycle as the TV last reported it: how many mistakes wait,
+  // whether the week ran out, and how many days of grace are left.
+  let wrongBookState = { count: 0, overdue: false, daysLeft: 0, mixing: false };
   let localBankActive = true;
   let clearSource = "course";
   let clearCollectionId = "";
@@ -4873,6 +5192,16 @@ Material to organize:
     };
   }
 
+  function applyWrongBook(book) {
+    if (!book) return;
+    wrongBookState = {
+      count: Number(book.count || 0),
+      overdue: Boolean(book.overdue),
+      daysLeft: Number(book.daysLeft || 0),
+      mixing: Boolean(book.mixing),
+    };
+  }
+
   function formatDate(ms) {
     if (!ms) return "";
     try {
@@ -5158,6 +5487,8 @@ Material to organize:
     renderBankImport();
     renderUnlockState();
     renderManualState();
+    renderPolicySummary();
+    renderPolicyLabels();
     if (activeModal === "manualDialog") {
       $("manualDialogLead").textContent = t("manualDialogLead", { minutes: manualMinutes });
     }
@@ -6007,6 +6338,16 @@ Material to organize:
     if ($("bankInRoundNotice")) {
       $("bankInRoundNotice").classList.toggle("hidden", counts.inRound <= 0);
     }
+    if ($("wrongBookHint")) {
+      const book = wrongBookState;
+      $("wrongBookHint").classList.toggle("hidden", book.count <= 0);
+      if (book.count > 0) {
+        $("wrongBookHint").classList.toggle("warn", Boolean(book.overdue));
+        $("wrongBookHint").textContent = book.overdue
+          ? t("wrongBookOverdue", { n: book.count })
+          : t("wrongBookMixed", { n: book.count, days: book.daysLeft });
+      }
+    }
   }
 
   function statusChip(item) {
@@ -6133,6 +6474,35 @@ Material to organize:
   function renderMaintenance() {
     if (!$("maintenanceCounts")) return;
     $("maintenanceCounts").textContent = t("meMaintenanceHint");
+    renderPolicySummary();
+  }
+
+  function renderPolicySummary() {
+    if (!$("mePolicyState")) return;
+    if (!policyState) {
+      $("mePolicyState").textContent = "—";
+      return;
+    }
+    const rules = policyState.rules;
+    $("mePolicyState").textContent = t("policySummary", {
+      windows: rules.weekdayWindows.length + rules.weekendWindows.length,
+      daily: rules.autoDailyLimitMinutes,
+      session: rules.sessionLimitMinutes,
+    });
+  }
+
+  // Language switches re-label the policy tab without rebuilding the window rows, so a value the
+  // parent is halfway through typing is not reverted to the last saved one.
+  function renderPolicyLabels() {
+    if (!$("policyActivationHint")) return;
+    if (!policyState) {
+      $("policyActivationHint").textContent = t("policyLoading");
+      return;
+    }
+    $("policyActivationHint").textContent = t(
+      policyState.activation === "AUTO" ? "policyActivationHintAuto" : "policyActivationHintManual",
+    );
+    renderPolicyHintState();
   }
 
   // Manual import keeps the tag lifecycle separate from the question write:
@@ -6910,6 +7280,400 @@ Material to organize:
     openBankImport();
   }
 
+  // ---- Guard rules (moved off the TV) -------------------------------------
+  // Times are minute-of-day integers on the wire, which lets the end be 1440
+  // (24:00). A native time input cannot express that, so these are plain text
+  // fields parsed here.
+
+  function clockText(minute) {
+    if (!Number.isInteger(minute)) return "";
+    const value = Math.max(0, Math.min(1440, minute));
+    if (value >= 1440) return "24:00";
+    const h = Math.floor(value / 60);
+    const m = value % 60;
+    return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+  }
+
+  function parseClock(text, max) {
+    const match = /^(\d{1,2}):(\d{2})$/.exec(String(text || "").trim());
+    if (!match) return null;
+    const value = Number(match[1]) * 60 + Number(match[2]);
+    if (!Number.isFinite(value)) return null;
+    if (value < 0 || value > max) return null;
+    return value;
+  }
+
+  function applyPolicy(data) {
+    if (!data || !data.rules) return;
+    policyState = {
+      mode: String(data.mode || ""),
+      source: String(data.source || ""),
+      activation: String(data.activation || "MANUAL"),
+      sessionState: String(data.sessionState || "IDLE"),
+      setupRequired: Boolean(data.setupRequired),
+      quizEnabled: Boolean(data.quizEnabled),
+      sourceEntriesVisible: Boolean(data.sourceEntriesVisible),
+      limits: data.limits || {},
+      rules: {
+        weekdayWindows: Array.isArray(data.rules.weekdayWindows) ? data.rules.weekdayWindows.slice() : [],
+        weekendWindows: Array.isArray(data.rules.weekendWindows) ? data.rules.weekendWindows.slice() : [],
+        autoDailyLimitMinutes: Number(data.rules.autoDailyLimitMinutes || 60),
+        sessionLimitMinutes: Number(data.rules.sessionLimitMinutes || 20),
+        restMinutes: Number(data.rules.restMinutes || 0),
+        sessionScreenOffBufferMinutes: Number(data.rules.sessionScreenOffBufferMinutes || 20),
+        allowedPackages: Array.isArray(data.rules.allowedPackages) ? data.rules.allowedPackages.slice() : [],
+        studyPackages: Array.isArray(data.rules.studyPackages) ? data.rules.studyPackages.slice() : [],
+        usesAppSelection: Boolean(data.rules.usesAppSelection),
+      },
+    };
+    policyDirty = false;
+    // Derive the "every app is allowed" switch from the stored rules here, not only in
+    // applyPolicyApps: if the app list cannot be fetched, saving must keep the narrow
+    // allowlist instead of falling back to the all-apps sentinel.
+    policyAppsAll = !Boolean(data.rules.usesAppSelection);
+    renderPolicy();
+  }
+
+  function applyPolicyApps(data) {
+    if (!data) return;
+    policyApps = {
+      apps: Array.isArray(data.apps) ? data.apps : [],
+      allowedPackages: Array.isArray(data.allowedPackages) ? data.allowedPackages : [],
+      studyPackages: Array.isArray(data.studyPackages) ? data.studyPackages : [],
+      usesAppSelection: Boolean(data.usesAppSelection),
+    };
+    if (policyState && !policyDirty) {
+      policyState.rules.allowedPackages = policyApps.allowedPackages.slice();
+      policyState.rules.usesAppSelection = policyApps.usesAppSelection;
+      policyAppsAll = !policyApps.usesAppSelection;
+    }
+    renderPolicy();
+  }
+
+  function policyWindowRow(day, index, window) {
+    const row = document.createElement("div");
+    row.className = "policy-window";
+
+    const startWrap = document.createElement("div");
+    const startLabel = document.createElement("label");
+    startLabel.textContent = t("policyWindowStart");
+    const startId = "policy-" + day + "-" + index + "-start";
+    startLabel.htmlFor = startId;
+    const start = document.createElement("input");
+    start.id = startId;
+    start.type = "text";
+    start.inputMode = "numeric";
+    start.autocomplete = "off";
+    start.value = clockText(window.start);
+    start.addEventListener("input", () => {
+      window.start = parseClock(start.value, 1439);
+      markPolicyDirty();
+    });
+    startWrap.appendChild(startLabel);
+    startWrap.appendChild(start);
+
+    const endWrap = document.createElement("div");
+    const endLabel = document.createElement("label");
+    endLabel.textContent = t("policyWindowEnd");
+    const endId = "policy-" + day + "-" + index + "-end";
+    endLabel.htmlFor = endId;
+    const end = document.createElement("input");
+    end.id = endId;
+    end.type = "text";
+    end.inputMode = "numeric";
+    end.autocomplete = "off";
+    end.value = clockText(window.end);
+    end.addEventListener("input", () => {
+      window.end = parseClock(end.value, 1440);
+      markPolicyDirty();
+    });
+    endWrap.appendChild(endLabel);
+    endWrap.appendChild(end);
+
+    const remove = document.createElement("button");
+    remove.className = "icon-btn";
+    remove.type = "button";
+    remove.setAttribute("aria-label", t("policyWindowRemove"));
+    remove.textContent = "×";
+    remove.addEventListener("click", () => {
+      const list = day === "wd" ? policyState.rules.weekdayWindows : policyState.rules.weekendWindows;
+      const at = list.indexOf(window);
+      if (at >= 0) list.splice(at, 1);
+      markPolicyDirty();
+      renderPolicy();
+    });
+
+    row.appendChild(startWrap);
+    row.appendChild(endWrap);
+    row.appendChild(remove);
+    return row;
+  }
+
+  function renderPolicyWindows(hostId, day, windows) {
+    const host = $(hostId);
+    if (!host) return;
+    host.replaceChildren();
+    if (!windows.length) {
+      const empty = document.createElement("p");
+      empty.className = "policy-windows-empty";
+      empty.textContent = t("policyNoWindow");
+      host.appendChild(empty);
+      return;
+    }
+    windows.forEach((window, index) => {
+      // A half-typed clock stays null and renders as an empty field: the row is kept so the
+      // parent can finish it, and save refuses the body until it parses.
+      if (!Number.isInteger(window.start)) window.start = null;
+      if (!Number.isInteger(window.end)) window.end = null;
+      host.appendChild(policyWindowRow(day, index, window));
+    });
+  }
+
+  function renderPolicyApps() {
+    const host = $("policyAppsList");
+    const empty = $("policyAppsEmpty");
+    if (!host) return;
+    host.replaceChildren();
+    const rules = policyState ? policyState.rules : null;
+    const selected = new Set(rules ? rules.allowedPackages : []);
+    const all = policyAppsAll || !rules || !rules.usesAppSelection;
+    host.classList.toggle("hidden", all);
+    if (empty) empty.classList.toggle("hidden", all || Boolean(policyApps && policyApps.apps.length));
+    if (all) return;
+    const apps = policyApps ? policyApps.apps : [];
+    apps.forEach((app) => {
+      const row = document.createElement("label");
+      row.className = "policy-app";
+      const box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = selected.has(app.packageName);
+      box.addEventListener("change", () => {
+        if (!policyState) return;
+        const set = new Set(policyState.rules.allowedPackages);
+        if (box.checked) set.add(app.packageName); else set.delete(app.packageName);
+        policyState.rules.allowedPackages = Array.from(set);
+        markPolicyDirty();
+        renderPolicyHintState();
+      });
+      const name = document.createElement("span");
+      name.className = "policy-app-name";
+      name.textContent = app.label || app.packageName;
+      const pkg = document.createElement("span");
+      pkg.className = "policy-app-pkg";
+      pkg.textContent = app.packageName;
+      row.appendChild(box);
+      row.appendChild(name);
+      row.appendChild(pkg);
+      host.appendChild(row);
+    });
+  }
+
+  function renderPolicyHintState() {
+    const rules = policyState ? policyState.rules : null;
+    if (!rules) return;
+    const limits = policyState.limits || {};
+    const maxWindows = Number(limits.maxWindowsPerDay || 2);
+    const weekdayFull = rules.weekdayWindows.length >= maxWindows;
+    const weekendFull = rules.weekendWindows.length >= maxWindows;
+    if ($("policyAddWeekday")) $("policyAddWeekday").disabled = weekdayFull;
+    if ($("policyAddWeekend")) $("policyAddWeekend").disabled = weekendFull;
+    if ($("policyWindowHint")) {
+      $("policyWindowHint").textContent = weekdayFull && weekendFull
+        ? t("policyWindowHint") + " " + t("err_RULES_TOO_MANY_WINDOWS")
+        : t("policyWindowHint");
+    }
+    if ($("policyLimitsHint")) {
+      $("policyLimitsHint").textContent = t("policyRestHint") + " " + t("policyBufferHint");
+    }
+    if ($("policyAppsHint")) $("policyAppsHint").textContent = t("policyAppsHint");
+    const count = rules.allowedPackages.length;
+    if ($("policyAppsAll")) $("policyAppsAll").checked = policyAppsAll || !rules.usesAppSelection;
+    if ($("policyAppsHint") && (policyAppsAll || !rules.usesAppSelection)) {
+      $("policyAppsHint").textContent = t("policyAppsAllHint");
+    } else if ($("policyAppsHint")) {
+      $("policyAppsHint").textContent = t("policyAppsHint") + " (" + count + ")";
+    }
+  }
+
+  function renderPolicy() {
+    if (!$("view-policy")) return;
+    const rules = policyState ? policyState.rules : null;
+    const ready = Boolean(rules);
+    document.querySelectorAll("#policyActivationSeg [data-policy-activation]").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(ready && button.dataset.policyActivation === String(policyState.activation).toLowerCase()),
+      );
+      button.disabled = !ready;
+    });
+    if ($("policyActivationHint")) {
+      $("policyActivationHint").textContent = ready
+        ? t(policyState.activation === "AUTO" ? "policyActivationHintAuto" : "policyActivationHintManual")
+        : t("policyLoading");
+    }
+    if ($("policyQuizToggle")) {
+      $("policyQuizToggle").checked = Boolean(policyState && policyState.quizEnabled);
+      $("policyQuizToggle").disabled = !ready;
+    }
+    if ($("policySourcesToggle")) {
+      $("policySourcesToggle").checked = Boolean(policyState && policyState.sourceEntriesVisible);
+      $("policySourcesToggle").disabled = !ready;
+    }
+    if (!ready) {
+      renderPolicyWindows("policyWeekdayWindows", "wd", []);
+      renderPolicyWindows("policyWeekendWindows", "we", []);
+      return;
+    }
+    renderPolicyWindows("policyWeekdayWindows", "wd", rules.weekdayWindows);
+    renderPolicyWindows("policyWeekendWindows", "we", rules.weekendWindows);
+    $("policyDaily").value = String(rules.autoDailyLimitMinutes);
+    $("policySession").value = String(rules.sessionLimitMinutes);
+    $("policyRest").value = String(rules.restMinutes);
+    $("policyBuffer").value = String(rules.sessionScreenOffBufferMinutes);
+    renderPolicyApps();
+    renderPolicyHintState();
+  }
+
+  function markPolicyDirty() {
+    policyDirty = true;
+    if ($("policyState")) $("policyState").textContent = "";
+  }
+
+  async function loadPolicy() {
+    if (policyLoading) return;
+    policyLoading = true;
+    if ($("policyError")) $("policyError").textContent = "";
+    if ($("policyState")) $("policyState").textContent = t("policyLoading");
+    try {
+      const data = await api("/api/quiz/admin/policy", { admin: true });
+      applyPolicy(data);
+      if ($("policyState")) $("policyState").textContent = "";
+      // The app list needs PackageManager, so it is a second call the TV answers.
+      if (policyState && policyState.mode === "LOCAL") {
+        try {
+          applyPolicyApps(await api("/api/quiz/admin/policy/apps", { admin: true }));
+        } catch (_) {
+          // An older TV without the endpoint still has usable rule editing.
+        }
+      }
+    } catch (error) {
+      if (error.code === "LOCAL_ONLY") {
+        if ($("policyError")) $("policyError").textContent = t("policyUnavailable");
+      } else if (error.code !== "ADMIN_EXPIRED" && error.code !== "ADMIN_REQUIRED") {
+        if ($("policyError")) $("policyError").textContent = errorText(error);
+      }
+    } finally {
+      policyLoading = false;
+      if ($("policyState") && !policyState) $("policyState").textContent = "";
+    }
+  }
+
+  /**
+   * Returns null instead of a half-typed body: a clock that does not parse must
+   * be fixed by the parent, not silently sent as 00:00, which would open a
+   * window the parent never chose.
+   */
+  function readPolicyBody() {
+    if (!policyState) return null;
+    const rules = policyState.rules;
+    const num = (id, fallback) => {
+      const value = Number($(id).value);
+      return Number.isInteger(value) ? value : fallback;
+    };
+    const clocksOk = (list) => list.every(
+      (window) => Number.isInteger(window.start) && Number.isInteger(window.end),
+    );
+    if (!clocksOk(rules.weekdayWindows) || !clocksOk(rules.weekendWindows)) return null;
+    const windows = (list) => list.map((window) => ({
+      start: window.start,
+      end: window.end,
+    }));
+    // Activation is deliberately absent: the two modes keep separate rule sets, so a
+    // switch is its own request (switchPolicyActivation) that must not copy this
+    // mode's windows into the other one.
+    return {
+      weekdayWindows: windows(rules.weekdayWindows),
+      weekendWindows: windows(rules.weekendWindows),
+      autoDailyLimitMinutes: num("policyDaily", rules.autoDailyLimitMinutes),
+      sessionLimitMinutes: num("policySession", rules.sessionLimitMinutes),
+      restMinutes: num("policyRest", rules.restMinutes),
+      sessionScreenOffBufferMinutes: num("policyBuffer", rules.sessionScreenOffBufferMinutes),
+      allowedPackages: policyAppsAll ? [ALL_VALID_APP] : rules.allowedPackages,
+      studyPackages: rules.studyPackages,
+      quizEnabled: Boolean($("policyQuizToggle") && $("policyQuizToggle").checked),
+      sourceEntriesVisible: Boolean($("policySourcesToggle") && $("policySourcesToggle").checked),
+    };
+  }
+
+  async function savePolicy() {
+    if (!policyState || policySaving) return;
+    const body = readPolicyBody();
+    if (!body) {
+      if ($("policyError")) $("policyError").textContent = t("policyWindowHint");
+      return;
+    }
+    policySaving = true;
+    if ($("policyError")) $("policyError").textContent = "";
+    if ($("policyState")) $("policyState").textContent = "";
+    setButtonSaving($("policySave"), true);
+    try {
+      const data = await api("/api/quiz/admin/policy", {
+        method: "POST",
+        admin: true,
+        body,
+      });
+      applyPolicy(data);
+      if ($("policyState")) $("policyState").textContent = t("policySaved");
+    } catch (error) {
+      if (error.code !== "ADMIN_EXPIRED" && error.code !== "ADMIN_REQUIRED") {
+        if ($("policyError")) $("policyError").textContent = errorText(error);
+      }
+    } finally {
+      policySaving = false;
+      setButtonSaving($("policySave"), false);
+    }
+  }
+
+  /**
+   * Switching AUTO/MANUAL is its own request: the TV swaps in the other stored
+   * rule set, so the two modes never share windows. Anything the parent already
+   * typed for the current mode is saved first, or the switch would silently
+   * throw those edits away.
+   */
+  async function switchPolicyActivation(next) {
+    if (!policyState || policySaving || policyState.activation === next) return;
+    policySaving = true;
+    if ($("policyError")) $("policyError").textContent = "";
+    if ($("policyState")) $("policyState").textContent = "";
+    setButtonSaving($("policySave"), true);
+    try {
+      if (policyDirty) {
+        const body = readPolicyBody();
+        if (!body) {
+          if ($("policyError")) $("policyError").textContent = t("policyWindowHint");
+          renderPolicy();
+          return;
+        }
+        applyPolicy(await api("/api/quiz/admin/policy", { method: "POST", admin: true, body }));
+      }
+      const data = await api("/api/quiz/admin/policy", {
+        method: "POST",
+        admin: true,
+        body: { activation: next },
+      });
+      applyPolicy(data);
+      if ($("policyState")) $("policyState").textContent = t("policySaved");
+    } catch (error) {
+      if (error.code !== "ADMIN_EXPIRED" && error.code !== "ADMIN_REQUIRED") {
+        if ($("policyError")) $("policyError").textContent = errorText(error);
+      }
+      renderPolicy();
+    } finally {
+      policySaving = false;
+      setButtonSaving($("policySave"), false);
+    }
+  }
+
   function renderMaintenanceSource() {
     if (!$("maintenanceSource")) return;
     document.querySelectorAll("#maintenanceSource [data-clear-source]").forEach((button) => {
@@ -7249,6 +8013,8 @@ Material to organize:
     });
     if (tab === "bank") {
       loadBank(true);
+    } else if (tab === "policy") {
+      loadPolicy();
     } else if (tab === "me") {
       refreshSync();
       // Refresh the lock state on entry so the action reflects the TV now,
@@ -7313,6 +8079,7 @@ Material to organize:
     syncState = data.syncState || null;
     cloudManaged = Boolean(data.cloudManaged);
     bankCapacity = Number(data.bankCapacity || 6000);
+    applyWrongBook(data.wrongBook);
     applyBankCounts(data.bank);
     renderSync();
     renderStock();
@@ -7386,6 +8153,10 @@ Material to organize:
     // Step Plan subscriptions use https://api.stepfun.com/step_plan/v1 instead; the
     // international host is https://api.stepfun.ai/v1.
     stepfun: { baseUrl: "https://api.stepfun.com/v1", sampleModel: "step-3.5-flash" },
+    // WorkBuddy has no public OpenAI-compatible endpoint we can verify, so this is
+    // a placeholder chip: it writes neither a URL nor a model. Pressing it focuses
+    // the base URL field and says what to copy from the provider's own console.
+    workbuddy: { baseUrl: "", sampleModel: "", hintKey: "providerPresetHintWorkBuddy" },
   };
 
   // Values already written by a preset may be replaced when another preset is chosen;
@@ -7417,9 +8188,16 @@ Material to organize:
   function updateProviderModelHint() {
     if (!$("providerModelHint")) return;
     const base = normalizedBaseUrl($("baseUrl").value);
-    $("providerModelHint").textContent = t(providerHintKey(base));
+    const placeholder = document.querySelector('[data-provider-preset="workbuddy"][aria-pressed="true"]');
+    $("providerModelHint").textContent = t(placeholder ? "providerPresetHintWorkBuddy" : providerHintKey(base));
     document.querySelectorAll("[data-provider-preset]").forEach((button) => {
       const preset = PROVIDER_PRESETS[button.dataset.providerPreset];
+      // The placeholder has no address to compare against; it keeps whatever
+      // pressed state the click gave it until the parent changes the URL.
+      if (preset && !preset.baseUrl) {
+        button.setAttribute("aria-pressed", base ? "false" : button.getAttribute("aria-pressed") || "false");
+        return;
+      }
       const active = Boolean(preset) && normalizedBaseUrl(preset.baseUrl) === base;
       button.setAttribute("aria-pressed", active ? "true" : "false");
     });
@@ -7428,6 +8206,24 @@ Material to organize:
   function applyProviderPreset(id) {
     const preset = PROVIDER_PRESETS[id];
     if (!preset) return;
+    // A placeholder only opens the field: nothing is written, so a wrong address
+    // is never saved by accident.
+    if (!preset.baseUrl) {
+      $("baseUrl").focus();
+      $("baseUrl").select?.();
+      document.querySelectorAll("[data-provider-preset]").forEach((button) => {
+        button.setAttribute(
+          "aria-pressed",
+          button.dataset.providerPreset === id ? "true" : "false",
+        );
+      });
+      if ($("providerModelHint")) {
+        $("providerModelHint").textContent = t(preset.hintKey || "providerPresetHintCustom");
+      }
+      providerMsg = null;
+      renderProviderMessages();
+      return;
+    }
     const currentModel = $("model").value.trim();
     $("baseUrl").value = preset.baseUrl;
     // Keep a model the parent typed; replace an empty field or a sample left by
@@ -8909,10 +9705,7 @@ Material to organize:
     });
 
     $("levelEmpty").classList.toggle("hidden", answerLevels.length > 0);
-    $("levelListCount").textContent = t("levelListCount", {
-      n: answerLevels.length,
-      max: MAX_LEVELS,
-    });
+    $("levelListCount").textContent = t("levelListCount", { n: answerLevels.length });
     renderCustomLevels();
     renderLevelUndo();
   }
@@ -8941,8 +9734,7 @@ Material to organize:
           available: Math.max(0, Number(item.available || 0)),
         };
       })
-      .filter(Boolean)
-      .slice(0, MAX_LEVELS);
+      .filter(Boolean);
     answerScope = answerLevels.length ? Object.assign({}, answerLevels[0].scope) : null;
     answerScopeMode = answerLevels.length ? "custom" : "bound";
     answerScopeAvailable = answerLevels.reduce(
@@ -8963,8 +9755,7 @@ Material to organize:
         collectionName: String(item && item.collectionName || ""),
         available: Math.max(0, Number(item && item.available || 0)),
       }))
-      .filter((item) => item.id && item.collectionId)
-      .slice(0, MAX_LEVELS);
+      .filter((item) => item.id && item.collectionId);
     if (genPage === "answer") renderCustomLevels();
     if (genPage === "customLevel") renderCustomLevelEditor();
   }
@@ -9074,17 +9865,11 @@ Material to organize:
           : t("levelAddCustomMeta");
     }
     const used = allLevelCount();
-    $("levelsTotalHint").textContent = t("levelsTotalHint", { used, max: MAX_LEVELS });
-    $("levelsTotalHint").classList.toggle("warn", used > MAX_LEVELS);
-    $("customLevelCombined").textContent = t("customLevelCombined", {
-      used,
-      max: MAX_LEVELS,
-    });
-    const atMax = used >= MAX_LEVELS;
-    $("addLevel").disabled = levelSaving || atMax;
-    $("addCustomLevel").disabled = !localBankActive || customLevelSaving || atMax;
-    $("levelMaxHint").classList.toggle("hidden", !atMax);
-    $("levelMaxHint").textContent = t("levelMaxHint", { n: MAX_LEVELS });
+    $("levelsTotalHint").textContent = t("levelsTotalHint", { used });
+    $("customLevelCombined").textContent = t("customLevelCombined", { used });
+    $("addLevel").disabled = levelSaving;
+    $("addCustomLevel").disabled = !localBankActive || customLevelSaving;
+    $("levelMaxHint").classList.add("hidden");
   }
 
   function renderCustomLevelEditor() {
@@ -9440,10 +10225,6 @@ Material to organize:
       level.id !== customLevelEditingId && level.collectionId === customLevelDraftTag);
     if (duplicate) {
       $("customLevelEditorError").textContent = t("customLevelTagDuplicate");
-      return;
-    }
-    if (!customLevelEditingId && allLevelCount() >= MAX_LEVELS) {
-      $("customLevelEditorError").textContent = t("levelMaxHint", { n: MAX_LEVELS });
       return;
     }
     let next;
@@ -10055,6 +10836,9 @@ Material to organize:
       await loadAdminSession();
       await loadProvider();
       await loadGenerationPrefsFromTv();
+      // The guard rules used to live on the TV; load them once so the summary on
+      // the 我的 tab is filled without a tap.
+      await loadPolicy();
     } catch (error) {
       if (error.code !== "ADMIN_EXPIRED" && error.code !== "ADMIN_REQUIRED") {
         // The editor is still hidden behind the PIN gate at this point, so an
@@ -10228,6 +11012,9 @@ Material to organize:
         body,
       });
       applyBankCounts(data.counts);
+      // The TV resets the weekly mistake cycle when this clear empties the book,
+      // so the hint must follow the answer instead of the old state.
+      applyWrongBook(data.wrongBook);
       if (data.sourceCounts) {
         bankSourceCounts = {
           course: Math.max(0, Number(data.sourceCounts.course || 0)),
@@ -10632,6 +11419,38 @@ Material to organize:
     $("clearWrong").addEventListener("click", () => clearBank("wrong", "confirmClearWrong"));
     $("clearAll").addEventListener("click", () => clearBank("all", "confirmClearAll"));
     $("toggleEnabled").addEventListener("change", toggleEnabled);
+
+    document.querySelectorAll("#policyActivationSeg [data-policy-activation]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (!policyState) return;
+        const next = button.dataset.policyActivation === "auto" ? "AUTO" : "MANUAL";
+        switchPolicyActivation(next);
+      });
+    });
+    const addWindow = (day) => {
+      if (!policyState) return;
+      const list = day === "wd" ? policyState.rules.weekdayWindows : policyState.rules.weekendWindows;
+      const max = Number((policyState.limits || {}).maxWindowsPerDay || 2);
+      if (list.length >= max) return;
+      list.push({ start: 17 * 60, end: 21 * 60 });
+      markPolicyDirty();
+      renderPolicy();
+    };
+    $("policyAddWeekday").addEventListener("click", () => addWindow("wd"));
+    $("policyAddWeekend").addEventListener("click", () => addWindow("we"));
+    $("policyAppsAll").addEventListener("change", () => {
+      policyAppsAll = Boolean($("policyAppsAll").checked);
+      markPolicyDirty();
+      renderPolicyApps();
+      renderPolicyHintState();
+    });
+    for (const id of ["policyDaily", "policySession", "policyRest", "policyBuffer"]) {
+      $(id).addEventListener("input", markPolicyDirty);
+    }
+    $("policyQuizToggle").addEventListener("change", markPolicyDirty);
+    $("policySourcesToggle").addEventListener("change", markPolicyDirty);
+    $("policySave").addEventListener("click", savePolicy);
+    $("mePolicy").addEventListener("click", () => setTab("policy", true));
 
     document.querySelectorAll(".nav-item[data-tab]").forEach((button) => {
       button.addEventListener("click", () => setTab(button.dataset.tab, false));

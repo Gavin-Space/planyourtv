@@ -159,6 +159,7 @@
     <string name="policy_quiz_reason_screen">the screen is not on</string>
     <string name="policy_quiz_reason_cache_empty">no questions are available right now</string>
     <string name="policy_quiz_reason_cache_insufficient">not enough unused questions yet</string>
+    <string name="policy_quiz_reason_wrong_book_overdue">the mistakes from last week still need to be answered correctly</string>
     <string name="policy_quiz_reason_cache_unavailable">the question cache is unavailable</string>
     <string name="policy_quiz_reason_source_disabled">the question source is turned off</string>
     <string name="policy_quiz_reason_source_unsupported">this question source is not available yet</string>

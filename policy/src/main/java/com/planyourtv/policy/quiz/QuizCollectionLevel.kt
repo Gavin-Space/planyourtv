@@ -69,9 +69,10 @@ data class QuizCollectionLevel(
         }
 
         /**
-         * Parses 0..[max] levels. Duplicate ids and duplicate tag references
-         * are rejected: two levels over the same tag would be indistinguishable
-         * when counts change, mirroring the duplicate-scope rule on QuizLevel.
+         * Parses up to [max] levels; the default is effectively unbounded.
+         * Duplicate ids and duplicate tag references are rejected: two levels over
+         * the same tag would be indistinguishable when counts change, mirroring the
+         * duplicate-scope rule on QuizLevel.
          */
         fun parseList(array: JSONArray?, max: Int = QuizLevel.MAX_LEVELS): List<QuizCollectionLevel>? {
             if (array == null) return null

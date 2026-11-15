@@ -309,7 +309,6 @@ object QuizSessionStore {
      * remains the source of truth for the TV and the web page.
      */
     fun saveAnswerScopes(levels: List<QuizLevel>): Boolean = synchronized(lock) {
-        if (levels.size > QuizLevel.MAX_LEVELS) return false
         val listOk = TvStore.putStringDurable(
             KEY_ANSWER_SCOPES,
             QuizLevel.encodeList(levels).toString(),

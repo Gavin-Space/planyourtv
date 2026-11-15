@@ -2676,6 +2676,7 @@ private fun rejectText(code: String): String = when (code) {
     "CACHE_EMPTY", "LOCAL_BANK_EMPTY" -> stringResource(R.string.policy_quiz_reason_cache_empty)
     "NO_LEVELS" -> stringResource(R.string.policy_quiz_reason_no_levels)
     "LOCAL_BANK_INSUFFICIENT" -> stringResource(R.string.policy_quiz_reason_cache_insufficient)
+    "WRONG_BOOK_OVERDUE" -> stringResource(R.string.policy_quiz_reason_wrong_book_overdue)
     "CACHE_UNAVAILABLE" -> stringResource(R.string.policy_quiz_reason_cache_unavailable)
     "SOURCE_DISABLED" -> stringResource(R.string.policy_quiz_reason_source_disabled)
     "SOURCE_UNSUPPORTED" -> stringResource(R.string.policy_quiz_reason_source_unsupported)
