@@ -4,9 +4,6 @@ package app.orchard.tv.ui.policy
 internal sealed interface ParentFocusTarget {
     data object Switch : ParentFocusTarget
     data object Remote : ParentFocusTarget
-    data object Password : ParentFocusTarget
-    data object AutoUpdate : ParentFocusTarget
-    data object QuizSetup : ParentFocusTarget
     data object MigrationRetry : ParentFocusTarget
     data object WaitConfigRetry : ParentFocusTarget
     data object SummaryRead : ParentFocusTarget
@@ -14,25 +11,18 @@ internal sealed interface ParentFocusTarget {
 }
 
 /**
- * The rail, top to bottom. Auto update is a device-level setting and is independent of the
- * cloud binding and of child mode, so it is always present, below the password row when there
- * is one and below the child-mode switch otherwise.
+ * The V29 rail has only two entries: the child-mode switch and remote management. Every local
+ * rule is configured on the phone; the TV never edits them.
  *
- * The quiz setup row is a child-mode entry: it opens the two phone codes and stays available
- * after a cloud handoff, but it is hidden while child mode is off.
+ * Remote management is hidden while child mode is off and while the cloud service is not
+ * enabled; the caller decides that through [remoteVisible].
  */
 internal fun parentRailTargets(
     childOn: Boolean,
     remoteVisible: Boolean,
-    passwordVisible: Boolean,
 ): List<ParentFocusTarget> = buildList {
     add(ParentFocusTarget.Switch)
-    if (childOn) {
-        if (remoteVisible) add(ParentFocusTarget.Remote)
-        if (passwordVisible) add(ParentFocusTarget.Password)
-    }
-    add(ParentFocusTarget.AutoUpdate)
-    if (childOn) add(ParentFocusTarget.QuizSetup)
+    if (childOn && remoteVisible) add(ParentFocusTarget.Remote)
 }
 
 /** The right-hand pane. The rail no longer selects a guard mode. */
@@ -43,10 +33,10 @@ internal enum class ParentPaneKind {
     MIGRATION,
     WAIT_CONFIG,
     SUMMARY,
-    QUIZ_SETUP,
+    PARENT_WEB_QR,
 }
 
 internal enum class ParentZone { RAIL, PANE }
 
 /** Left always returns to the rail row that opened the pane. */
-internal enum class ParentRailOrigin { SWITCH, REMOTE, QUIZ_SETUP }
+internal enum class ParentRailOrigin { SWITCH, REMOTE }

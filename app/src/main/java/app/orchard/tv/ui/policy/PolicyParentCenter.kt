@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.orchard.tv.R
 import app.orchard.tv.policy.LocalPolicyRuntime
-import app.orchard.tv.policy.PolicyCloud
 import app.orchard.tv.policy.PolicyInstalledApp
 import app.orchard.tv.policy.PolicyInstalledApps
 import app.orchard.tv.policy.PolicyModeCoordinator
@@ -52,7 +51,6 @@ import app.orchard.tv.policy.SourceEntrySettings
 import app.orchard.tv.quiz.QuizSettings
 import app.orchard.tv.system.Sounds
 import app.orchard.tv.ui.components.liquidGlass
-import app.orchard.tv.update.Updates
 import app.orchard.tv.ui.theme.Glyph
 import app.orchard.tv.ui.theme.GlyphIcon
 import app.orchard.tv.ui.theme.Palette
@@ -83,8 +81,10 @@ private const val PARENT_PIN_LENGTH = 6
 private const val CONFIRM_TIMEOUT_MS = 6_000L
 private const val REMOVE_TIMEOUT_MS = 3_000L
 
-// Remote (cloud) management is not released yet. The rail row, the bind/migration/summary
-// panes and all their wiring stay in place; flip this to true to bring them back together.
+// 2026-11-12: 远程管理随扫码绑定一起放出。绑定后答题配置完全以云端为准
+// （题库孩子级配置 + TV 关卡），本机只保留断网时的 active 文档执行能力。
+// 2026-11-15: 远程功能尚未就绪，先隐藏家长中心的「远程管理」入口；绑定点位、
+// 迁移流程和页面代码保持完整，后期功能好后改回 true 即可整体释放。
 private const val REMOTE_MANAGEMENT_ENABLED = false
 
 // The sheet's inner width is 864 dp: the rail, its gap and the pane must add up to it.
@@ -94,7 +94,7 @@ private val ParentPaneWidth = 564.dp
 
 // Parent-center editor ranges (V6 UI contract §2.3). The rule engine accepts wider ranges so
 // that cloud rules stay valid, but both TV and phone only edit within these steps.
-internal const val MIN_EDIT_DAILY_MINUTES = 15
+internal const val MIN_EDIT_DAILY_MINUTES = 0
 internal const val MAX_EDIT_DAILY_MINUTES = 240
 internal const val MIN_EDIT_SESSION_MINUTES = 5
 internal const val MAX_EDIT_REST_MINUTES = 60
@@ -161,17 +161,12 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     var quizEnabled by remember { mutableStateOf(QuizSettings.isEnabled()) }
     var quizChanging by remember { mutableStateOf(false) }
     var sourceEntriesVisible by remember { mutableStateOf(SourceEntrySettings.isVisible()) }
-    var defaultPin by remember { mutableStateOf(false) }
-    var pendingSync by remember { mutableStateOf(PolicyRuntime.isPasswordSyncPending()) }
     var savedNotice by remember { mutableStateOf<Int?>(null) }
     var actionError by remember { mutableStateOf<Int?>(null) }
     var handoffError by remember { mutableStateOf<Int?>(null) }
     var handoffBusy by remember { mutableStateOf(false) }
-    var showChangePin by remember { mutableStateOf(false) }
     // First local enable: choose the parent PIN before the guard is switched on.
     var showInitialPin by remember { mutableStateOf(false) }
-    // First child-mode enable only: the notice that child mode also turns on auto update.
-    var showAutoConsent by remember { mutableStateOf(false) }
     var cloudConsentAccepted by remember {
         mutableStateOf(PolicyConsentStore.cloudUploadAccepted())
     }
@@ -213,9 +208,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     val rootFocus = remember { FocusRequester() }
     val railSwitchFocus = remember { FocusRequester() }
     val railRemoteFocus = remember { FocusRequester() }
-    val railPasswordFocus = remember { FocusRequester() }
-    val railAutoFocus = remember { FocusRequester() }
-    val railQuizFocus = remember { FocusRequester() }
     val migrationRetryFocus = remember { FocusRequester() }
     val waitRetryFocus = remember { FocusRequester() }
     val summaryReadFocus = remember { FocusRequester() }
@@ -229,13 +221,10 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     val handoff = remote?.handoffState
     val handoffDone = bound && handoff == RemoteHandoffState.DONE
     val handoffPending = bound && handoff == RemoteHandoffState.PENDING
-    // Once the handoff is done the phone owns the rules and the local pane already shows the
-    // bound read-only state, so the rail row would only repeat it. Keep it while binding is
-    // still settling (it carries the migration progress) and show it again after an unbind.
-    val remoteEntryVisible =
-        REMOTE_MANAGEMENT_ENABLED && PolicyProduct.cloudEnabled && !handoffDone
+    // V29: remote management is a core row whenever the service is available. It leads to the
+    // bind flow when unbound and to the read-only remote summary when bound.
+    val remoteEntryVisible = REMOTE_MANAGEMENT_ENABLED && PolicyProduct.cloudEnabled
     val unboundCloud = PolicyProduct.cloudEnabled && !bound && state.mode == PolicyMode.CLOUD
-    val passwordVisible = childOn && !handoffDone
     val localSessionActive = state.mode == PolicyMode.LOCAL && state.sessionState == SessionState.ACTIVE
     // The mode switch clears the rest cursor too, so the confirmation must warn when either a
     // running segment or a rest countdown will be discarded.
@@ -321,9 +310,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         activeZone = when (target) {
             ParentFocusTarget.Switch,
             ParentFocusTarget.Remote,
-            ParentFocusTarget.Password,
-            ParentFocusTarget.AutoUpdate,
-            ParentFocusTarget.QuizSetup,
             -> ParentZone.RAIL
             else -> ParentZone.PANE
         }
@@ -359,7 +345,7 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         ).map { ParentFocusTarget.LocalRow(it) }
         // The bind and quiz pages are display-only and keep their rail row focused.
         ParentPaneKind.BIND -> emptyList()
-        ParentPaneKind.QUIZ_SETUP -> emptyList()
+        ParentPaneKind.PARENT_WEB_QR -> emptyList()
         ParentPaneKind.MIGRATION -> listOf(ParentFocusTarget.MigrationRetry)
         ParentPaneKind.WAIT_CONFIG -> listOf(ParentFocusTarget.WaitConfigRetry)
         ParentPaneKind.SUMMARY -> listOf(ParentFocusTarget.SummaryRead)
@@ -374,15 +360,15 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     }
 
     fun defaultPaneKind(): ParentPaneKind = when {
-        // The child-mode row keeps showing the local rule view after binding; the remote pane
-        // (bind/migration/summary) is only for the remote-management rail row.
-        bound -> ParentPaneKind.LOCAL
-        unboundCloud && REMOTE_MANAGEMENT_ENABLED -> ParentPaneKind.BIND
-        else -> ParentPaneKind.LOCAL
+        !childOn -> ParentPaneKind.OFF
+        bound || state.mode == PolicyMode.CLOUD -> remotePaneKind()
+        else -> ParentPaneKind.PARENT_WEB_QR
     }
 
-    fun railTargetsNow(): List<ParentFocusTarget> =
-        parentRailTargets(childOn, remoteEntryVisible, passwordVisible)
+    fun railTargetsNow(): List<ParentFocusTarget> = parentRailTargets(
+        childOn = childOn,
+        remoteVisible = remoteEntryVisible,
+    )
 
     fun enterPane(pane: ParentPaneKind, origin: ParentRailOrigin) {
         if (!childOn || pane == ParentPaneKind.OFF) {
@@ -403,7 +389,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
             focusNow(
                 when (origin) {
                     ParentRailOrigin.REMOTE -> ParentFocusTarget.Remote
-                    ParentRailOrigin.QUIZ_SETUP -> ParentFocusTarget.QuizSetup
                     ParentRailOrigin.SWITCH -> ParentFocusTarget.Switch
                 },
             )
@@ -444,12 +429,12 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         enterPane(defaultPaneKind(), ParentRailOrigin.SWITCH)
     }
 
-    fun enterQuizSetupPane() {
+    fun enterParentWebPane() {
         if (!childOn) {
             focusNow(ParentFocusTarget.Switch)
             return
         }
-        enterPane(ParentPaneKind.QUIZ_SETUP, ParentRailOrigin.QUIZ_SETUP)
+        enterPane(ParentPaneKind.PARENT_WEB_QR, ParentRailOrigin.SWITCH)
     }
 
     fun focusRailFromPane() {
@@ -457,8 +442,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         val target = when {
             railOrigin == ParentRailOrigin.REMOTE && ParentFocusTarget.Remote in targets ->
                 ParentFocusTarget.Remote
-            railOrigin == ParentRailOrigin.QUIZ_SETUP &&
-                ParentFocusTarget.QuizSetup in targets -> ParentFocusTarget.QuizSetup
             else -> ParentFocusTarget.Switch
         }
         focusNow(target)
@@ -477,17 +460,14 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                     handoffError = null
                     paneKind = when (target) {
                         PolicyMode.NONE -> ParentPaneKind.OFF
-                        PolicyMode.LOCAL -> ParentPaneKind.LOCAL
+                        PolicyMode.LOCAL -> ParentPaneKind.PARENT_WEB_QR
                         PolicyMode.CLOUD -> if (REMOTE_MANAGEMENT_ENABLED) {
                             remotePaneKind()
                         } else {
-                            ParentPaneKind.LOCAL
+                            ParentPaneKind.PARENT_WEB_QR
                         }
                     }
                     focusNow(ParentFocusTarget.Switch)
-                    defaultPin = withContext(Dispatchers.Default) {
-                        PolicyModeCoordinator.isDefaultPin()
-                    }
                 }
                 is PolicyModeCoordinator.SwitchResult.WrongPin -> {
                     pinVerified = false
@@ -533,20 +513,7 @@ fun PolicyParentCenter(onClose: () -> Unit) {
 
     fun enableChild() {
         if (switching) return
-        // The first child-mode enable also turns auto update on, after the notice. One-time:
-        // a parent who has already chosen on or off is not asked again.
-        if (!Updates.auto && !Updates.autoChoiceMade()) {
-            cancelInlineConfirm()
-            showAutoConsent = true
-            return
-        }
         startChildMode()
-    }
-
-    fun toggleAutoUpdate() {
-        cancelInlineConfirm()
-        actionError = null
-        Updates.setAuto(context, !Updates.auto)
     }
 
     fun requestDisable() {
@@ -665,8 +632,9 @@ fun PolicyParentCenter(onClose: () -> Unit) {
 
     fun adjustDaily(delta: Int) {
         // Editor range is narrower than the engine range (see the V6 UI contract §2.3):
-        // 15–240 in 15-minute steps, so a remote rule is always editable on the TV. Keep an
-        // out-of-range value from an imported rule stable instead of snapping it the wrong way.
+        // 0–240 in 15-minute steps, so a remote rule is always editable on the TV. Zero means
+        // no automatic entertainment that day. Keep an out-of-range value from an imported rule
+        // stable instead of snapping it the wrong way.
         val current = rules.autoDailyLimitMinutes
         val next = (current + delta).coerceIn(
             minOf(MIN_EDIT_DAILY_MINUTES, current),
@@ -979,13 +947,12 @@ fun PolicyParentCenter(onClose: () -> Unit) {
             handoffBusy = false
             when (result) {
                 PolicyModeCoordinator.HandoffResult.Success -> {
-                    // The upload replaced the local editor with the cloud copy. Land back on the
-                    // familiar child-mode pane, now read-only, instead of a second summary page.
+                    // Remote management now owns the policy. Land on its read-only summary.
                     handoffError = null
                     showSaved(R.string.policy_v6_upload_done)
-                    paneKind = ParentPaneKind.LOCAL
-                    railOrigin = ParentRailOrigin.SWITCH
-                    focusNow(ParentFocusTarget.Switch)
+                    paneKind = remotePaneKind()
+                    railOrigin = ParentRailOrigin.REMOTE
+                    focusNow(ParentFocusTarget.Remote)
                 }
                 PolicyModeCoordinator.HandoffResult.NotNeeded,
                 PolicyModeCoordinator.HandoffResult.Busy,
@@ -1020,8 +987,7 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     // opens a prompt sets the flag, and the next press can arrive before the recomposition that
     // composes it. A live read routes that press to the router, which buffers it for the prompt.
     fun anyDialogVisible(): Boolean =
-        showChangePin || showInitialPin || showCloudConsent || showAutoConsent ||
-            verifyRequest != null || activationConfirmTarget != null
+        showInitialPin || showCloudConsent || verifyRequest != null
     val dialogOpen = anyDialogVisible()
 
     // Drop leftovers (and a stale handler) once every prompt is gone.
@@ -1040,9 +1006,11 @@ fun PolicyParentCenter(onClose: () -> Unit) {
             armedRemoveKey != null -> cancelRemoveConfirm()
             editingKey != null -> editingKey = null
             activeZone == ParentZone.PANE -> focusRailFromPane()
-            // The quiz page is a display-only detour: Back returns to the default pane first,
-            // and a second Back leaves the parent center like everywhere else.
-            paneKind == ParentPaneKind.QUIZ_SETUP -> paneKind = defaultPaneKind()
+            // A QR page opened as a detour returns to the default pane first. When it already is
+            // the default (the local-only parent center), Back leaves instead of re-selecting it,
+            // so the key can always close the overlay.
+            paneKind == ParentPaneKind.PARENT_WEB_QR && paneKind != defaultPaneKind() ->
+                paneKind = defaultPaneKind()
             else -> onClose()
         }
         return true
@@ -1097,14 +1065,12 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         },
     )
 
-    // Rail focus follows the rows that actually exist. In particular, the password row must
-    // not keep the highlight after handoff removes it.
+    // Rail focus follows the two core rows that actually exist.
     LaunchedEffect(
         authenticated,
         childOn,
         bound,
         handoffDone,
-        passwordVisible,
         focusedTarget,
         activeZone,
         paneKind,
@@ -1116,23 +1082,9 @@ fun PolicyParentCenter(onClose: () -> Unit) {
     ) {
         if (!authenticated) return@LaunchedEffect
         if (!childOn) {
-            // Auto update stays reachable with child mode off: it is a device-level setting,
-            // not part of the child-mode block.
-            if (focusedTarget != ParentFocusTarget.Switch &&
-                focusedTarget != ParentFocusTarget.AutoUpdate
-            ) {
+            if (focusedTarget != ParentFocusTarget.Switch) {
                 focusNow(ParentFocusTarget.Switch)
             }
-            return@LaunchedEffect
-        }
-        if (focusedTarget == ParentFocusTarget.Password && !passwordVisible) {
-            focusNow(
-                if (ParentFocusTarget.Remote in railTargetsNow()) {
-                    ParentFocusTarget.Remote
-                } else {
-                    ParentFocusTarget.Switch
-                },
-            )
             return@LaunchedEffect
         }
         val railTargets = railTargetsNow()
@@ -1195,23 +1147,12 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         // onto the remote row must not open the bind/QR pane behind the privacy notice.
         val remoteContext =
             REMOTE_MANAGEMENT_ENABLED && wantsRemote && (bound || cloudConsentAccepted)
-        val quizSetupOpen = paneKind == ParentPaneKind.QUIZ_SETUP
         val next = when {
-            // A finished handoff hides the remote rail entry; never leave the right pane on a
-            // remote view whose entry no longer exists. The quiz page is not a remote view and
-            // may stay open after the handoff.
-            handoffDone && !quizSetupOpen -> ParentPaneKind.LOCAL
             remoteContext -> remotePaneKind()
             activeZone == ParentZone.RAIL && focusedTarget == ParentFocusTarget.Switch ->
                 defaultPaneKind()
-            // The quiz page belongs to the rail row, not to the cloud handoff, so it survives
-            // binding and a finished handoff until the switch or remote row is picked.
-            quizSetupOpen -> ParentPaneKind.QUIZ_SETUP
-            handoffDone -> ParentPaneKind.LOCAL
-            bound -> ParentPaneKind.LOCAL
-            REMOTE_MANAGEMENT_ENABLED && state.mode == PolicyMode.CLOUD -> ParentPaneKind.BIND
-            REMOTE_MANAGEMENT_ENABLED && paneKind == ParentPaneKind.BIND -> ParentPaneKind.BIND
-            else -> paneKind
+            bound || state.mode == PolicyMode.CLOUD -> remotePaneKind()
+            else -> ParentPaneKind.PARENT_WEB_QR
         }
         if (next != paneKind) {
             paneKind = next
@@ -1222,20 +1163,7 @@ fun PolicyParentCenter(onClose: () -> Unit) {
 
     LaunchedEffect(authenticated) {
         if (authenticated) {
-            defaultPin = withContext(Dispatchers.Default) {
-                PolicyModeCoordinator.isDefaultPin()
-            }
             focusNow(ParentFocusTarget.Switch)
-        }
-    }
-
-    // Warm the picker while the parent is editing rules so opening it shows icons at once. The
-    // scan is repeated on open, so an app installed during this session still appears.
-    LaunchedEffect(authenticated, paneKind, readOnlyLocal) {
-        if (authenticated && !readOnlyLocal && paneKind == ParentPaneKind.LOCAL &&
-            pickerApps == null
-        ) {
-            refreshPickerApps()
         }
     }
 
@@ -1292,14 +1220,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                 }
             }
             ParentFocusTarget.Remote -> enterRemotePane()
-            ParentFocusTarget.Password -> {
-                if (passwordVisible) {
-                    cancelInlineConfirm()
-                    showChangePin = true
-                }
-            }
-            ParentFocusTarget.AutoUpdate -> toggleAutoUpdate()
-            ParentFocusTarget.QuizSetup -> enterQuizSetupPane()
             ParentFocusTarget.MigrationRetry -> requestHandoff()
             ParentFocusTarget.WaitConfigRetry -> retryRemoteConfig()
             ParentFocusTarget.SummaryRead -> Unit
@@ -1419,7 +1339,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
             when (target) {
                 ParentFocusTarget.Switch -> enterPaneFromSwitch()
                 ParentFocusTarget.Remote -> enterRemotePane()
-                ParentFocusTarget.QuizSetup -> enterQuizSetupPane()
                 else -> Unit
             }
             return true
@@ -1462,14 +1381,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
         handoff == RemoteHandoffState.PENDING -> stringResource(R.string.policy_v6_remote_pending)
         handoff == RemoteHandoffState.DONE -> stringResource(R.string.policy_v6_remote_done)
         else -> stringResource(R.string.policy_v6_status_wait_config)
-    }
-    // Password failures abort the handoff, so before handoff completes the cloud PIN is not
-    // authoritative yet. Only claim "migrating" when a handoff is actually pending; an unknown
-    // remote state must not read as progress.
-    val passwordSubtitle = when {
-        !bound -> stringResource(R.string.policy_v6_pin_local_only)
-        handoff == RemoteHandoffState.PENDING -> stringResource(R.string.policy_v6_pin_migrating)
-        else -> stringResource(R.string.policy_v6_password_pending)
     }
     val notice = actionError ?: savedNotice
     val noticeText = notice?.let { stringResource(it) }
@@ -1553,11 +1464,11 @@ fun PolicyParentCenter(onClose: () -> Unit) {
             }
             paneSummaryColor = if (notice != null) noticeColor else Palette.SecondaryLabel
         }
-        ParentPaneKind.QUIZ_SETUP -> {
-            paneTitle = stringResource(R.string.policy_v6_quiz_setup)
-            paneStatus = stringResource(R.string.policy_v6_quiz_setup_status)
-            paneStatusColor = Palette.SecondaryLabel
-            paneSummary = stringResource(R.string.policy_v6_quiz_setup_summary)
+        ParentPaneKind.PARENT_WEB_QR -> {
+            paneTitle = stringResource(R.string.policy_v29_qr_pane_title)
+            paneStatus = stringResource(R.string.policy_v29_qr_pane_status)
+            paneStatusColor = Palette.Green
+            paneSummary = stringResource(R.string.policy_v29_qr_pane_summary)
             paneSummaryColor = Palette.SecondaryLabel
         }
     }
@@ -1617,73 +1528,17 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                     onRight = { enterPaneFromSwitch() },
                 )
 
-                if (childOn) {
-                    if (remoteEntryVisible) {
-                        Spacer(Modifier.height(12.dp))
-                        V6RailRow(
-                            title = stringResource(R.string.policy_v6_remote_manage),
-                            subtitle = remoteSubtitle,
-                            focusRequester = railRemoteFocus,
-                            highlighted = focusedTarget == ParentFocusTarget.Remote,
-                            onClick = ::enterRemotePane,
-                            onUp = railUp(ParentFocusTarget.Remote),
-                            onDown = railDown(ParentFocusTarget.Remote),
-                            onRight = ::enterRemotePane,
-                        )
-                    }
-                    if (passwordVisible) {
-                        Spacer(Modifier.height(8.dp))
-                        V6RailRow(
-                            title = stringResource(R.string.policy_parent_password),
-                            subtitle = passwordSubtitle,
-                            focusRequester = railPasswordFocus,
-                            highlighted = focusedTarget == ParentFocusTarget.Password,
-                            onClick = {
-                                cancelInlineConfirm()
-                                showChangePin = true
-                            },
-                            onUp = railUp(ParentFocusTarget.Password),
-                            onDown = railDown(ParentFocusTarget.Password),
-                        )
-                    }
-                    if (defaultPin && passwordVisible) {
-                        Spacer(Modifier.height(6.dp))
-                        BasicText(
-                            stringResource(R.string.policy_parent_default_pin_hint),
-                            style = Type.Caption.copy(fontSize = 11.sp, color = Palette.Orange),
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                        )
-                    }
-                }
-
-                // Device-level, so it stays here with child mode off and after a handoff.
-                Spacer(Modifier.height(12.dp))
-                PolicySwitchRow(
-                    title = stringResource(R.string.policy_v6_auto_update),
-                    // The switch itself is the complete state; the one-time consent dialog
-                    // carries the explanation, so the rail stays one line and never reflows.
-                    on = Updates.auto,
-                    focusRequester = railAutoFocus,
-                    highlighted = focusedTarget == ParentFocusTarget.AutoUpdate,
-                    onClick = ::toggleAutoUpdate,
-                    onUp = railUp(ParentFocusTarget.AutoUpdate),
-                    onDown = railDown(ParentFocusTarget.AutoUpdate),
-                )
-
-                // Child-mode entry to the two phone codes. It is a destination row instead of
-                // an always-on card under auto update: the remote-management row takes that
-                // space when it is released, and the right pane can spread the codes apart.
-                if (childOn) {
-                    Spacer(Modifier.height(8.dp))
+                if (childOn && remoteEntryVisible) {
+                    Spacer(Modifier.height(12.dp))
                     V6RailRow(
-                        title = stringResource(R.string.policy_v6_quiz_setup),
-                        subtitle = stringResource(R.string.policy_v6_quiz_setup_sub),
-                        focusRequester = railQuizFocus,
-                        highlighted = focusedTarget == ParentFocusTarget.QuizSetup,
-                        onClick = ::enterQuizSetupPane,
-                        onUp = railUp(ParentFocusTarget.QuizSetup),
-                        onDown = railDown(ParentFocusTarget.QuizSetup),
-                        onRight = ::enterQuizSetupPane,
+                        title = stringResource(R.string.policy_v6_remote_manage),
+                        subtitle = remoteSubtitle,
+                        focusRequester = railRemoteFocus,
+                        highlighted = focusedTarget == ParentFocusTarget.Remote,
+                        onClick = ::enterRemotePane,
+                        onUp = railUp(ParentFocusTarget.Remote),
+                        onDown = railDown(ParentFocusTarget.Remote),
+                        onRight = ::enterRemotePane,
                     )
                 }
 
@@ -1757,8 +1612,9 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                             deviceNo = cloudState.deviceNo,
                             guide = cloudGuide,
                         )
-                        ParentPaneKind.QUIZ_SETUP -> V6QuizSetupPane(
-                            localMode = state.mode == PolicyMode.LOCAL,
+                        ParentPaneKind.PARENT_WEB_QR -> V6ParentWebQrPane(
+                            rules = rules,
+                            dailyUsedSeconds = state.dailyUsedSeconds,
                         )
                         ParentPaneKind.MIGRATION -> V6MigrationPane(
                             busy = handoffBusy,
@@ -1844,20 +1700,6 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                 },
             )
         }
-        if (showAutoConsent) {
-            PolicyAutoUpdateConsentDialog(
-                keyRouter = dialogKeyRouter,
-                onConfirm = {
-                    showAutoConsent = false
-                    Updates.setAuto(context, true)
-                    startChildMode()
-                },
-                onDismiss = {
-                    showAutoConsent = false
-                    focusNow(ParentFocusTarget.Switch)
-                },
-            )
-        }
         if (showInitialPin) {
             PolicyInitialPinDialog(
                 keyRouter = dialogKeyRouter,
@@ -1876,56 +1718,8 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                             result(true)
                             authPin = pin
                             pinVerified = true
-                            defaultPin = false
                             showInitialPin = false
                             switchTo(PolicyMode.LOCAL, "")
-                        }
-                    }
-                },
-            )
-        }
-        if (showChangePin) {
-            PolicyChangePinDialog(
-                keyRouter = dialogKeyRouter,
-                knownOldPin = authPin.takeIf {
-                    pinVerified && it.length == PARENT_PIN_LENGTH
-                },
-                onDismiss = {
-                    showChangePin = false
-                    focusNow(
-                        when {
-                            passwordVisible -> ParentFocusTarget.Password
-                            remoteEntryVisible -> ParentFocusTarget.Remote
-                            else -> ParentFocusTarget.Switch
-                        },
-                    )
-                },
-                onSave = { oldPin, newPin, result ->
-                    if (!PolicyModeCoordinator.changePin(oldPin, newPin)) {
-                        result(false)
-                    } else {
-                        result(true)
-                        authPin = newPin
-                        pinVerified = true
-                        savedNotice = R.string.policy_parent_pin_saved
-                        defaultPin = false
-                        scope.launch {
-                            defaultPin = withContext(Dispatchers.Default) {
-                                PolicyModeCoordinator.isDefaultPin()
-                            }
-                        }
-                        val cloud = PolicyRuntime.state.value
-                        if (cloud.bound && cloud.deviceNo.isNotBlank()) {
-                            scope.launch {
-                                val pushed = PolicyCloud.updatePassword(cloud.deviceNo, newPin)
-                                if (pushed.isSuccess) {
-                                    PolicyRuntime.clearPasswordSyncPending()
-                                    pendingSync = false
-                                } else {
-                                    PolicyRuntime.markPasswordSyncPending()
-                                    pendingSync = true
-                                }
-                            }
                         }
                     }
                 },
