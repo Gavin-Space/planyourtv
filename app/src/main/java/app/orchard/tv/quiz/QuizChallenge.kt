@@ -692,7 +692,14 @@ object QuizChallenge {
      * and clearing the record can be reconciled on the next launch.
      */
     @Synchronized
-    fun completeReview(nowMs: Long = System.currentTimeMillis()): ReviewOutcome {
+    fun completeReview(
+        nowMs: Long = System.currentTimeMillis(),
+        /**
+         * The entertainment app that opened this round, if any. Only a real started session
+         * confirms it; the launch happens above the lock screen.
+         */
+        targetPackage: String? = null,
+    ): ReviewOutcome {
         val state = QuizRuntime.refresh()
         val session = state.session ?: return ReviewOutcome.Failed("NOT_READY")
         if (session.status != QuizSessionStatus.SETTLING &&
@@ -736,6 +743,9 @@ object QuizChallenge {
         }.getOrElse { SessionStartResult.Rejected(RejectReason.INVALID_COMMAND) }
         return when (startResult) {
             SessionStartResult.Started -> {
+                // The session is real: remember the app before the lock screen leaves the
+                // composition, because this coroutine is canceled with it.
+                QuizLaunchTarget.confirm(targetPackage)
                 QuizSessionStore.clearSession()
                 QuizRuntime.refresh()
                 ReviewOutcome.Started
@@ -758,6 +768,7 @@ object QuizChallenge {
                 // process already started the policy session and died before
                 // clearing the quiz record. Treat it as success.
                 if (recovered && startResult.reason == RejectReason.BUSY) {
+                    QuizLaunchTarget.confirm(targetPackage)
                     QuizSessionStore.clearSession()
                     QuizRuntime.refresh()
                     return ReviewOutcome.Started
@@ -804,9 +815,12 @@ object QuizChallenge {
      * <p>Settlement is idempotent by session id, so a lost response is safe to
      * retry; only a definitive business refusal marks the round failed.
      */
-    suspend fun completeReviewHosted(nowMs: Long = System.currentTimeMillis()): ReviewOutcome {
+    suspend fun completeReviewHosted(
+        nowMs: Long = System.currentTimeMillis(),
+        targetPackage: String? = null,
+    ): ReviewOutcome {
         PolicyFlowTrace.event("quiz.settle.begin")
-        val outcome = hostedReviewMutex.withLock { settleHostedLocked(nowMs) }
+        val outcome = hostedReviewMutex.withLock { settleHostedLocked(nowMs, targetPackage) }
         PolicyFlowTrace.event(
             "quiz.settle.result",
             "result" to outcome.logLabel(),
@@ -814,7 +828,10 @@ object QuizChallenge {
         return outcome
     }
 
-    private suspend fun settleHostedLocked(nowMs: Long): ReviewOutcome {
+    private suspend fun settleHostedLocked(
+        nowMs: Long,
+        targetPackage: String?,
+    ): ReviewOutcome {
         val state = QuizRuntime.refresh()
         val session = state.session
         if (session == null) {
@@ -930,7 +947,10 @@ object QuizChallenge {
                 // The backend dispatches the trusted manual grant over MQTT.
                 // Confirm it here so pressing the report's start button enters
                 // timing directly instead of returning to the lock screen for
-                // a second confirmation.
+                // a second confirmation. The target is confirmed outside the
+                // review composition, which is disposed when the session
+                // becomes ACTIVE.
+                QuizLaunchTarget.confirm(targetPackage)
                 confirmHostedStart()
                 QuizSessionStore.clearSession()
                 QuizRuntime.refresh()
