@@ -1,5 +1,6 @@
 package com.planyourtv.policy.quiz
 
+import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -7,6 +8,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class QuizSessionCodecTest {
+    private fun JSONArray.toIntList(): List<Int> = (0 until length()).map { optInt(it) }
+
     private val now = 1_760_000_000_000L
     private val item = QuizItem(
         questionId = "q_1234567",
@@ -46,6 +49,136 @@ class QuizSessionCodecTest {
         val decoded = QuizSessionCodec.decode(QuizSessionCodec.encode(source))
         assertTrue(decoded is QuizDecodeResult.Success)
         assertEquals(source, (decoded as QuizDecodeResult.Success).session)
+    }
+
+    @Test
+    fun keepsSingleChoiceWireAndEncodesMultipleChoiceAsASet() {
+        val singleWire = QuizSessionCodec.encodeItem(item)
+        assertEquals(2, singleWire.getInt("answerIndex"))
+        assertTrue(!singleWire.has("type"))
+        assertTrue(!singleWire.has("answerIndices"))
+
+        val multiple = item.copy(
+            answerKind = QuizAnswerKind.MULTIPLE,
+            answerIndices = listOf(1, 3),
+            answerIndex = 1,
+        )
+        val multiWire = QuizSessionCodec.encodeItem(multiple)
+        assertEquals("multiple", multiWire.getString("type"))
+        assertEquals("choice", multiWire.getString("presentation"))
+        assertEquals(listOf(1, 3), multiWire.getJSONArray("answerIndices").toIntList())
+        // Old APKs infer single from answerIndex; omitting it makes them
+        // reject the item instead of grading only one correct option.
+        assertTrue(!multiWire.has("answerIndex"))
+    }
+
+    @Test
+    fun roundTripsMultipleChoiceItemsAndSubmissions() {
+        val multiple = item.copy(
+            answerKind = QuizAnswerKind.MULTIPLE,
+            answerIndices = listOf(1, 3),
+            answerIndex = 1,
+        )
+        val run = QuizRun(
+            startedAt = now,
+            startedDate = "2025-10-09",
+            index = 1,
+            correctCount = 1,
+            earnedPoints = 1,
+            deadlineAt = now + 60_000,
+            submissions = listOf(
+                QuizSubmission(
+                    questionId = multiple.questionId,
+                    selectedIndex = 1,
+                    correct = true,
+                    timedOut = false,
+                    answeredAt = now + 1_000,
+                    selectedIndices = listOf(1, 3),
+                ),
+            ),
+        )
+        val source = session(
+            status = QuizSessionStatus.RUNNING,
+            items = listOf(multiple),
+            run = run,
+        )
+        val encoded = QuizSessionCodec.encode(source)
+        val decoded = QuizSessionCodec.decode(encoded)
+        assertTrue(decoded is QuizDecodeResult.Success)
+        val restored = (decoded as QuizDecodeResult.Success).session
+        assertEquals(source, restored)
+        assertEquals(
+            listOf(1, 3),
+            JSONObject(encoded)
+                .getJSONObject("run")
+                .getJSONArray("submissions")
+                .getJSONObject(0)
+                .getJSONArray("selectedIndices")
+                .toIntList(),
+        )
+    }
+
+    @Test
+    fun decodesSchemaSixSingleChoiceSessionsAsSingle() {
+        val encoded = JSONObject(QuizSessionCodec.encode(session()))
+            .put("schemaVersion", 6)
+            .toString()
+        val decoded = QuizSessionCodec.decode(encoded)
+        assertTrue(decoded is QuizDecodeResult.Success)
+        val restored = (decoded as QuizDecodeResult.Success).session
+        assertEquals(QuizAnswerKind.SINGLE, restored.items[0].answerKind)
+        assertEquals(QuizPresentation.CHOICE, restored.items[0].presentation)
+        assertEquals(6, restored.originSchemaVersion)
+    }
+
+    @Test
+    fun rejectsInconsistentOrUnsupportedQuestionTypes() {
+        val multiple = item.copy(
+            answerKind = QuizAnswerKind.MULTIPLE,
+            answerIndices = listOf(1, 3),
+            answerIndex = 1,
+        )
+        val multiWire = QuizSessionCodec.encodeItem(multiple)
+        assertTrue(
+            QuizSessionCodec.decodeItem(
+                JSONObject(multiWire.toString()).put("answerIndex", 0).toString(),
+            ) == null,
+        )
+        assertTrue(
+            QuizSessionCodec.decodeItem(
+                QuizSessionCodec.encodeItem(item)
+                    .put("answerIndices", JSONArray(listOf(0, 2)))
+                    .toString(),
+            ) == null,
+        )
+        assertTrue(
+            QuizSessionCodec.decodeItem(
+                JSONObject(multiWire.toString()).put("type", "essay").toString(),
+            ) == null,
+        )
+        assertTrue(
+            QuizSessionCodec.decodeItem(
+                JSONObject(multiWire.toString()).put("presentation", "geometry").toString(),
+            ) == null,
+        )
+    }
+
+    @Test
+    fun rejectsInvalidMultipleChoiceSetsAtDecode() {
+        fun decodeMultiple(vararg indices: Int): QuizDecodeResult {
+            val multiple = item.copy(
+                answerKind = QuizAnswerKind.MULTIPLE,
+                answerIndices = indices.toList(),
+                answerIndex = indices.firstOrNull() ?: 0,
+            )
+            return QuizSessionCodec.decode(
+                QuizSessionCodec.encode(session(items = listOf(multiple))),
+            )
+        }
+        assertTrue(decodeMultiple(0) is QuizDecodeResult.Failure)
+        assertTrue(decodeMultiple(0, 1, 2, 3) is QuizDecodeResult.Failure)
+        assertTrue(decodeMultiple(0, 1, 1) is QuizDecodeResult.Failure)
+        assertTrue(decodeMultiple(0, 9) is QuizDecodeResult.Failure)
     }
 
     @Test

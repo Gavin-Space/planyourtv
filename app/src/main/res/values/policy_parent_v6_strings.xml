@@ -93,11 +93,6 @@
     <string name="policy_v29_qr_pane_title">Parent center</string>
     <string name="policy_v29_qr_pane_status">Phone setup</string>
     <string name="policy_v29_qr_pane_summary">Local settings are on your phone. The TV keeps only the child-mode switch and remote management.</string>
-    <string name="policy_v29_qr_title">Set up on your phone</string>
-    <string name="policy_v29_qr_same_wifi">Connect your phone to the same Wi-Fi as the TV, then scan with a browser.</string>
-    <string name="policy_v29_ro_rules">Current rules (read-only)</string>
-    <string name="policy_v29_ro_windows">Weekdays %1$d · Weekends %2$d</string>
-    <string name="policy_v29_ro_used">Used today: %1$d min</string>
     <string name="policy_v6_study_apps">Study apps</string>
     <string name="policy_v6_study_none">None</string>
     <string name="policy_v6_study_hint">Study apps are never timed and only open in study mode.</string>

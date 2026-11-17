@@ -352,7 +352,7 @@ class MainActivity : ComponentActivity() {
             }
             CompositionLocalProvider(LocalReducedMotion provides reducedMotion, LocalDensity provides canvas) {
                 Box(Modifier.fillMaxSize()) {
-                    PolicyHomeGate(policyState, vm, ::launch, ::open) {
+                    PolicyHomeGate(policyState, vm, ::launch) {
                         HomeScreen(
                             vm = vm,
                             onLaunch = ::launch,

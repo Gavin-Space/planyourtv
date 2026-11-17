@@ -47,7 +47,7 @@
     <string name="policy_quiz_bank_stock">Дереккөз: жергілікті банк · пайдаланылмаған: %1$d</string>
     <string name="policy_quiz_wrong_stock">Дереккөз: қателер · қайталауға: %1$d</string>
     <string name="policy_quiz_source_cloud">Дереккөз: бұлттық банк</string>
-    <string name="policy_quiz_scope_label">Сұрақ ауқымы</string>
+    <string name="policy_quiz_scope_label">Деңгейді таңдау</string>
     <string name="policy_quiz_level_hint">Деңгейді ауыстыру: жоғары/төмен</string>
     <string name="policy_quiz_key_ok">OK</string>
     <string name="policy_quiz_preparing">Раунд дайындалуда…</string>
@@ -57,8 +57,11 @@
     <string name="policy_quiz_scope_any">Орнатылмаған</string>
     <string name="policy_quiz_scope_custom_tag">Жеке тег · %1$s</string>
     <string name="policy_quiz_scope_wrong_review">Қателерді қайталау</string>
+    <string name="policy_quiz_scope_mixed_level">Аралас деңгей · дереккөз: %1$d</string>
     <string name="policy_quiz_format_label">Жауап форматы</string>
     <string name="policy_quiz_format_single">Бір жауап</string>
+    <string name="policy_quiz_format_multiple">Бірнеше жауап</string>
+    <string name="policy_quiz_format_mixed">Бір / бірнеше</string>
     <string name="policy_quiz_semester_first">1-жартыжылдық</string>
     <string name="policy_quiz_semester_second">2-жартыжылдық</string>
     <string name="policy_quiz_scope_unit">%1$d-бөлім</string>
@@ -73,6 +76,8 @@
     <string name="policy_quiz_bank_empty_body">Жергілікті банкте дайын сұрақ жоқ. Кодты сканерлеп, телефон бетінде сұрақ жасаңыз.</string>
     <string name="policy_quiz_bank_blocked_title">Викторина-сынақ баптауларын қайта сақтау қажет</string>
     <string name="policy_quiz_bank_blocked_body">Теледидар жергілікті викторина параметрлерін оқи алмады. Кодты сканерлеп, телефон бетінде параметрлерді қайта сақтаңыз.</string>
+    <string name="policy_quiz_bank_paused_title">Жауап деңгейлері кідіртілді</string>
+    <string name="policy_quiz_bank_paused_body">Ата-ана барлық деңгейді кідіртті. Жалғастыру үшін телефон бетінде кемінде бір деңгейді қосыңыз.</string>
     <string name="policy_quiz_bank_insufficient">Бастау үшін тағы %1$d сұрақ керек.</string>
     <string name="policy_quiz_bank_refresh">Жаңарту</string>
     <string name="policy_quiz_ready_title">Викторина дайын</string>
@@ -92,6 +97,10 @@
     <string name="policy_quiz_time_left">%1$d секунд қалды</string>
     <string name="policy_quiz_points_hint">Дұрыс жауап: %1$d минут</string>
     <string name="policy_quiz_question_scroll_hint">Сұрақ пен нұсқаларды толық оқу үшін ↑/↓ пернелерін пайдаланыңыз</string>
+    <string name="policy_quiz_single_hint">Бір жауап: бір нұсқаны таңдасаңыз, жауап бірден жіберіледі</string>
+    <string name="policy_quiz_multiple_hint">Бірнеше жауап: барлық дұрыс нұсқаларды таңдап, «Растау» түймесін басыңыз</string>
+    <string name="policy_quiz_confirm_answer">Жауапты растау</string>
+    <string name="policy_quiz_select_at_least_one">Кемінде бір нұсқаны таңдаңыз</string>
     <string name="policy_quiz_feedback_scroll_hint">Оқу үшін ↑/↓ пернелерін пайдаланыңыз; жалғастыру үшін OK басыңыз</string>
     <string name="policy_quiz_feedback_continue">Түсінікті — мен мұны үйрендім</string>
     <string name="policy_quiz_feedback_wait">%1$d секундтан кейін жалғастыру</string>
@@ -167,6 +176,7 @@
     <string name="policy_quiz_reason_storage">теледидар күйді сақтай алмады</string>
     <string name="policy_quiz_reason_not_ready">дайын викторина жоқ</string>
     <string name="policy_quiz_reason_no_levels">ата-ана әлі деңгейлерді орнатпаған</string>
+    <string name="policy_quiz_reason_level_paused">бұл деңгей кідіртілген; ата-анадан қосуды сұраңыз</string>
     <string name="policy_quiz_reason_not_available">теледидар қолмен басқару режимінде емес</string>
     <string name="policy_quiz_reason_screen">экран қосылмаған</string>
     <string name="policy_quiz_reason_cache_empty">қазір қолжетімді сұрақ жоқ</string>
@@ -243,6 +253,7 @@
     <string name="policy_lock_quiz_expired_footer">Ата-анадан қайта баптауды сұраңыз.</string>
     <string name="policy_lock_quiz_empty_footer">Сұрақ банкі дайын емес. Ата-анадан баптауды сұраңыз.</string>
     <string name="policy_lock_quiz_blocked_footer">Викторина-сынақ баптауларын қайта сақтау қажет.</string>
+    <string name="policy_lock_quiz_paused_footer">Ата-ана жауап деңгейлерін кідіртті.</string>
     <string name="policy_lock_manual_local_footer">Ұзақтықты таңдаңыз, содан кейін ата-ана PIN енгізеді.</string>
     <string name="policy_lock_manual_remote_footer">Ата-ана телефоннан уақыт жібереді немесе бала тілекті айырбастайды.</string>
     <string name="policy_lock_auto_local_footer">Күндік шек пен ұзақтық есептеледі, содан кейін демалыс.</string>

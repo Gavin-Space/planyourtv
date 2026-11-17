@@ -28,10 +28,8 @@ import kotlin.math.abs
  * and the page simply shows “not downloaded” and offers a retry.
  */
 object OfficialMediaDownloader {
-    const val MAX_OFFICIAL_ITEMS = 8
-    // The library is capped by item count, not by a byte budget: when it is full the parent must
-    // delete a local copy before downloading another. Real storage pressure is handled separately
-    // by [KEEP_FREE_BYTES], so a short film never fills the TV on its own.
+    // Downloads run one at a time and the library keeps no count quota; only [KEEP_FREE_BYTES]
+    // below stops a download from filling the TV.
     const val KEEP_FREE_BYTES = 64L * 1024 * 1024
     private const val TAG = "PolicyMediaDownloader"
     private const val CONNECT_TIMEOUT_MS = 10_000
@@ -70,7 +68,6 @@ object OfficialMediaDownloader {
         data object NotFound : StartResult()
         data object RoleInvalid : StartResult()
         data object NoSpace : StartResult()
-        data object LibraryFull : StartResult()
     }
 
     fun progress(id: String): Progress? = states[id]
@@ -99,7 +96,6 @@ object OfficialMediaDownloader {
         val active = activeId
         if (active != null && active != id) return StartResult.Busy
 
-        if (!hasRoom(app, item)) return StartResult.LibraryFull
         if (!hasFreeSpace(app, item)) return StartResult.NoSpace
 
         val progress = Progress(STATE_DOWNLOADING, 0L, item.bytes, null)
@@ -369,13 +365,6 @@ object OfficialMediaDownloader {
             throw DownloadFailure("MEDIA_DOWNLOAD_FAILED")
         }
         old.deleteRecursively()
-    }
-
-    private fun hasRoom(context: Context, item: OfficialMediaItem): Boolean {
-        val existing = OfficialMediaStore.list(context)
-        // Re-downloading a film the library already holds replaces it and does not need a free slot.
-        if (existing.any { it.id == item.id }) return true
-        return existing.size < MAX_OFFICIAL_ITEMS
     }
 
     private fun hasFreeSpace(context: Context, item: OfficialMediaItem): Boolean {

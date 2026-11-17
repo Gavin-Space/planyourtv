@@ -4,7 +4,7 @@ import android.util.Log
 import com.planyourtv.policy.quiz.QuizConfig
 import com.planyourtv.policy.quiz.QuizConfigDocument
 import com.planyourtv.policy.quiz.QuizDayType
-import com.planyourtv.policy.quiz.QuizLevel
+import com.planyourtv.policy.quiz.QuizLevelPackage
 import com.planyourtv.policy.quiz.QuizRewardProfile
 import com.planyourtv.policy.quiz.QuizRewardResolver
 
@@ -15,7 +15,11 @@ data class QuizLocalRoundPlan(
     val config: QuizConfig,
     val dayType: QuizDayType,
     val profile: QuizRewardProfile,
-    val levels: List<QuizLevel>,
+    /**
+     * The parent-designed packages frozen at start. Each package may draw from
+     * several sources; [QuizChallenge] reserves one round from the chosen one.
+     */
+    val packages: List<QuizLevelPackage>,
 )
 
 sealed interface QuizLocalPlanResult {
@@ -35,7 +39,16 @@ object QuizLocalRoundPlanner {
     const val DOCUMENT_UNREADABLE = "DOCUMENT_UNREADABLE"
     const val DOCUMENT_INVALID = "DOCUMENT_INVALID"
 
-    fun plan(document: QuizConfigDocument?, nowMs: Long): QuizLocalPlanResult {
+    /**
+     * [packages] is supplied by [QuizLevelPackageStore], which owns migration
+     * and the fail-closed marker. The planner only validates the document and
+     * freezes the inputs; it never falls back to the legacy level keys.
+     */
+    fun plan(
+        document: QuizConfigDocument?,
+        nowMs: Long,
+        packages: List<QuizLevelPackage> = emptyList(),
+    ): QuizLocalPlanResult {
         if (document == null) return QuizLocalPlanResult.Rejected(DOCUMENT_UNREADABLE)
         val issues = QuizLocalConfigDocument.localReadIssues(document)
         if (issues.isNotEmpty()) {
@@ -54,15 +67,13 @@ object QuizLocalRoundPlanner {
             ?: return QuizLocalPlanResult.Rejected(DOCUMENT_INVALID)
         val config = document.toLegacyConfig()
             ?: return QuizLocalPlanResult.Rejected(DOCUMENT_INVALID)
-        val levels = document.localLevels()
-            ?: return QuizLocalPlanResult.Rejected(DOCUMENT_UNREADABLE)
         return QuizLocalPlanResult.Ready(
             QuizLocalRoundPlan(
                 document = document,
                 config = config,
                 dayType = dayType,
                 profile = profile,
-                levels = levels,
+                packages = packages,
             ),
         )
     }

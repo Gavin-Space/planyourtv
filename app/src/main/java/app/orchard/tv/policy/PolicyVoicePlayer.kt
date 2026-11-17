@@ -38,6 +38,12 @@ object PolicyVoicePlayer {
     private var focusRequest: AudioFocusRequest? = null
 
     @Volatile
+    private var playing = false
+
+    /** True while a generated cue is audible; quiz TTS waits briefly so the two do not overlap. */
+    fun isPlaying(): Boolean = playing
+
+    @Volatile
     var enabled: Boolean = true
 
     // Every approved quiz cue is a small set; a shuffle bag avoids playing the
@@ -101,6 +107,7 @@ object PolicyVoicePlayer {
         stopCurrent(context)
         val media = runCatching { MediaPlayer.create(context, resource) }.getOrNull() ?: return
         player = media
+        playing = true
         media.setVolume(0.8f, 0.8f)
         requestFocus(context)
         media.setOnCompletionListener { release(context) }
@@ -193,6 +200,7 @@ object PolicyVoicePlayer {
     private fun stopCurrent(context: Context) {
         val media = player ?: return
         player = null
+        playing = false
         runCatching { if (media.isPlaying) media.stop() }
         runCatching { media.release() }
         abandonFocus(context)
@@ -201,6 +209,7 @@ object PolicyVoicePlayer {
     private fun release(context: Context) {
         val media = player ?: return
         player = null
+        playing = false
         runCatching { media.release() }
         abandonFocus(context)
     }

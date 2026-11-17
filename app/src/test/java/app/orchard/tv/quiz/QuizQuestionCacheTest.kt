@@ -2,12 +2,16 @@ package app.orchard.tv.quiz
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
+import com.planyourtv.policy.quiz.QuizAnswerKind
 import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizConfig
 import com.planyourtv.policy.quiz.QuizItem
+import com.planyourtv.policy.quiz.QuizLevelPackage
+import com.planyourtv.policy.quiz.QuizPackageSource
 import com.planyourtv.policy.quiz.QuizSession
 import com.planyourtv.policy.quiz.QuizSessionCodec
 import com.planyourtv.policy.quiz.QuizSessionStatus
+import com.planyourtv.policy.quiz.QuizTypeFilter
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -15,12 +19,16 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import java.util.Random
 import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
 class QuizQuestionCacheTest {
     private val now = 1_760_000_000_000L
     private val testDb = "quiz_cache_test.db"
+    // Production capacity is 100,000; filling that in a unit test only tests
+    // SQLite endurance. The boundary behavior is independent of the number.
+    private val smallCapacity = 25
 
     private fun item(index: Int) = QuizItem(
         questionId = "q_000000$index",
@@ -57,6 +65,30 @@ class QuizQuestionCacheTest {
             scopeUnitNo = null,
             difficulty = "hard",
         )
+
+    private fun courseScope(subject: String, unitNo: Int) = QuizAnswerScope.create(
+        grade = 4,
+        semester = 1,
+        subject = subject,
+        textbook = "RENJIAO",
+        scopeType = "UNIT",
+        unitNo = unitNo,
+        difficulty = null,
+    )!!
+
+    private fun itemIn(index: Int, subject: String, unitNo: Int) =
+        scopedItem(index).copy(scopeSubject = subject, scopeUnitNo = unitNo)
+
+    private fun multipleItemIn(index: Int, subject: String, unitNo: Int) =
+        itemIn(index, subject, unitNo).copy(
+            answerKind = QuizAnswerKind.MULTIPLE,
+            answerIndices = listOf(0, 2),
+        )
+
+    /** Forces the round-robin source offset and every draw offset. */
+    private class FixedRandom(private val value: Int) : Random() {
+        override fun nextInt(bound: Int): Int = if (bound <= 0) 0 else value % bound
+    }
 
     private fun session(id: String, count: Int) = QuizSession(
         id = id,
@@ -198,6 +230,46 @@ class QuizQuestionCacheTest {
         )
         assertEquals(2, reserved.size)
         assertTrue(reserved.all { it.question.scopeGrade == 4 })
+    }
+
+    @Test
+    fun facetSnapshotGroupsRowsWithoutDecodingEveryQuestion() {
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_facets",
+            (1..2).map { scopedItem(it, grade = 4) } +
+                (3..3).map { scopedItem(it, grade = 4).copy(scopeSubject = "CHINESE") } +
+                (4..6).map { scopedItem(it, grade = 5) } +
+                listOf(item(7)),
+            now,
+        )
+        val snapshot = QuizQuestionCache.facetSnapshot(QuizQuestionCache.LOCAL_SCOPE, now)
+        fun subjectCount(grade: Int, subject: String) = snapshot.groups
+            .filter { it.grade == grade && it.subject == subject }
+            .sumOf { it.count }
+        assertEquals(7, snapshot.total)
+        assertEquals(7, snapshot.groups.sumOf { it.count })
+        assertEquals(2, subjectCount(4, "MATH"))
+        assertEquals(1, subjectCount(4, "CHINESE"))
+        assertEquals(3, subjectCount(5, "MATH"))
+        // The unscoped row is its own group and is not dropped from the total.
+        assertEquals(1, snapshot.groups.filter { it.grade == null }.sumOf { it.count })
+    }
+
+    @Test
+    fun facetSnapshotKeepsSingleAndMultipleCountsSeparate() {
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_facets_kind",
+            (1..2).map { scopedItem(it) } +
+                (3..3).map { multipleItemIn(it, "MATH", 3) },
+            now,
+        )
+        val snapshot = QuizQuestionCache.facetSnapshot(QuizQuestionCache.LOCAL_SCOPE, now)
+        fun kindCount(kind: String) = snapshot.groups
+            .filter { it.answerKind == kind }
+            .sumOf { it.count }
+        assertEquals(2, kindCount(QuizAnswerKind.SINGLE.wire))
+        assertEquals(1, kindCount(QuizAnswerKind.MULTIPLE.wire))
+        assertEquals(3, snapshot.groups.sumOf { it.count })
     }
 
     @Test
@@ -449,20 +521,26 @@ class QuizQuestionCacheTest {
 
     @Test
     fun appendStopsAtCapacityWithoutDeletingExistingRows() {
-        val all = (1..QuizQuestionCache.BANK_CAPACITY).map(::bulkItem)
-        val first = QuizQuestionCache.appendLocalQuestions("batch_full", all, now)
-        assertEquals(QuizQuestionCache.BANK_CAPACITY, first.appended)
+        val all = (1..smallCapacity).map(::bulkItem)
+        val first = QuizQuestionCache.appendLocalQuestions(
+            "batch_full",
+            all,
+            now,
+            capacity = smallCapacity,
+        )
+        assertEquals(smallCapacity, first.appended)
         assertEquals(0, first.rejected)
 
         val extra = QuizQuestionCache.appendLocalQuestions(
             "batch_extra",
             listOf(bulkItem(1).copy(questionId = "q_extra_0001", prompt = "One more")),
             now,
+            capacity = smallCapacity,
         )
         assertEquals(0, extra.appended)
         assertEquals(1, extra.rejected)
         assertTrue(extra.capacityReached)
-        assertEquals(QuizQuestionCache.BANK_CAPACITY, QuizQuestionCache.bankCounts(QuizQuestionCache.LOCAL_SCOPE, now).total)
+        assertEquals(smallCapacity, QuizQuestionCache.bankCounts(QuizQuestionCache.LOCAL_SCOPE, now).total)
     }
 
     @Test
@@ -687,13 +765,23 @@ class QuizQuestionCacheTest {
 
     @Test
     fun importIsAllOrNothingWhenTheBankIsFull() {
-        val all = (1..QuizQuestionCache.BANK_CAPACITY).map(::bulkItem)
+        val all = (1..smallCapacity).map(::bulkItem)
         assertEquals(
-            QuizQuestionCache.BANK_CAPACITY,
-            QuizQuestionCache.appendLocalQuestions("batch_import_full", all, now).appended,
+            smallCapacity,
+            QuizQuestionCache.appendLocalQuestions(
+                "batch_import_full",
+                all,
+                now,
+                capacity = smallCapacity,
+            ).appended,
         )
         val tag = "col-full"
-        val preview = QuizQuestionCache.previewLocalImport(tag, listOf(item(1), item(2)), now)
+        val preview = QuizQuestionCache.previewLocalImport(
+            tag,
+            listOf(item(1), item(2)),
+            now,
+            capacity = smallCapacity,
+        )
         assertEquals(0, preview.remaining)
         assertEquals(2, preview.wouldAppend)
 
@@ -702,11 +790,49 @@ class QuizQuestionCacheTest {
             "import-full",
             listOf(item(1), item(2)),
             now,
+            capacity = smallCapacity,
         )
         assertEquals(0, result.appended)
         assertTrue(result.capacityReached)
-        assertEquals(QuizQuestionCache.BANK_CAPACITY, QuizQuestionCache.bankCounts(QuizQuestionCache.LOCAL_SCOPE, now).total)
+        assertEquals(smallCapacity, QuizQuestionCache.bankCounts(QuizQuestionCache.LOCAL_SCOPE, now).total)
         assertEquals(0, QuizQuestionCache.availableCollectionCount(tag, now))
+    }
+
+    @Test
+    fun batchedImportMatchesOneRunAndRetryIsIdempotent() {
+        val tag = "col-batch-" + UUID.randomUUID()
+        val all = (1..500).map(::bulkItem)
+        val batches = all.chunked(200)
+        var appended = 0
+        batches.forEachIndexed { index, batch ->
+            appended += QuizQuestionCache.importLocalQuestions(
+                tag,
+                "import-batch-$index",
+                batch,
+                now,
+            ).appended
+        }
+        assertEquals(500, appended)
+        assertEquals(500, QuizQuestionCache.availableCollectionCount(tag, now))
+        assertEquals(500, QuizQuestionCache.bankCounts(QuizQuestionCache.LOCAL_SCOPE, now).total)
+
+        // A failed run is retried from the start; fingerprints must prevent a
+        // second copy of every batch that already succeeded.
+        var retryAppended = 0
+        var retryDuplicates = 0
+        batches.forEachIndexed { index, batch ->
+            val result = QuizQuestionCache.importLocalQuestions(
+                tag,
+                "import-retry-$index",
+                batch,
+                now,
+            )
+            retryAppended += result.appended
+            retryDuplicates += result.collectionDuplicates
+        }
+        assertEquals(0, retryAppended)
+        assertEquals(500, retryDuplicates)
+        assertEquals(500, QuizQuestionCache.availableCollectionCount(tag, now))
     }
 
     @Test
@@ -897,5 +1023,251 @@ class QuizQuestionCacheTest {
         assertEquals(1, review.size)
         // The duplicate row stays wrong for a later round; only this round dedupes.
         assertEquals(2, QuizQuestionCache.wrongReviewCount())
+    }
+
+    @Test
+    fun packageRoundRobinDrawsFromEverySourceAndHonorsTypeFilters() {
+        val chinese = courseScope("CHINESE", 2)
+        val math = courseScope("MATH", 1)
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_pkg_types",
+            (1..4).map { itemIn(it, "CHINESE", 2) } +
+                (5..8).map { multipleItemIn(it, "MATH", 1) },
+            now,
+        )
+        val pkg = QuizLevelPackage.create(
+            listOf(
+                QuizPackageSource.Course(chinese, QuizTypeFilter.SINGLE),
+                QuizPackageSource.Course(math, QuizTypeFilter.MULTIPLE),
+            ),
+        )!!
+
+        val availability = QuizQuestionCache.packageAvailability(pkg, now)
+        assertEquals(listOf(4, 4), availability.sourceCounts)
+        assertEquals(8, availability.available)
+        assertEquals(
+            QuizQuestionCache.AnswerKindCounts(total = 4, single = 4, multiple = 0),
+            QuizQuestionCache.availableTypeCounts(nowMs = now, answerScope = chinese),
+        )
+        assertEquals(
+            QuizQuestionCache.AnswerKindCounts(total = 4, single = 0, multiple = 4),
+            QuizQuestionCache.availableTypeCounts(nowMs = now, answerScope = math),
+        )
+
+        val picked = QuizQuestionCache.reservePackageForRound(
+            level = pkg,
+            count = 4,
+            sessionId = "sess_pkg_types",
+            minRequired = 4,
+            nowMs = now,
+            random = Random(7),
+        )
+        assertEquals(4, picked.size)
+        assertEquals(2, picked.count { it.question.scopeSubject == "CHINESE" })
+        assertEquals(2, picked.count { it.question.scopeSubject == "MATH" })
+        assertTrue(
+            picked.filter { it.question.scopeSubject == "CHINESE" }
+                .none { it.question.isMultipleChoice },
+        )
+        assertTrue(
+            picked.filter { it.question.scopeSubject == "MATH" }
+                .all { it.question.isMultipleChoice },
+        )
+    }
+
+    @Test
+    fun packageRoundRobinStartsAtARandomSourceOffset() {
+        val chinese = courseScope("CHINESE", 2)
+        val math = courseScope("MATH", 1)
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_pkg_offset",
+            (1..8).map { itemIn(it, "CHINESE", 2) } +
+                (9..16).map { itemIn(it, "MATH", 1) },
+            now,
+        )
+        val pkg = QuizLevelPackage.create(
+            listOf(
+                QuizPackageSource.Course(chinese),
+                QuizPackageSource.Course(math),
+            ),
+        )!!
+
+        val fromFirst = QuizQuestionCache.reservePackageForRound(
+            level = pkg,
+            count = 1,
+            sessionId = "sess_pkg_offset_first",
+            minRequired = 1,
+            nowMs = now,
+            random = FixedRandom(0),
+        )
+        val fromSecond = QuizQuestionCache.reservePackageForRound(
+            level = pkg,
+            count = 1,
+            sessionId = "sess_pkg_offset_second",
+            minRequired = 1,
+            nowMs = now,
+            random = FixedRandom(1),
+        )
+        assertEquals("CHINESE", fromFirst.single().question.scopeSubject)
+        assertEquals("MATH", fromSecond.single().question.scopeSubject)
+    }
+
+    @Test
+    fun shortPackageRoundRollsBackAndLeavesTheBankAvailable() {
+        val chinese = courseScope("CHINESE", 2)
+        val math = courseScope("MATH", 1)
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_pkg_short",
+            listOf(itemIn(1, "CHINESE", 2), itemIn(2, "MATH", 1)),
+            now,
+        )
+        val pkg = QuizLevelPackage.create(
+            listOf(
+                QuizPackageSource.Course(chinese),
+                QuizPackageSource.Course(math),
+            ),
+        )!!
+
+        assertTrue(
+            QuizQuestionCache.reservePackageForRound(
+                level = pkg,
+                count = 3,
+                sessionId = "sess_pkg_short",
+                minRequired = 3,
+                nowMs = now,
+            ).isEmpty(),
+        )
+        assertEquals(2, QuizQuestionCache.counts(nowMs = now).available)
+        assertEquals(2, QuizQuestionCache.packageAvailability(pkg, now).available)
+        // The rejected attempt must not have stranded reservations.
+        assertEquals(
+            QuizQuestionCache.packageAvailability(pkg, now).available,
+            QuizQuestionCache.reservePackageForRound(
+                level = pkg,
+                count = 2,
+                sessionId = "sess_pkg_short_retry",
+                minRequired = 2,
+                nowMs = now,
+            ).size,
+        )
+    }
+
+    @Test
+    fun crossSourceDuplicateContentCountsOnceInAPackageRound() {
+        val chinese = courseScope("CHINESE", 2)
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_pkg_dupe_course",
+            listOf(itemIn(1, "CHINESE", 2)),
+            now,
+        )
+        val imported = QuizQuestionCache.importLocalQuestions(
+            "col-pkg-dupe",
+            "import-pkg-dupe",
+            listOf(itemIn(1, "CHINESE", 2)),
+            now,
+        )
+        assertEquals(1, imported.appended)
+        val pkg = QuizLevelPackage.create(
+            listOf(
+                QuizPackageSource.Course(chinese),
+                QuizPackageSource.Collection("col-pkg-dupe"),
+            ),
+        )!!
+        assertEquals(1, QuizQuestionCache.packageAvailability(pkg, now).available)
+        assertTrue(
+            QuizQuestionCache.reservePackageForRound(
+                level = pkg,
+                count = 2,
+                sessionId = "sess_pkg_dupe",
+                minRequired = 2,
+                nowMs = now,
+            ).isEmpty(),
+        )
+        assertEquals(2, QuizQuestionCache.availableCount(nowMs = now))
+    }
+
+    @Test
+    fun wrongReviewSourceClearsMistakesBeforeNormalSourcesReuseThem() {
+        val chinese = courseScope("CHINESE", 2)
+        QuizQuestionCache.appendLocalQuestions(
+            "batch_pkg_wrong_course",
+            (1..2).map { itemIn(it, "CHINESE", 2) },
+            now,
+        )
+        QuizQuestionCache.importLocalQuestions(
+            "col-pkg-wrong",
+            "import-pkg-wrong",
+            listOf(itemIn(1, "CHINESE", 2), itemIn(3, "CHINESE", 2)),
+            now,
+        )
+        val seed = QuizQuestionCache.reserveForRound(
+            count = 2,
+            sessionId = "sess_pkg_seed",
+            scopeKey = QuizQuestionCache.LOCAL_SCOPE,
+            minRequired = 2,
+            nowMs = now,
+            answerScope = chinese,
+        )
+        assertEquals(2, seed.size)
+        assertTrue(
+            QuizQuestionCache.settleRound(
+                "sess_pkg_seed",
+                QuizQuestionCache.LOCAL_SCOPE,
+                seed.map { cached ->
+                    QuizQuestionCache.AnswerWrite(
+                        cacheId = cached.cacheId,
+                        questionId = cached.question.questionId,
+                        selectedIndex = 0,
+                        correct = cached.question.questionId != "q_0000001",
+                        timedOut = false,
+                        answeredAt = now + 1,
+                    )
+                },
+                now + 2,
+            ),
+        )
+        assertEquals(1, QuizQuestionCache.wrongReviewCount())
+
+        val pkg = QuizLevelPackage.create(
+            listOf(
+                QuizPackageSource.Course(chinese),
+                QuizPackageSource.Collection("col-pkg-wrong"),
+                QuizPackageSource.WrongReview,
+            ),
+        )!!
+        val picked = QuizQuestionCache.reservePackageForRound(
+            level = pkg,
+            count = 2,
+            sessionId = "sess_pkg_wrong_review",
+            minRequired = 2,
+            nowMs = now + 3,
+            random = Random(1),
+        )
+        assertEquals(2, picked.size)
+        // Wrong review re-asks q1; the identical tag copy is blocked instead of
+        // duplicating it, and q3 fills the round.
+        assertEquals(
+            setOf("q_0000001", "q_0000003"),
+            picked.map { it.question.questionId }.toSet(),
+        )
+        val reasked = picked.first { it.question.questionId == "q_0000001" }
+        assertTrue(
+            QuizQuestionCache.writeAnswers(
+                "sess_pkg_wrong_review",
+                QuizQuestionCache.LOCAL_SCOPE,
+                listOf(
+                    QuizQuestionCache.AnswerWrite(
+                        cacheId = reasked.cacheId,
+                        questionId = reasked.question.questionId,
+                        selectedIndex = 1,
+                        correct = true,
+                        timedOut = false,
+                        answeredAt = now + 4,
+                    ),
+                ),
+                now + 5,
+            ),
+        )
+        assertEquals(0, QuizQuestionCache.wrongReviewCount())
     }
 }

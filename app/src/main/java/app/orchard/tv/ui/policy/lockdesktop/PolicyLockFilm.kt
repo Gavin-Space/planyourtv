@@ -2,6 +2,7 @@ package app.orchard.tv.ui.policy.lockdesktop
 
 import android.view.SurfaceView
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -29,12 +31,14 @@ import app.orchard.tv.policy.media.PolicyVideoSource
 import app.orchard.tv.ui.theme.Motion
 
 /**
- * The child-mode film chosen in the parent center, looping silently behind the lock desktop.
+ * The child-mode film chosen in the parent center, looping behind the lock desktop. It is
+ * silent unless the parent turned the wallpaper sound on and the film has a decodable audio
+ * track; parent mode never uses this composable or reads that preference.
  *
  * A SurfaceView sits behind the window, so the lock screen keeps its root transparent while
  * this is composed and fades its own default-wallpaper picture out through [cover] once the
- * first frame is ready. The audio track is disabled as well as the volume muted: this is a
- * background wallpaper, not a second audio source.
+ * first frame is ready. Sound fades in only after that frame, so a decoder error never leaves
+ * audio running over the fallback picture.
  *
  * The decoder is released with the lock screen and paused when the app stops. A film that
  * cannot be decoded leaves [cover] at zero, so the default wallpaper simply stays.
@@ -49,6 +53,7 @@ internal fun PolicyLockFilm(
     cover: Animatable<Float, *>,
     modifier: Modifier = Modifier,
     active: Boolean = true,
+    soundEnabled: Boolean = false,
 ) {
     // A still picture is drawn by the caller's backdrop; it must never reach ExoPlayer.
     if (source.kind != PolicyMediaKind.VIDEO) return
@@ -81,6 +86,38 @@ internal fun PolicyLockFilm(
         }
     }
 
+    // The wallpaper is quiet by default; a parent who enabled sound gets a low, duckable
+    // music stream. Tying the fade to firstFrame keeps audio and picture together.
+    val targetVolume = if (soundEnabled && active && firstFrame && !failed) {
+        FILM_VOLUME
+    } else {
+        0f
+    }
+    val audioVolume by animateFloatAsState(
+        targetValue = targetVolume,
+        animationSpec = tween(if (targetVolume > 0f) 500 else 250, easing = Motion.EaseOut),
+        label = "policy-lock-film-volume",
+    )
+    LaunchedEffect(player, audioVolume) {
+        player?.volume = audioVolume
+    }
+    // Switching the parent-center toggle must not restart the wallpaper. Apply the audio track
+    // choice to the live player; a muted film also stops requesting audio focus.
+    LaunchedEffect(player, soundEnabled) {
+        val exo = player ?: return@LaunchedEffect
+        exo.setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                .build(),
+            soundEnabled,
+        )
+        exo.trackSelectionParameters = TrackSelectionParameters.Builder()
+            .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, !soundEnabled)
+            .build()
+        if (!soundEnabled) exo.volume = 0f
+    }
+
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -102,9 +139,16 @@ internal fun PolicyLockFilm(
             repeatMode = Player.REPEAT_MODE_ONE
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
             videoChangeFrameRateStrategy = C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                    .build(),
+                soundEnabled,
+            )
             volume = 0f
             trackSelectionParameters = TrackSelectionParameters.Builder()
-                .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, true)
+                .setTrackTypeDisabled(C.TRACK_TYPE_AUDIO, !soundEnabled)
                 .build()
             addListener(object : Player.Listener {
                 override fun onRenderedFirstFrame() {
@@ -144,3 +188,6 @@ internal fun PolicyLockFilm(
         )
     }
 }
+
+/** Low enough to sit under quiz prompts and parent speech, loud enough to be audible. */
+private const val FILM_VOLUME = 0.40f

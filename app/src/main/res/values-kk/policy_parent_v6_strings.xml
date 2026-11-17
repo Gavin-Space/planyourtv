@@ -92,11 +92,6 @@
     <string name="policy_v29_qr_pane_title">Ата-ана орталығы</string>
     <string name="policy_v29_qr_pane_status">Телефоннан баптау</string>
     <string name="policy_v29_qr_pane_summary">Жергілікті баптаулар енді телефонда. Теледидарда тек бала режимінің қосқышы мен қашықтан басқару қалды.</string>
-    <string name="policy_v29_qr_title">Телефоннан баптаңыз</string>
-    <string name="policy_v29_qr_same_wifi">Телефонды теледидармен бір Wi-Fi желісіне қосып, кодты браузермен сканерлеңіз.</string>
-    <string name="policy_v29_ro_rules">Ағымдағы ережелер (тек оқу)</string>
-    <string name="policy_v29_ro_windows">Жұмыс күндері: %1$d · Демалыс: %2$d</string>
-    <string name="policy_v29_ro_used">Бүгін қолданылды: %1$d мин</string>
     <string name="policy_v6_study_apps">Оқу қолданбалары</string>
     <string name="policy_v6_study_none">Жоқ</string>
     <string name="policy_v6_study_hint">Оқу қолданбалары есепке алынбайды және тек оқу режимінде ашылады.</string>

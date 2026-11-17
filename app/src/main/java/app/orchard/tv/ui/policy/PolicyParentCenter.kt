@@ -1610,10 +1610,7 @@ fun PolicyParentCenter(onClose: () -> Unit) {
                             deviceNo = cloudState.deviceNo,
                             guide = cloudGuide,
                         )
-                        ParentPaneKind.PARENT_WEB_QR -> V6ParentWebQrPane(
-                            rules = rules,
-                            dailyUsedSeconds = state.dailyUsedSeconds,
-                        )
+                        ParentPaneKind.PARENT_WEB_QR -> V6ParentWebQrPane()
                         ParentPaneKind.MIGRATION -> V6MigrationPane(
                             busy = handoffBusy,
                             error = handoffError,

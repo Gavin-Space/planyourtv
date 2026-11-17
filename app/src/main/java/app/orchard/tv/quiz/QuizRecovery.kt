@@ -115,6 +115,9 @@ object QuizRecovery {
             val selected = submission.selectedIndex?.let { displayIndex ->
                 if (item.optionOrder.isEmpty()) displayIndex else item.optionOrder.getOrNull(displayIndex)
             }
+            val selectedIndices = submission.selectedIndices.mapNotNull { displayIndex ->
+                if (item.optionOrder.isEmpty()) displayIndex else item.optionOrder.getOrNull(displayIndex)
+            }
             QuizQuestionCache.AnswerWrite(
                 cacheId = item.cacheId,
                 questionId = item.questionId,
@@ -122,6 +125,7 @@ object QuizRecovery {
                 correct = submission.correct,
                 timedOut = submission.timedOut,
                 answeredAt = submission.answeredAt,
+                selectedIndices = selectedIndices,
             )
         }
     }

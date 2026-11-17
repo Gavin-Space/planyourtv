@@ -73,9 +73,9 @@
     <string name="policy_v6_activation_manual_hint">支持答题解锁和单次使用；每段时长由家长确认。</string>
     <string name="policy_v6_activation_tab_hint">各模式单独保存时段、时长、休息和息屏缓冲；点选上方标签切换，下方参数只属于当前模式。</string>
     <string name="policy_v6_activation_confirm_auto_title">切换到自动模式？</string>
-    <string name="policy_v6_activation_confirm_auto_body">自动模式下电视不能开始答题挑战。当前自动规则：每天最多 %1$d 分钟，每次最多 %2$d 分钟，休息间隔 %3$d 分钟。</string>
+    <string name="policy_v6_activation_confirm_auto_body">自动模式下电视不能开始答题闯关。当前自动规则：每天最多 %1$d 分钟，每次最多 %2$d 分钟，休息间隔 %3$d 分钟。</string>
     <string name="policy_v6_activation_confirm_manual_title">切换到手动模式？</string>
-    <string name="policy_v6_activation_confirm_manual_body">手动模式由家长在锁屏发起单次计时，并支持答题挑战。</string>
+    <string name="policy_v6_activation_confirm_manual_body">手动模式由家长在锁屏发起单次计时，并支持答题闯关。</string>
     <string name="policy_v6_activation_confirm_end_session">本次计时和休息倒计时会立即结束。</string>
     <string name="policy_v6_activation_confirm_cancel">取消</string>
     <string name="policy_v6_activation_confirm_switch">切换</string>
@@ -92,11 +92,6 @@
     <string name="policy_v29_qr_pane_title">家长中心</string>
     <string name="policy_v29_qr_pane_status">手机配置</string>
     <string name="policy_v29_qr_pane_summary">本地设置已移到手机，电视只保留儿童模式开关和远程管理。</string>
-    <string name="policy_v29_qr_title">手机扫码配置家长中心</string>
-    <string name="policy_v29_qr_same_wifi">手机与电视连接同一 Wi-Fi，用浏览器扫码。</string>
-    <string name="policy_v29_ro_rules">当前规则（只读）</string>
-    <string name="policy_v29_ro_windows">工作日 %1$d 段 · 周末 %2$d 段</string>
-    <string name="policy_v29_ro_used">今日已用 %1$d 分钟</string>
     <string name="policy_v6_study_apps">学习应用</string>
     <string name="policy_v6_study_none">无</string>
     <string name="policy_v6_study_hint">学习应用不计时，仅在学习模式中打开。</string>

@@ -14,6 +14,8 @@ data class PolicyVideoSource(
     val official: Boolean,
     val poster: File?,
     val kind: PolicyMediaKind = PolicyMediaKind.VIDEO,
+    /** Whether this film has an audio track the TV can decode; the sound switch checks it. */
+    val hasAudio: Boolean = false,
 )
 
 /**
@@ -62,6 +64,7 @@ object PolicyVideoLibrary {
         val local: OfficialMediaLocal?,
         val upload: QuizIntroVideoEntry?,
         val capabilityRoles: Set<PolicyVideoRole>,
+        val hasAudio: Boolean,
     )
 
     fun ensureMigrated(context: Context) {
@@ -112,6 +115,7 @@ object PolicyVideoLibrary {
                     official = true,
                     poster = local.poster,
                     kind = local.item.kind,
+                    hasAudio = local.item.hasAudio,
                 )
             }
             localIdPattern.matches(id) -> {
@@ -121,6 +125,7 @@ object PolicyVideoLibrary {
                     official = false,
                     poster = QuizIntroVideo.posterOf(context, id),
                     kind = upload.kind,
+                    hasAudio = upload.hasAudio,
                 )
             }
             else -> null
@@ -138,14 +143,18 @@ object PolicyVideoLibrary {
         if (target.isEmpty()) {
             val editor = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
             roles.forEach { editor.remove(it.prefKey) }
-            return if (editor.commit()) EditResult.Ok else EditResult.DeleteFailed
+            val saved = editor.commit()
+            return if (saved) EditResult.Ok else EditResult.DeleteFailed
         }
         if (!isPlayable(context, target)) return EditResult.NotFound
         val capability = capabilityRoles(context, target)
         if (!capability.containsAll(roles)) return EditResult.RoleInvalid
         val editor = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
         roles.forEach { editor.putString(it.prefKey, target) }
-        return if (editor.commit()) EditResult.Ok else EditResult.DeleteFailed
+        if (!editor.commit()) return EditResult.DeleteFailed
+        // The sound preference is independent of which item is selected: a picture or a silent
+        // video simply cannot resolve it to "on", and a later audio video keeps the default.
+        return EditResult.Ok
     }
 
     /** Deletes a local copy/upload and clears every role that pointed at it. */
@@ -192,6 +201,10 @@ object PolicyVideoLibrary {
     fun capabilityRoles(context: Context, id: String): Set<PolicyVideoRole> = when {
         localIdPattern.matches(id) -> {
             val upload = QuizIntroVideo.all(context).firstOrNull { it.id == id }
+            // Every locally stored video can fill either role: the upload path already checked
+            // it against this TV's decoders, and the quiz player streams from disk, so a long
+            // film is no different from a short one. Images stay wallpaper-only because the
+            // intro is played by ExoPlayer.
             when (upload?.kind) {
                 PolicyMediaKind.IMAGE -> setOf(PolicyVideoRole.LOCK_WALLPAPER)
                 PolicyMediaKind.VIDEO -> PolicyVideoRole.entries.toSet()
@@ -254,6 +267,7 @@ object PolicyVideoLibrary {
                 local = local,
                 upload = null,
                 capabilityRoles = item.roles,
+                hasAudio = item.hasAudio,
             )
         }
 
@@ -280,6 +294,7 @@ object PolicyVideoLibrary {
                     local = local,
                     upload = null,
                     capabilityRoles = local.item.roles.ifEmpty { PolicyVideoRole.entries.toSet() },
+                    hasAudio = local.item.hasAudio,
                 )
             }
 
@@ -303,11 +318,8 @@ object PolicyVideoLibrary {
                 catalog = null,
                 local = null,
                 upload = upload,
-                capabilityRoles = if (upload.kind == PolicyMediaKind.IMAGE) {
-                    setOf(PolicyVideoRole.LOCK_WALLPAPER)
-                } else {
-                    PolicyVideoRole.entries.toSet()
-                },
+                capabilityRoles = capabilityRoles(context, upload.id),
+                hasAudio = upload.hasAudio,
             )
         }
 
@@ -331,6 +343,7 @@ object PolicyVideoLibrary {
                     .put("state", item.state)
                     .put("roles", JSONArray(item.roles.map { it.wire }))
                     .put("capabilityRoles", JSONArray(item.capabilityRoles.map { it.wire }))
+                    .put("hasAudio", item.hasAudio)
                     .put("downloadedAt", item.downloadedAtMs / 1000L)
                     .put(
                         "download",
@@ -350,28 +363,68 @@ object PolicyVideoLibrary {
             )
         }
 
+        val lockId = roles[PolicyVideoRole.LOCK_WALLPAPER]
+        val lockHasAudio = lockId != null && hasAudio(context, lockId)
         return JSONObject()
             .put("catalog", OfficialMediaCatalog.snapshot(context, autoRefreshCatalog))
             .put(
                 "roles",
                 JSONObject()
                     .put("quiz", roles[PolicyVideoRole.QUIZ_INTRO] ?: JSONObject.NULL)
-                    .put("lock", roles[PolicyVideoRole.LOCK_WALLPAPER] ?: JSONObject.NULL),
+                    .put("lock", lockId ?: JSONObject.NULL),
             )
+            .put("lockSound", QuizIntroVideo.lockSound(context) && lockHasAudio)
             .put("items", itemArray)
             .put("downloads", OfficialMediaDownloader.snapshot())
             .put(
                 "limits",
                 JSONObject()
-                    .put("maxOfficialItems", OfficialMediaDownloader.MAX_OFFICIAL_ITEMS)
-                    .put("maxLocalItems", QuizIntroVideo.MAX_VIDEOS)
-                    .put("maxLocalBytes", QuizIntroVideo.MAX_TOTAL_BYTES)
+                    // Neither library has a count or total-byte quota; the page only needs the
+                    // per-file limits and the free-space guard below.
+                    .put("localKeepFreeBytes", QuizIntroVideo.KEEP_FREE_BYTES)
+                    .put("maxWallpaperDurationMs", 0L)
+                    .put("maxWallpaperFileBytes", PolicyVideoValidation.MAX_WALLPAPER_FILE_BYTES)
+                    .put("maxQuizDurationMs", PolicyVideoValidation.MAX_QUIZ_DURATION_MS)
+                    .put("maxQuizFileBytes", PolicyVideoValidation.MAX_QUIZ_FILE_BYTES)
+                    .put("maxImageUploadBytes", QuizIntroVideo.MAX_UPLOAD_BYTES)
+                    .put("maxImageStoredBytes", QuizIntroVideo.MAX_IMAGE_BYTES)
+                    .put("maxRequestBytes", PolicyVideoValidation.MAX_REQUEST_BYTES)
+                    // Legacy page aliases. Never widen these to the wallpaper limits.
                     .put("keepFreeBytes", OfficialMediaDownloader.KEEP_FREE_BYTES)
                     .put("maxFileBytes", PolicyVideoValidation.MAX_FILE_BYTES)
                     .put("maxUploadBytes", QuizIntroVideo.MAX_UPLOAD_BYTES)
                     .put("maxImageBytes", QuizIntroVideo.MAX_IMAGE_BYTES)
                     .put("maxDurationMs", PolicyVideoValidation.MAX_DURATION_MS),
             )
+    }
+
+    /** Whether the current item has an audio track this TV can decode. */
+    fun lockSound(context: Context): Boolean {
+        val id = lockRoleId(context) ?: return false
+        return QuizIntroVideo.lockSound(context) && hasAudio(context, id)
+    }
+
+    /**
+     * The parent page's wallpaper-sound switch. Only a selected video with a decodable audio
+     * track may turn the preference on; the caller maps `false` to `MEDIA_SOUND_UNAVAILABLE`.
+     */
+    fun setLockSound(context: Context, enabled: Boolean): Boolean {
+        val id = lockRoleId(context)
+        if (enabled) {
+            if (id == null || !hasAudio(context, id)) return false
+        }
+        return QuizIntroVideo.setLockSound(context, enabled)
+    }
+
+    private fun hasAudio(context: Context, id: String): Boolean = when {
+        officialIdPattern.matches(id) -> {
+            val catalog = OfficialMediaCatalog.find(context, id)
+            val installed = OfficialMediaStore.read(context, id)
+            catalog?.hasAudio ?: installed?.item?.hasAudio ?: false
+        }
+        localIdPattern.matches(id) ->
+            QuizIntroVideo.all(context).firstOrNull { it.id == id }?.hasAudio == true
+        else -> false
     }
 
     /** The cached cover of a local upload or downloaded official film, for the poster route. */

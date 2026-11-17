@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import app.orchard.tv.BuildConfig
 import app.orchard.tv.policy.media.PolicyVideoLibrary
+import app.orchard.tv.policy.media.PolicyVideoValidation
 import app.orchard.tv.quiz.QuizIntroVideo
 import com.planyourtv.policy.LocalPin
 import fi.iki.elonen.NanoHTTPD
@@ -104,6 +105,8 @@ object ParentWebAdmin {
                 // LOCAL/unbound check and by the recovery code's own persisted lockout.
                 session.method == Method.POST && path == "/api/parent/recover" -> recover(session)
                 session.method == Method.GET && path == "/api/parent/snapshot" -> snapshot(context, session)
+                session.method == Method.GET && path == "/api/parent/device" ->
+                    deviceStatus(context, session)
                 session.method == Method.GET && path == "/api/parent/intro-video" ->
                     introVideoStatus(context, session)
                 session.method == Method.POST && path == "/api/parent/intro-video" ->
@@ -126,6 +129,8 @@ object ParentWebAdmin {
                     write(context, session) { ParentCenterActions.selectMedia(context, it) }
                 session.method == Method.POST && path == "/api/parent/media/delete" ->
                     write(context, session) { ParentCenterActions.deleteMedia(context, it) }
+                session.method == Method.POST && path == "/api/parent/media/sound" ->
+                    write(context, session) { ParentCenterActions.setMediaSound(context, it) }
                 session.method == Method.GET && path == "/api/parent/apps" -> apps(context, session)
                 session.method == Method.GET && path == "/api/parent/icon" -> icon(context, session)
                 session.method == Method.POST && path == "/api/parent/rules" ->
@@ -422,6 +427,23 @@ object ParentWebAdmin {
         )
     }
 
+    /**
+     * Read-only diagnostics for the device card on the Control page. It requires the editor
+     * lease like the snapshot: a second phone that only holds the quiz login must not be able
+     * to poll this TV's memory and permission state.
+     */
+    private fun deviceStatus(context: Context, session: IHTTPSession): Response {
+        val check = editorCheck(session)
+        val result = check.second
+        if (result is ParentWebAccess.EditorCheck.Failed) return editorError(result.code)
+        return json(
+            Response.Status.OK,
+            JSONObject()
+                .put("ok", true)
+                .put("device", ParentDeviceStatus.snapshot(context)),
+        )
+    }
+
     private fun introVideoStatus(context: Context, session: IHTTPSession): Response {
         val check = editorCheck(session)
         val result = check.second
@@ -467,7 +489,7 @@ object ParentWebAdmin {
      * buffered as JSON. The declared length is checked before any bytes are allocated or read;
      * the editor lease is checked before the body is consumed, so an unauthorized client never
      * gets to fill the TV's storage. Pictures may be up to 12 MiB on the wire and are normalised
-     * to one 4 MiB JPEG before publishing; videos stay capped at 4 MiB.
+     * to one 4 MiB JPEG before publishing; a video may be up to 128 MiB and has no duration cap.
      */
     private fun uploadIntroVideo(context: Context, session: IHTTPSession): Response {
         if (!requirePostHeader(session)) return jsonError(Response.Status.FORBIDDEN, "REQUEST_HEADER")
@@ -478,8 +500,10 @@ object ParentWebAdmin {
         val declared = session.headers["content-length"]?.toLongOrNull()
             ?: return jsonError(Response.Status.LENGTH_REQUIRED, "LENGTH_REQUIRED")
         if (declared <= 0L) return jsonError(Response.Status.BAD_REQUEST, "INTRO_VIDEO_INVALID")
-        if (declared > QuizIntroVideo.MAX_UPLOAD_BYTES) {
-            return jsonError(Response.Status.PAYLOAD_TOO_LARGE, "INTRO_IMAGE_TOO_LARGE")
+        // One raw cap for both kinds. QuizIntroVideo.receive() then applies the narrower image
+        // and video limits from the extension, so a large picture still gets its own error.
+        if (declared > PolicyVideoValidation.MAX_REQUEST_BYTES) {
+            return jsonError(Response.Status.PAYLOAD_TOO_LARGE, "MEDIA_TOO_LARGE")
         }
         val name = session.parameters["name"]?.firstOrNull().orEmpty()
         return when (val result = QuizIntroVideo.receive(context, session.inputStream, declared, name)) {
@@ -508,7 +532,6 @@ object ParentWebAdmin {
     private fun introVideoError(code: String): Response {
         val status = when (code) {
             "INTRO_VIDEO_TOO_LARGE", "INTRO_IMAGE_TOO_LARGE" -> Response.Status.PAYLOAD_TOO_LARGE
-            "INTRO_VIDEO_LIBRARY_FULL" -> Response.Status.CONFLICT
             "INTRO_VIDEO_NO_SPACE" -> Response.Status.SERVICE_UNAVAILABLE
             "INTRO_VIDEO_BAD_FORMAT", "INTRO_VIDEO_BAD_CODEC", "INTRO_VIDEO_HEVC",
             "INTRO_VIDEO_UNSUPPORTED_CODEC", "INTRO_VIDEO_BAD_RATIO", "INTRO_VIDEO_BAD_FPS",
@@ -638,8 +661,8 @@ object ParentWebAdmin {
 
     private fun outcomeStatus(code: String): Response.Status = when (code) {
         "STATE_CHANGED", "READ_ONLY", "NOT_READY", "SESSION_NOT_ACTIVE",
-        "MEDIA_BUSY", "MEDIA_NOT_READY", "MEDIA_IN_USE", "MEDIA_LIBRARY_FULL",
-        "RECOVERY_NOT_SET", "RECOVERY_FAILED", "LOCAL_ONLY" ->
+        "MEDIA_BUSY", "MEDIA_NOT_READY", "MEDIA_IN_USE",
+        "MEDIA_SOUND_UNAVAILABLE", "RECOVERY_NOT_SET", "RECOVERY_FAILED", "LOCAL_ONLY" ->
             Response.Status.CONFLICT
         "RECOVERY_LOCKED" -> Response.Status.TOO_MANY_REQUESTS
         "MEDIA_NOT_FOUND" -> Response.Status.NOT_FOUND

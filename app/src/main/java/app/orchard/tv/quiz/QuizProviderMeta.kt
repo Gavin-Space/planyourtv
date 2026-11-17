@@ -58,5 +58,18 @@ data class QuizProviderMeta(
             }
             return trimmed
         }
+
+        /**
+         * Voice reading uses a fixed DeepSeek TTS endpoint. Only accept the
+         * official host so a custom OpenAI-compatible base URL never receives
+         * the stored key for a TTS request it does not support.
+         */
+        fun isOfficialDeepSeek(baseUrl: String): Boolean {
+            val normalized = normalizeBaseUrl(baseUrl) ?: return false
+            val uri = runCatching { URI(normalized) }.getOrNull() ?: return false
+            if (!uri.host.equals("api.deepseek.com", ignoreCase = true)) return false
+            val path = uri.path.orEmpty().trimEnd('/')
+            return path.isEmpty() || path == "/v1"
+        }
     }
 }

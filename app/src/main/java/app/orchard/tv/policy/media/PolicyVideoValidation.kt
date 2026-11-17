@@ -31,10 +31,24 @@ import kotlin.math.roundToInt
  * them as `MEDIA_BAD_FORMAT` instead of showing the raw code.
  */
 object PolicyVideoValidation {
-    /** Local uploads stay small; official films keep their source bitrate. */
+    /**
+     * Legacy snapshot values. New pages read the split limits from the media snapshot; these
+     * stay at the old Web's 4 MiB / 15 seconds so a cached page cannot start treating a 128 MiB
+     * wallpaper as a quiz intro.
+     */
     const val MAX_FILE_BYTES = 4L * 1024 * 1024
+    const val MAX_QUIZ_DURATION_MS = 15_000L
+    const val MAX_DURATION_MS = MAX_QUIZ_DURATION_MS
+
+    /** A quiz intro is short; a local wallpaper may run as long as it fits in its byte cap. */
+    const val MAX_QUIZ_FILE_BYTES = 16L * 1024 * 1024
+    const val MAX_WALLPAPER_FILE_BYTES = 128L * 1024 * 1024
+
+    /** One raw upload request. The typed checks in the library stay the real safety boundary. */
+    const val MAX_REQUEST_BYTES = MAX_WALLPAPER_FILE_BYTES
+
     const val MAX_OFFICIAL_FILE_BYTES = 20L * 1024 * 1024
-    const val MAX_DURATION_MS = 15_000L
+    const val MAX_OFFICIAL_DURATION_MS = 15_000L
     const val MAX_WIDTH = 1920
     const val MAX_HEIGHT = 1080
     const val MAX_FPS = 30
@@ -63,13 +77,19 @@ object PolicyVideoValidation {
         data class Rejected(val code: String) : Result()
     }
 
-    /** Local uploads may use any codec this TV can decode at the actual size and rate. */
-    fun validateLocalUpload(file: File): Result = validate(file, localUpload = true)
+    /**
+     * Local uploads may use any codec this TV can decode at the actual size and rate. Wallpaper
+     * videos have no duration cap: the byte, storage and decoder limits are what keep playback
+     * safe. Pass [maxDurationMs] when validating for the quiz role.
+     */
+    fun validateLocalUpload(file: File, maxDurationMs: Long? = null): Result =
+        validate(file, localUpload = true, maxDurationMs = maxDurationMs)
 
     /** Official cloud media stays H.264-only so Android 5.0 TVs remain supported. */
-    fun validateOfficialDownload(file: File): Result = validate(file, localUpload = false)
+    fun validateOfficialDownload(file: File): Result =
+        validate(file, localUpload = false, maxDurationMs = MAX_OFFICIAL_DURATION_MS)
 
-    private fun validate(file: File, localUpload: Boolean): Result {
+    private fun validate(file: File, localUpload: Boolean, maxDurationMs: Long?): Result {
         val retriever = MediaMetadataRetriever()
         try {
             retriever.setDataSource(file.absolutePath)
@@ -79,7 +99,9 @@ object PolicyVideoValidation {
             val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                 ?.toLongOrNull() ?: return Result.Rejected("INTRO_VIDEO_INVALID")
             if (duration <= 0L) return Result.Rejected("INTRO_VIDEO_INVALID")
-            if (duration > MAX_DURATION_MS) return Result.Rejected("INTRO_VIDEO_BAD_DURATION")
+            if (maxDurationMs != null && duration > maxDurationMs) {
+                return Result.Rejected("INTRO_VIDEO_BAD_DURATION")
+            }
 
             var width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
                 ?.toIntOrNull() ?: 0
@@ -153,9 +175,9 @@ object PolicyVideoValidation {
                             }
                         }
                         mime.startsWith("audio/") -> {
-                            // Aerial accepts any owner-video audio track. ExoPlayer selects a
-                            // supported one and the lock wallpaper disables audio entirely;
-                            // official media keeps AAC-LC for the Android 5.0 floor.
+                            // Aerial accepts any owner-video audio track. The wallpaper sound
+                            // switch may only enable audio this TV can actually decode.
+                            // Official media keeps AAC-LC for the Android 5.0 floor.
                             if (!localUpload) {
                                 if (mime != "audio/mp4a-latm") {
                                     return Result.Rejected("INTRO_VIDEO_BAD_CODEC")
@@ -168,8 +190,10 @@ object PolicyVideoValidation {
                                 ) {
                                     return Result.Rejected("INTRO_VIDEO_BAD_CODEC")
                                 }
+                                hasAudio = true
+                            } else if (hasAudioDecoder(mime)) {
+                                hasAudio = true
                             }
-                            hasAudio = true
                         }
                     }
                 }
@@ -185,6 +209,33 @@ object PolicyVideoValidation {
             runCatching { retriever.release() }
         }
     }
+
+    /**
+     * Whether at least one audio track has a regular decoder on this TV. Used for the sound
+     * switch and for the one-time migration of local videos uploaded before `info.json`
+     * carried `hasAudio`.
+     */
+    fun probeHasAudio(file: File): Boolean {
+        val extractor = MediaExtractor()
+        return try {
+            extractor.setDataSource(file.absolutePath)
+            (0 until extractor.trackCount).any { index ->
+                val mime = extractor.getTrackFormat(index).getString(MediaFormat.KEY_MIME)
+                    ?: return@any false
+                mime.startsWith("audio/") && hasAudioDecoder(mime)
+            }
+        } catch (error: Exception) {
+            Log.w(TAG, "could not probe a policy video's audio", error)
+            false
+        } finally {
+            runCatching { extractor.release() }
+        }
+    }
+
+    private fun hasAudioDecoder(mime: String): Boolean =
+        MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.any { codec ->
+            !codec.isEncoder && codec.supportedTypes.any { it.equals(mime, ignoreCase = true) }
+        }
 
     private fun isHevc(mime: String): Boolean = mime == "video/hevc" || mime == "video/h265"
 

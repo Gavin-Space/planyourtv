@@ -195,7 +195,6 @@ body.web-disabled .top { margin-top: clamp(18px, 6vh, 54px); }
 .web-disabled .error { margin: 0 0 14px; }
 .gate h2 { margin-bottom: 8px; }
 .gate .muted { margin-bottom: 20px; }
-.gate .fineprint { margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
 .gate .notice { margin: 0 0 20px; }
 #gateTakeover { margin: 0 0 10px; }
 
@@ -237,11 +236,6 @@ body.web-disabled .top { margin-top: clamp(18px, 6vh, 54px); }
   margin: 0 0 14px;
   color: var(--muted);
   font-size: 13px;
-}
-.fineprint {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
 }
 .error, .ok, .warn {
   min-height: 0;
@@ -664,6 +658,13 @@ details.solution p {
   font-size: 14px;
 }
 .check input { flex: none; width: 20px; min-height: 20px; accent-color: var(--accent); }
+
+.speech-settings { margin-top: 6px; }
+.speech-content { transition: opacity 160ms ease; }
+.speech-content.is-off { opacity: 0.45; }
+.speech-content .section-label { margin-bottom: 0; }
+.speech-content .check { margin-top: 4px; min-height: 38px; }
+.speech-content > .hint { margin-top: 4px; }
 
 .inline-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 
@@ -1322,6 +1323,7 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
   gap: 10px;
   margin: 0 0 16px;
 }
+.level-add-row.single { grid-template-columns: 1fr; }
 .level-add-card.wrong {
   grid-column: 1 / -1;
   min-height: 64px;
@@ -1380,6 +1382,16 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
 }
 .level-add-card:active:not(:disabled) .level-add-plus { transform: scale(0.94); }
 .level-add-copy { display: grid; gap: 3px; min-width: 0; }
+.level-add-count {
+  flex: none;
+  align-self: center;
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.level-add-count.warn { color: var(--warn); }
 .level-add-title { font-size: 13.5px; font-weight: 650; }
 .level-add-meta {
   overflow: hidden;
@@ -1401,6 +1413,15 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
   overflow: hidden;
 }
 .level-row.short { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); }
+.level-row.paused { background: color-mix(in srgb, var(--surface) 72%, var(--surface-2)); }
+.level-row.paused .level-title { color: var(--muted); }
+.level-paused-note {
+  color: var(--warn);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
 .level-main {
   display: flex;
   align-items: flex-start;
@@ -1445,9 +1466,64 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
 .level-actions {
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 2px;
   padding: 6px 8px 6px 0;
+}
+.level-switch {
+  position: relative;
+  display: block;
+  width: 36px;
+  height: 20px;
+  margin-bottom: 3px;
+  cursor: pointer;
+}
+.level-switch input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+  /* Keep the real input as the hit target. If the visible track sits on top,
+     Chromium turns one tap into two clicks (track/label, then a click
+     forwarded to the input); the page's global click debounce swallows that
+     second click and the switch never toggles. pointer-events: none on the
+     track below pairs with this. */
+  z-index: 1;
+}
+.level-switch-track {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  pointer-events: none;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+.level-switch-track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.16s ease;
+}
+.level-switch input:checked + .level-switch-track {
+  border-color: transparent;
+  background: var(--accent);
+}
+.level-switch input:checked + .level-switch-track::after { transform: translateX(16px); }
+.level-switch input:disabled + .level-switch-track { opacity: 0.5; }
+.level-switch input:focus-visible + .level-switch-track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .level-action {
   display: grid;
@@ -1464,18 +1540,6 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
 }
 .level-action:disabled { opacity: 0.35; }
 .level-action[data-level-delete] { color: var(--danger); }
-.level-undo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
-  font-size: 13px;
-}
-.level-undo .btn { margin: 0; }
 .level-rules-note { margin: 0 0 10px; font-size: 12.5px; }
 .field > label,
 .field-label {
@@ -1969,23 +2033,38 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
   font-size: 12px;
 }
 .import-tools { margin-top: 8px; }
-#importCopyState { margin-top: 6px; }
-.import-prompt {
+.import-tools .btn[aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.import-prompt-hint { margin: 8px 0 0; font-size: 12px; }
+.import-prompt-panel {
   margin-top: 12px;
-  padding: 10px 12px;
+  padding: 10px 12px 12px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--surface-2);
 }
-.import-prompt summary {
-  cursor: pointer;
+.import-prompt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.import-prompt-title {
   color: var(--ink);
   font-size: 13px;
+  font-weight: 620;
+}
+.import-copy-state {
+  min-height: 1em;
+  color: var(--accent);
+  font-size: 12px;
   font-weight: 600;
 }
 .import-prompt-text {
   max-height: 300px;
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   padding: 10px;
   overflow: auto;
   border-radius: 8px;
@@ -2011,6 +2090,14 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
+.import-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.import-error-actions .ok { margin: 0; font-size: 12px; }
 .import-summary {
   display: grid;
   gap: 0;
@@ -2065,6 +2152,70 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
 }
 .import-result .muted { margin: 0 0 4px; font-size: 12.5px; }
 .import-result .hint { margin: 6px 0 0; }
+.import-risk {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.import-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.import-page-label {
+  flex: 1 1 auto;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+.import-page-jump { display: flex; align-items: center; gap: 6px; }
+.import-page-jump input {
+  width: 64px;
+  padding: 7px 8px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.import-page-jump input::-webkit-outer-spin-button,
+.import-page-jump input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.import-progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.import-progress-fill {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 180ms ease-out;
+}
+.import-progress-count {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+}
+.import-progress .muted { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; }
+.import-progress .hint { margin: 8px 0 10px; }
+.import-progress .btn { width: 100%; }
 
 .level-divider {
   margin: 18px 0;
@@ -2107,6 +2258,137 @@ body.subpage-open main { padding-top: max(10px, env(safe-area-inset-top)); }
 }
 .level-action[data-custom-level-delete],
 .level-action[data-wrong-level-delete] { color: var(--danger); }
+
+/* Package draft: one level being assembled from several sources. The card and
+   the "unsaved" badge keep it visually apart from the saved level list, so
+   adding a source never reads as creating a level. */
+.level-draft-badge {
+  flex: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.level-draft-badge:empty { display: none; }
+.package-sources-card {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+.package-sources-card > .hint { margin: 0 2px; }
+/* The live total stays above the source rows so a parent can check several
+   imports without scrolling through each source. */
+.package-sources-card > .package-totals {
+  justify-self: start;
+  margin: 0 2px;
+}
+.package-totals.warn { background: var(--warn-soft); color: var(--warn); }
+.package-source-list { display: grid; gap: 6px; }
+.package-source-list:empty { display: none; }
+.package-source-list .level-row.package-source-row {
+  border: 0;
+  border-radius: 11px;
+  background: var(--surface);
+  box-shadow: inset 3px 0 0 var(--line);
+}
+.package-source-list .level-row.package-source-row.custom {
+  box-shadow: inset 3px 0 0 var(--select-border);
+}
+.package-source-list .level-row.package-source-row.wrong {
+  box-shadow: inset 3px 0 0 var(--warn);
+}
+.package-source-list .package-source-row .level-main { padding: 9px 6px 9px 12px; }
+.level-source-eyebrow {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+/* The draft lives on the answer-range page, so adding a source never pushes
+   another "add level" page. */
+.package-draft-panel {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 16px;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+  border-radius: 16px;
+  background: var(--surface);
+}
+.package-draft-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.package-draft-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  flex: 1;
+  min-width: 0;
+}
+.package-draft-heading h2 {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.package-draft-name { margin: 0; }
+.package-draft-panel .package-sources-card { margin-top: 2px; }
+.package-source-choices {
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 0;
+}
+.package-source-choices .level-add-card {
+  min-height: 52px;
+  padding: 8px 10px;
+  border-radius: 11px;
+}
+.package-source-choices .level-add-plus {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  font-size: 17px;
+}
+.package-source-choices .level-add-card.wrong { grid-column: auto; }
+.package-tag-field { margin: 2px 0 0; }
+.package-draft-panel > .available,
+.package-draft-panel > .error { margin: 0; }
+.package-draft-actions { margin-top: 2px; }
+.package-draft-actions .btn { width: 100%; }
+/* Configured sources shown under each saved level on the answer-range page. */
+.level-source-list {
+  display: grid;
+  gap: 2px;
+  margin-top: 2px;
+}
+.level-source-line {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.level-source-line::before {
+  content: "";
+  flex: none;
+  width: 4px;
+  height: 4px;
+  margin-top: 0.5em;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--muted) 55%, transparent);
+}
 
 .tag-choice-list { display: grid; gap: 8px; }
 .tag-choice {

@@ -46,6 +46,54 @@ class QuizGenerationRequestTest {
         )
     }
 
+    @Test fun questionTypeDefaultsToSingleAndIsValidated() {
+        val default = QuizGeneration.parseRequest(JSONObject())
+        assertTrue(default is QuizGeneration.ParseResult.Ok)
+        assertEquals(
+            QuizGeneration.QUESTION_TYPE_SINGLE,
+            (default as QuizGeneration.ParseResult.Ok).request.questionType,
+        )
+        val mixed = QuizGeneration.parseRequest(JSONObject().put("questionType", " MIXED "))
+        assertEquals(
+            QuizGeneration.QUESTION_TYPE_MIXED,
+            (mixed as QuizGeneration.ParseResult.Ok).request.questionType,
+        )
+        assertTrue(
+            QuizGeneration.parseRequest(JSONObject().put("questionType", "essay")) is
+                QuizGeneration.ParseResult.Invalid,
+        )
+    }
+
+    @Test fun rememberedQuestionTypeDefaultsToSingleAndIsWhitelisted() {
+        val prefs = JSONObject()
+            .put("grade", "4b")
+            .put("subject", "math")
+            .put("textbook", "renjiao")
+            .put("scope", "unit")
+            .put("unit", 3)
+            .put("targetCount", 30)
+            .put("options", 4)
+            .put("difficulty", "medium")
+            .put("customTopic", "")
+            .put("autoAdd", true)
+            .put("presetVersion", 3)
+        assertEquals(
+            QuizGeneration.QUESTION_TYPE_SINGLE,
+            QuizGeneration.parsePreferences(prefs)!!.optString("questionType"),
+        )
+        assertEquals(
+            QuizGeneration.QUESTION_TYPE_MULTIPLE,
+            QuizGeneration.parsePreferences(
+                JSONObject(prefs.toString()).put("questionType", "multiple"),
+            )!!.optString("questionType"),
+        )
+        assertNull(
+            QuizGeneration.parsePreferences(
+                JSONObject(prefs.toString()).put("questionType", "essay"),
+            ),
+        )
+    }
+
     @Test fun legacySingleBatchCountStillWorks() {
         val parsed = QuizGeneration.parseRequest(JSONObject().put("count", 10))
         assertTrue(parsed is QuizGeneration.ParseResult.Ok)

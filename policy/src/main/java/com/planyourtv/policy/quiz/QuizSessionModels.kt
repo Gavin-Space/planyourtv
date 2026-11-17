@@ -5,9 +5,32 @@ import org.json.JSONObject
 import java.security.MessageDigest
 
 /** The wire schema stored under `quiz.session`. Bump this for any incompatible edit. */
-const val QUIZ_SCHEMA_VERSION = 6
+const val QUIZ_SCHEMA_VERSION = 7
 /** v2 differs only by the removed daily-attempt limit, so old records remain readable. */
 const val QUIZ_MIN_SCHEMA_VERSION = 2
+
+/** Answer semantics are separate from how the question is presented. */
+enum class QuizAnswerKind(val wire: String) {
+    SINGLE("single"),
+    MULTIPLE("multiple"),
+    ;
+
+    companion object {
+        fun fromWire(value: String): QuizAnswerKind? =
+            entries.firstOrNull { it.wire == value.trim().lowercase() }
+    }
+}
+
+/** The renderer selector. New presentations must fail closed in older builds. */
+enum class QuizPresentation(val wire: String) {
+    CHOICE("choice"),
+    ;
+
+    companion object {
+        fun fromWire(value: String): QuizPresentation? =
+            entries.firstOrNull { it.wire == value.trim().lowercase() }
+    }
+}
 const val QUIZ_MAX_EARNED_MINUTES = 180
 const val QUIZ_MAX_DIFFICULTY_MINUTES = 30
 /**
@@ -145,7 +168,23 @@ data class QuizItem(
      * it is uploaded; the UI keeps using the display index.
      */
     val optionOrder: List<Int> = emptyList(),
-)
+    /**
+     * v7 multiple-choice correct set: zero-based, ascending, unique. Empty for
+     * single-choice items, which continue to use [answerIndex].
+     */
+    val answerIndices: List<Int> = emptyList(),
+    /** v7 answer semantics; old records decode as [QuizAnswerKind.SINGLE]. */
+    val answerKind: QuizAnswerKind = QuizAnswerKind.SINGLE,
+    /** v7 renderer selector; old records decode as [QuizPresentation.CHOICE]. */
+    val presentation: QuizPresentation = QuizPresentation.CHOICE,
+) {
+    val isMultipleChoice: Boolean
+        get() = answerKind == QuizAnswerKind.MULTIPLE
+
+    /** The complete correct set in the current option space. */
+    val correctIndices: List<Int>
+        get() = if (isMultipleChoice) answerIndices else listOf(answerIndex)
+}
 
 data class QuizSubmission(
     val questionId: String,
@@ -158,6 +197,11 @@ data class QuizSubmission(
      * records so an in-flight round keeps its old answerDisplaySec semantics.
      */
     val feedbackHoldMs: Long? = null,
+    /**
+     * v7 multiple-choice selection: zero-based, ascending, unique. Empty for
+     * single-choice and timed-out submissions.
+     */
+    val selectedIndices: List<Int> = emptyList(),
 )
 
 /**
@@ -504,7 +548,23 @@ object QuizSessionCodec {
             val id = item.requiredString("questionId", prefix, errors)
             val prompt = item.requiredString("prompt", prefix, errors)
             val optionsArray = item.requiredArray("options", prefix, errors)
-            val answer = item.requiredInt("answerIndex", prefix, errors)
+            val answerIndexRaw = optionalInt(item, "answerIndex", prefix, errors)
+            val answerIndicesArray = optionalArray(item, "answerIndices", prefix, errors)
+            val hasAnswerIndex = item.has("answerIndex") && !item.isNull("answerIndex")
+            val hasAnswerIndices = item.has("answerIndices") && !item.isNull("answerIndices")
+            val typeText = optionalString(item, "type", prefix, errors)
+            val presentationText = optionalString(item, "presentation", prefix, errors)
+            val declaredKind = typeText?.let { raw ->
+                QuizAnswerKind.fromWire(raw).also {
+                    if (it == null) errors += "$prefix.type: unsupported"
+                }
+            }
+            val presentation = when {
+                presentationText == null -> QuizPresentation.CHOICE
+                else -> QuizPresentation.fromWire(presentationText).also {
+                    if (it == null) errors += "$prefix.presentation: unsupported"
+                } ?: QuizPresentation.CHOICE
+            }
             val explanation = item.optString("explanation", "")
             val subject = item.optString("subject", "")
             val grade = item.optString("grade", "")
@@ -521,7 +581,7 @@ object QuizSessionCodec {
             val cacheId = item.optString("cacheId", "").take(64)
             val sourceKind = item.optString("sourceKind", "").take(32)
             val sourceRef = item.optString("sourceRef", "").take(128)
-            if (id == null || prompt == null || optionsArray == null || answer == null ||
+            if (id == null || prompt == null || optionsArray == null ||
                 points == null || timeLimit == null
             ) {
                 continue
@@ -545,7 +605,69 @@ object QuizSessionCodec {
             if (options.map { it.trim().lowercase() }.toSet().size != options.size) {
                 errors += "$prefix.options: duplicate"
             }
-            if (answer !in options.indices) errors += "$prefix.answerIndex: out of range"
+            val answerKind = declaredKind ?: if (hasAnswerIndices) {
+                QuizAnswerKind.MULTIPLE
+            } else {
+                QuizAnswerKind.SINGLE
+            }
+            val answerIndices = mutableListOf<Int>()
+            if (answerIndicesArray != null) {
+                for (j in 0 until answerIndicesArray.length()) {
+                    val raw = answerIndicesArray.opt(j)
+                    if (raw !is Number || raw.toDouble() != raw.toLong().toDouble()) {
+                        errors += "$prefix.answerIndices[$j]: not an integer"
+                    } else {
+                        answerIndices += raw.toInt()
+                    }
+                }
+                if (answerIndices.size != answerIndicesArray.length()) {
+                    // Keep the error concrete even when a mixed array also
+                    // contains valid integers.
+                    errors += "$prefix.answerIndices: invalid"
+                }
+                if (answerIndices.any { it !in options.indices }) {
+                    errors += "$prefix.answerIndices: out of range"
+                }
+                if (answerIndices.distinct().size != answerIndices.size) {
+                    errors += "$prefix.answerIndices: duplicate"
+                }
+                answerIndices.sort()
+            }
+            val answerIndex = when (answerKind) {
+                QuizAnswerKind.SINGLE -> {
+                    if (hasAnswerIndices && answerIndices.isNotEmpty()) {
+                        errors += "$prefix.answerIndices: not allowed for single"
+                    }
+                    if (!hasAnswerIndex || answerIndexRaw == null) {
+                        errors += "$prefix.answerIndex: required"
+                    } else if (answerIndexRaw !in options.indices) {
+                        errors += "$prefix.answerIndex: out of range"
+                    }
+                    answerIndexRaw
+                }
+                QuizAnswerKind.MULTIPLE -> {
+                    if (!hasAnswerIndices || answerIndicesArray == null) {
+                        errors += "$prefix.answerIndices: required"
+                    } else {
+                        if (answerIndices.size !in 2..options.lastIndex) {
+                            errors += "$prefix.answerIndices: count out of range"
+                        }
+                        if (options.size < 3) {
+                            errors += "$prefix.options: multiple-choice requires at least 3"
+                        }
+                        if (answerIndices.size == options.size) {
+                            errors += "$prefix.answerIndices: must leave a distractor"
+                        }
+                    }
+                    val first = answerIndices.firstOrNull() ?: answerIndexRaw
+                    if (first != null && hasAnswerIndex && answerIndexRaw != null &&
+                        answerIndexRaw != first
+                    ) {
+                        errors += "$prefix.answerIndex: mismatch"
+                    }
+                    first
+                }
+            }
             if (explanation.length > QUIZ_MAX_EXPLANATION_CHARS) errors += "$prefix.explanation: too long"
             if (subject.length > 32 || grade.length > 32 || difficulty.length > 16) {
                 errors += "$prefix.metadata: too long"
@@ -596,7 +718,10 @@ object QuizSessionCodec {
                 questionId = id,
                 prompt = prompt,
                 options = options,
-                answerIndex = answer,
+                // An invalid answer always leaves an error behind; the
+                // placeholder keeps construction total without changing the
+                // failure result.
+                answerIndex = answerIndex ?: 0,
                 explanation = explanation,
                 subject = subject,
                 grade = grade,
@@ -614,6 +739,9 @@ object QuizSessionCodec {
                 sourceKind = sourceKind,
                 sourceRef = sourceRef,
                 optionOrder = optionOrder,
+                answerIndices = if (answerKind == QuizAnswerKind.MULTIPLE) answerIndices else emptyList(),
+                answerKind = answerKind,
+                presentation = presentation,
             )
         }
         return if (errors.isEmpty()) items else null
@@ -647,6 +775,25 @@ object QuizSessionCodec {
                 val prefix = "run.submissions[$i]"
                 val questionId = obj.requiredString("questionId", prefix, errors)
                 val selected = if (obj.isNull("selectedIndex")) null else obj.requiredInt("selectedIndex", prefix, errors)
+                val selectedIndicesArray = optionalArray(obj, "selectedIndices", prefix, errors)
+                val selectedIndices = mutableListOf<Int>()
+                if (selectedIndicesArray != null) {
+                    for (j in 0 until selectedIndicesArray.length()) {
+                        val raw = selectedIndicesArray.opt(j)
+                        if (raw !is Number || raw.toDouble() != raw.toLong().toDouble()) {
+                            errors += "$prefix.selectedIndices[$j]: not an integer"
+                        } else {
+                            selectedIndices += raw.toInt()
+                        }
+                    }
+                    if (selectedIndices.size != selectedIndicesArray.length()) {
+                        errors += "$prefix.selectedIndices: invalid"
+                    }
+                    if (selectedIndices.distinct().size != selectedIndices.size) {
+                        errors += "$prefix.selectedIndices: duplicate"
+                    }
+                    selectedIndices.sort()
+                }
                 val isCorrect = obj.requiredBoolean("correct", prefix, errors)
                 val timedOut = obj.requiredBoolean("timedOut", prefix, errors)
                 val answeredAt = obj.requiredLong("answeredAt", prefix, errors)
@@ -667,6 +814,7 @@ object QuizSessionCodec {
                         timedOut,
                         answeredAt,
                         holdMs,
+                        selectedIndices,
                     )
                 }
             }
@@ -760,7 +908,18 @@ object QuizSessionCodec {
         .put("questionId", item.questionId)
         .put("prompt", item.prompt)
         .put("options", JSONArray(item.options))
-        .put("answerIndex", item.answerIndex)
+        .apply {
+            if (item.isMultipleChoice) {
+                // Deliberately omit answerIndex: an old APK then rejects the
+                // item instead of grading it as a single-choice question.
+                put("type", item.answerKind.wire)
+                put("presentation", item.presentation.wire)
+                put("answerIndices", JSONArray(item.answerIndices))
+            } else {
+                // Keep the legacy single-choice wire byte-for-byte compatible.
+                put("answerIndex", item.answerIndex)
+            }
+        }
         .put("explanation", item.explanation)
         .put("subject", item.subject)
         .put("grade", item.grade)
@@ -813,7 +972,14 @@ object QuizSessionCodec {
                         .put("correct", sub.correct)
                         .put("timedOut", sub.timedOut)
                         .put("answeredAt", sub.answeredAt)
-                        .put("feedbackHoldMs", sub.feedbackHoldMs ?: JSONObject.NULL),
+                        .put("feedbackHoldMs", sub.feedbackHoldMs ?: JSONObject.NULL)
+                        .apply {
+                            // Omit the empty collection so single-choice
+                            // submissions keep their old wire shape.
+                            if (sub.selectedIndices.isNotEmpty()) {
+                                put("selectedIndices", JSONArray(sub.selectedIndices))
+                            }
+                        },
                 )
             }
         })
@@ -900,6 +1066,36 @@ object QuizSessionCodec {
             return null
         }
         return value.toInt()
+    }
+
+    private fun optionalString(
+        root: JSONObject,
+        name: String,
+        prefix: String,
+        errors: MutableList<String>,
+    ): String? {
+        if (!root.has(name) || root.isNull(name)) return null
+        val value = root.opt(name)
+        if (value !is String) {
+            errors += "$prefix.$name: not a string"
+            return null
+        }
+        return value
+    }
+
+    private fun optionalArray(
+        root: JSONObject,
+        name: String,
+        prefix: String,
+        errors: MutableList<String>,
+    ): JSONArray? {
+        if (!root.has(name) || root.isNull(name)) return null
+        val value = root.opt(name)
+        if (value !is JSONArray) {
+            errors += "$prefix.$name: not an array"
+            return null
+        }
+        return value
     }
 
     private fun optionalInt(

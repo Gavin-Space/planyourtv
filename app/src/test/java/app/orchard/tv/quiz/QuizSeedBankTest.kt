@@ -1,11 +1,15 @@
 package app.orchard.tv.quiz
 
 import com.planyourtv.policy.TvStore
+import com.planyourtv.policy.quiz.QuizAnswerKind
 import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizCurriculum
 import com.planyourtv.policy.quiz.QuizSessionCodec
+import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +30,28 @@ class QuizSeedBankTest {
           "explanation": "Because.",
           "subject": "数学",
           "grade": "小学一年级",
+          "difficulty": "easy",
+          "points": 1,
+          "timeLimitSec": 60,
+          "recommendedTimeSec": 60
+        }
+    """.trimIndent()
+
+    private fun multiItemJson(
+        id: String,
+        answerIndices: String = "0, 2",
+        prompt: String = "Which animals are mammals?",
+    ) = """
+        {
+          "questionId": "$id",
+          "prompt": "$prompt",
+          "options": ["whale", "penguin", "bat", "carp"],
+          "type": "multiple",
+          "presentation": "choice",
+          "answerIndices": [$answerIndices],
+          "explanation": "Whales and bats are mammals.",
+          "subject": "science",
+          "grade": "g1",
           "difficulty": "easy",
           "points": 1,
           "timeLimitSec": 60,
@@ -107,6 +133,76 @@ class QuizSeedBankTest {
     }
 
     @Test
+    fun multipleChoiceBankUsesItsOwnSeedTag() {
+        assertEquals(
+            1,
+            QuizSeedBank.importJson(bank(itemJson("seed-test-0030")), version = 1, nowMs = now),
+        )
+        assertEquals(
+            1,
+            QuizSeedBank.importMultiJson(
+                bank(multiItemJson("seed-multi-test-0031")),
+                version = 1,
+                nowMs = now,
+            ),
+        )
+        assertEquals(2, QuizQuestionCache.availableCount(nowMs = now))
+
+        // Replacing the single-choice bank must not delete multiple-choice rows.
+        assertEquals(
+            1,
+            QuizSeedBank.importJson(bank(itemJson("seed-test-0032")), version = 2, nowMs = now),
+        )
+        assertEquals(2, QuizQuestionCache.availableCount(nowMs = now))
+        var kinds = QuizQuestionCache.listBank(QuizQuestionCache.LOCAL_SCOPE, "all", nowMs = now)
+            .associate { it.question.questionId to it.question.answerKind }
+        assertEquals(QuizAnswerKind.SINGLE, kinds["seed-test-0032"])
+        assertEquals(QuizAnswerKind.MULTIPLE, kinds["seed-multi-test-0031"])
+
+        // Replacing the multiple-choice bank must not delete single-choice rows.
+        assertEquals(
+            1,
+            QuizSeedBank.importMultiJson(
+                bank(multiItemJson("seed-multi-test-0033")),
+                version = 2,
+                nowMs = now,
+            ),
+        )
+        assertEquals(2, QuizQuestionCache.availableCount(nowMs = now))
+        kinds = QuizQuestionCache.listBank(QuizQuestionCache.LOCAL_SCOPE, "all", nowMs = now)
+            .associate { it.question.questionId to it.question.answerKind }
+        assertEquals(QuizAnswerKind.SINGLE, kinds["seed-test-0032"])
+        assertEquals(QuizAnswerKind.MULTIPLE, kinds["seed-multi-test-0033"])
+    }
+
+    @Test
+    fun multipleChoiceImportKeepsTheAnswerSet() {
+        assertEquals(
+            1,
+            QuizSeedBank.importMultiJson(
+                bank(multiItemJson("seed-multi-test-0040")),
+                version = 1,
+                nowMs = now,
+            ),
+        )
+        assertEquals(
+            0,
+            QuizSeedBank.importMultiJson(
+                bank(multiItemJson("seed-multi-test-0040")),
+                version = 1,
+                nowMs = now,
+            ),
+        )
+
+        val item = QuizQuestionCache.listBank(QuizQuestionCache.LOCAL_SCOPE, "all", nowMs = now)
+            .single()
+            .question
+        assertEquals(QuizAnswerKind.MULTIPLE, item.answerKind)
+        assertEquals(listOf(0, 2), item.answerIndices)
+        assertEquals(0, item.answerIndex)
+    }
+
+    @Test
     fun freshInstallDefaultsToMidtermScope() {
         val prefs = QuizStudyProfile.current()
 
@@ -134,15 +230,78 @@ class QuizSeedBankTest {
     }
 
     @Test
+    fun brokenNewBankKeepsThePreviousSeedBank() {
+        assertEquals(
+            1,
+            QuizSeedBank.importJson(bank(itemJson("seed-test-0020")), version = 1, nowMs = now),
+        )
+
+        // Streaming import has already deleted the old rows by the time the
+        // second item turns out to be truncated; the transaction must roll back.
+        val broken = """{"items": [${itemJson("seed-test-0021")}, {"questionId": "seed-test-0022""""
+        assertEquals(0, QuizSeedBank.importJson(broken, version = 2, nowMs = now))
+
+        val ids = QuizQuestionCache.listBank(QuizQuestionCache.LOCAL_SCOPE, "all", nowMs = now)
+            .map { it.question.questionId }
+            .toSet()
+        assertEquals(setOf("seed-test-0020"), ids)
+
+        // The marker stayed unset, so a later valid asset can still import.
+        assertEquals(
+            1,
+            QuizSeedBank.importJson(bank(itemJson("seed-test-0022")), version = 2, nowMs = now),
+        )
+    }
+
+    @Test
+    fun unusableNewBankKeepsThePreviousSeedBank() {
+        assertEquals(
+            1,
+            QuizSeedBank.importJson(bank(itemJson("seed-test-0023")), version = 1, nowMs = now),
+        )
+
+        val invalid = bank(itemJson("seed-test-0024", answerIndex = 9))
+        assertEquals(0, QuizSeedBank.importJson(invalid, version = 2, nowMs = now))
+        assertEquals(1, QuizQuestionCache.availableCount(nowMs = now))
+    }
+
+    @Test
     fun shippedAssetImportsCleanly() {
         val context = RuntimeEnvironment.getApplication()
 
-        assertEquals(5_500, QuizSeedBank.install(context))
+        assertEquals(5_500, QuizSeedBank.installSingle(context))
         assertEquals(5_500, QuizQuestionCache.availableCount(nowMs = now))
-        assertEquals(0, QuizSeedBank.install(context))
+        assertEquals(0, QuizSeedBank.installSingle(context))
+        assertBundledScopes()
+    }
 
+    @Test
+    fun shippedMultiAssetImportsCleanlyWhenBundled() {
+        val context = RuntimeEnvironment.getApplication()
+        val bundled = context.assets.list("quiz")?.contains("seed_bank_multi.json") == true
+        assumeTrue("seed_bank_multi.json is generated separately", bundled)
+
+        val expected = context.assets.open("quiz/seed_bank_multi.json").bufferedReader().use {
+            JSONObject(it.readText()).optInt("count", 0)
+        }
+        assertTrue(expected > 0)
+
+        assertEquals(expected, QuizSeedBank.installMulti(context))
+        assertEquals(expected, QuizQuestionCache.availableCount(nowMs = now))
+        assertEquals(0, QuizSeedBank.installMulti(context))
+
+        // listBank is paged (default 50); this test needs the whole bank.
+        val items = QuizQuestionCache.listAllBank(QuizQuestionCache.LOCAL_SCOPE, nowMs = now)
+            .map { it.question }
+        assertEquals(expected, items.size)
+        assertTrue(items.all { it.answerKind == QuizAnswerKind.MULTIPLE })
+        assertTrue(items.all { it.answerIndices.size in 2..3 })
+        assertEveryBundledScopeHasItems()
+    }
+
+    private fun bundledScopes(): List<Pair<String, QuizAnswerScope>> {
         val curriculum = requireNotNull(QuizCurriculum.current())
-        var combinations = 0
+        val scopes = ArrayList<Pair<String, QuizAnswerScope>>()
         for (grade in 1..9) {
             for (subject in curriculum.subjectIds()) {
                 if (subject == QuizAnswerScope.SUBJECT_ALL) continue
@@ -155,17 +314,10 @@ class QuizSeedBankTest {
                     scopeType = "MIDTERM",
                     unitNo = null,
                     difficulty = null,
-                )
-                assertEquals(
-                    "$grade/$subject/$textbook",
-                    100,
-                    QuizQuestionCache.availableCount(nowMs = now, answerScope = scope),
-                )
-                combinations++
+                ) ?: continue
+                scopes += "$grade/$subject/$textbook" to scope
             }
         }
-        assertEquals(49, combinations)
-
         for (grade in 1..6) {
             val scope = QuizAnswerScope.create(
                 grade = grade,
@@ -175,11 +327,31 @@ class QuizSeedBankTest {
                 scopeType = "MIDTERM",
                 unitNo = null,
                 difficulty = null,
-            )
+            ) ?: continue
+            scopes += "XINANDA $grade/MATH" to scope
+        }
+        return scopes
+    }
+
+    private fun assertBundledScopes() {
+        val scopes = bundledScopes()
+        assertEquals(55, scopes.size)
+        for ((label, scope) in scopes) {
             assertEquals(
-                "XINANDA $grade/MATH",
+                label,
                 100,
                 QuizQuestionCache.availableCount(nowMs = now, answerScope = scope),
+            )
+        }
+    }
+
+    private fun assertEveryBundledScopeHasItems() {
+        val scopes = bundledScopes()
+        assertEquals(55, scopes.size)
+        for ((label, scope) in scopes) {
+            assertTrue(
+                "$label has no multiple-choice questions",
+                QuizQuestionCache.availableCount(nowMs = now, answerScope = scope) > 0,
             )
         }
     }

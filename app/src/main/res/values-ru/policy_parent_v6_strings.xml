@@ -92,11 +92,6 @@
     <string name="policy_v29_qr_pane_title">Центр для родителей</string>
     <string name="policy_v29_qr_pane_status">Настройка с телефона</string>
     <string name="policy_v29_qr_pane_summary">Локальные настройки теперь на телефоне. На телевизоре остались только переключатель детского режима и удалённое управление.</string>
-    <string name="policy_v29_qr_title">Настройте с телефона</string>
-    <string name="policy_v29_qr_same_wifi">Подключите телефон к той же сети Wi-Fi, что и телевизор, и отсканируйте код браузером.</string>
-    <string name="policy_v29_ro_rules">Текущие правила (только чтение)</string>
-    <string name="policy_v29_ro_windows">Будни: %1$d · Выходные: %2$d</string>
-    <string name="policy_v29_ro_used">Сегодня использовано: %1$d мин</string>
     <string name="policy_v6_study_apps">Учебные приложения</string>
     <string name="policy_v6_study_none">Нет</string>
     <string name="policy_v6_study_hint">Учебные приложения не учитываются и открываются только в режиме учёбы.</string>

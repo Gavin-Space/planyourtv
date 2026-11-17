@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="4dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="8dp">
+
+    <ScrollView
+        android:id="@+id/deviceListScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/deviceList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/addDeviceButton"
+        style="@style/ParentPrimaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:minHeight="48dp"
+        android:text="@string/devices_add_scan" />
+
+    <Button
+        android:id="@+id/manualDeviceButton"
+        style="@style/ParentSecondaryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minHeight="48dp"
+        android:text="@string/devices_add_manual" />
+</LinearLayout>

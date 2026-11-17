@@ -5,28 +5,27 @@
     zh: {
       eyebrow: "家长设置 · 局域网",
       title: "家长网页",
-      securityNote: "本页可配置题库与 AI 出题；仅在电视实际锁屏时，输入家长密码才能临时解锁；手动模式下还可开启一次计时。它不能结束计时、退出学习模式或修改守护与系统设置。",
       status_loading: "正在连接电视…",
-      status_none: "电视上还没有挑战",
+      status_none: "电视上还没有闯关",
       status_draft: "草稿已保存",
-      status_ready: "挑战已就绪",
-      status_running: "挑战进行中",
+      status_ready: "闯关已就绪",
+      status_running: "闯关进行中",
       status_settling: "正在结算",
       status_starting: "正在开始",
       status_start_failed: "启动失败",
       status_expired: "配置已过期",
       status_unreadable: "答题数据读取失败",
       status_blocked: "当前不可用",
-      detail_none: "先在电视锁屏点击「开始挑战答题」，再扫描二维码。",
+      detail_none: "先在电视锁屏点击「开始答题闯关」，再扫描二维码。",
       detail_draft: "草稿只在网页和电视暂存，发布后锁屏才会出现入口。",
-      detail_ready: "在电视锁屏点击「开始挑战答题」即可开始。",
+      detail_ready: "在电视锁屏点击「开始答题闯关」即可开始。",
       detail_running: "本轮在电视上进行，网页只读；结束后才能换题。",
-      detail_expired: "二维码或挑战已过期，请在电视上重新打开设置页。",
+      detail_expired: "二维码或闯关已过期，请在电视上重新打开设置页。",
       detail_unreadable: "请联系家长在电视上重置答题数据。",
-      detail_blocked: "当前没有可用的挑战。",
+      detail_blocked: "当前没有可开始的闯关。",
       readyDetail: "{n} 道题，至少答对 {m} 道。",
       gate_scan_title: "请从电视扫码",
-      gate_scan_text: "打开电视锁屏上的「开始挑战答题」，用手机扫描电视上的专用二维码。",
+      gate_scan_text: "打开电视锁屏上的「开始答题闯关」，用手机扫描电视上的专用二维码。",
       gate_pair_title: "家长验证",
       gate_pair_text: "请输入电视上的 6 位家长密码。验证后当天内再次打开无需输入；次日 0 点后需要重新验证。临时解锁只作用于电视锁屏。",
       gate_pair_expired: "二维码已过期，请在电视上刷新后重新扫码。",
@@ -72,9 +71,9 @@
       err_RECOVERY_FAILED: "重置失败，请重试。",
       err_NEW_PIN_INVALID: "新密码必须是 6 位数字。",
       err_PIN_TOO_SIMPLE: "请不要使用 123456 或 666666 这类简单密码。",
-      editor_locked: "本轮挑战进行中，网页只能查看摘要。",
-      challengeTitle: "本次挑战",
-      challengeHint: "题目只属于本次挑战；发布后电视锁屏才会显示入口。",
+      editor_locked: "本轮闯关进行中，网页只能查看摘要。",
+      challengeTitle: "本次闯关",
+      challengeHint: "题目只属于本次闯关；发布后电视锁屏才会显示入口。",
       addQuestion: "手动添加一道题",
       prompt: "题目",
       options: "选项（2–6 个，互不重复）",
@@ -86,10 +85,10 @@
       solution: "解题过程",
       points: "分数（1–5）",
       timeLimit: "本题时限（秒）",
-      addToList: "加入本次挑战",
+      addToList: "加入本次闯关",
       emptyList: "还没有题目，先添加一道题。",
       remove: "移除",
-      settingsTitle: "挑战规则",
+      settingsTitle: "闯关规则",
       defaultTime: "默认时限（秒）",
       pullCount: "每轮题目数量",
       minutesPerQuestion: "每答对 1 题获得分钟",
@@ -100,11 +99,11 @@
       answerDisplayHint: "解析滚动到底部后才开始倒计时；倒计时结束会自动进入下一题。",
       shuffle: "打乱选项顺序",
       publish: "发布到电视",
-      deleteSession: "删除挑战",
+      deleteSession: "删除闯关",
       logout: "退出家长设置",
-      published: "已发布到电视。请在电视锁屏开始挑战。",
-      deleted: "挑战已删除。",
-      confirmDelete: "确定删除当前挑战？",
+      published: "已发布到电视。请在电视锁屏开始闯关。",
+      deleted: "闯关已删除。",
+      confirmDelete: "确定删除当前闯关？",
       qErrPrompt: "请填写题目。",
       qErrOptions: "请填写 2–6 个互不相同的选项。",
       qErrCount: "至少需要一道题。",
@@ -122,9 +121,9 @@
       err_CONTENT_TYPE: "请求格式不正确。",
       err_INVALID_JSON: "请求内容无法读取。",
       err_INVALID_SESSION: "题目或规则不符合要求。",
-      err_SESSION_RUNNING: "挑战进行中，暂时不能修改。",
-      err_SESSION_EXISTS: "已有一份已就绪的挑战，请先删除或勾选替换。",
-      err_SESSION_CONFLICT: "同一份挑战的内容不一致，请重新打开设置。",
+      err_SESSION_RUNNING: "闯关进行中，暂时不能修改。",
+      err_SESSION_EXISTS: "已有一套就绪的闯关，请先删除或勾选替换。",
+      err_SESSION_CONFLICT: "电视上的闯关内容与本次不一致，请重新打开设置。",
       err_STORAGE_ERROR: "电视保存失败，请重试。",
       err_DOCUMENT_UNREADABLE: "电视上的答题配置已损坏，请重新保存一次。",
       err_INVALID_DOCUMENT: "答题规则不符合要求，请检查后重试。",
@@ -134,10 +133,10 @@
       err_NOT_FOUND: "接口不存在或版本不匹配。",
       err_NETWORK: "无法连接电视，请确认手机和电视在同一局域网。",
       aiTitle: "AI 出题",
-      aiIntro: "让模型生成选择题，再由你挑选加入本次挑战。也可以完全手动出题。",
+      aiIntro: "让模型生成选择题，再由你挑选加入本次闯关。也可以完全手动出题。",
       aiUnsupported: "此电视的 Android 版本不支持安全保存 API 密钥，因此只能手动出题。",
       aiUnsupportedBadge: "不可用",
-      consentText: "我同意将出题要求（主题、年级、难度、数量等）发送给模型服务；不会发送家庭信息。API 密钥只保存在电视本地（系统支持时加密），不会回传给手机页面，也不会保存到本产品的云端；生成题目时只随请求发送给你配置的模型服务商。",
+      consentText: "我同意将出题要求（主题、年级、难度、数量等）发送给模型服务；不会发送家庭信息。API 密钥只保存在电视本地（系统支持时加密），不会回传给手机页面，也不会保存到本产品的云端；生成题目时只随请求发送给你配置的模型服务商。若开启 DeepSeek 语音播报，题目、选项、答案和解题过程文本还会发送给 DeepSeek 语音服务。",
       consentHint: "不勾选时只能手动出题；撤回授权会删除电视上保存的密钥。",
       manualNote: "手动添加的题目只保存在电视上，不会上传。",
       baseUrl: "模型服务地址（HTTPS）",
@@ -237,6 +236,12 @@
       difficultyEasy: "简单",
       difficultyMedium: "中等",
       difficultyHard: "较难",
+      genQuestionType: "题型",
+      genTypeSingle: "单选",
+      genTypeMultiple: "多选",
+      genTypeMixed: "混合",
+      genTypeHint: "多选和混合题在电视上需要按“确认答案”提交；生成后请核对正确答案。",
+      genMultiReviewWarning: "本次生成包含多选题。AI 可能漏选正确项，请逐题核对后再入库。",
       genPoints: "每题分数",
       genTime: "每题时限（秒）",
       generateButton: "AI 出题",
@@ -270,7 +275,7 @@
       err_INVALID_JOB: "生成任务编号无效。",
       err_INVALID_REQUEST: "出题参数不正确。",
       warningsLabel: "提示",
-      qErrTooMany: "一次挑战最多 10 道题。",
+      qErrTooMany: "一次闯关最多 10 道题。",
       settingsMenuTitle: "设置",
       languageLabel: "语言",
       close: "关闭",
@@ -281,7 +286,7 @@
       rulesFirstHint: "只需设置一次，以后可在右上角齿轮中修改。",
       saveRules: "保存规则",
       saveAndPublish: "保存并发布",
-      rulesSaved: "挑战规则已保存。",
+      rulesSaved: "闯关规则已保存。",
       rulesNotSet: "未设置",
       rulesSummary: "至少答对 {m} 题",
       syncTitle: "答题配置同步",
@@ -307,11 +312,11 @@
       privacyTitle: "开始前，请了解数据如何保存",
       privacyIntro: "确认后才能进入；只需确认一次。",
       privacyLocalTitle: "保存在电视本地",
-      privacyLocal: "题目、答案和进度只保存在电视上，挑战结束即删除。",
+      privacyLocal: "题目、答案和进度只保存在电视上，闯关结束即删除。",
       privacyAiTitle: "AI 出题",
-      privacyAi: "主题、年级、难度等出题要求会发送给你配置的模型服务商；不会发送家庭信息。",
+      privacyAi: "主题、年级、难度等出题要求会发送给你配置的模型服务商；不会发送家庭信息。开启 DeepSeek 语音播报时，题目、选项、答案和解题过程文本也会发送给 DeepSeek 语音服务。",
       privacyKeyTitle: "API 密钥",
-      privacyKey: "密钥只保存在电视本地（系统支持时加密），不会回显给手机页面，也不会保存到本产品的云端；生成题目时只随请求发送给你配置的模型服务商。",
+      privacyKey: "密钥只保存在电视本地（系统支持时加密），不会回显给手机页面，也不会保存到本产品的云端；生成题目时只随请求发送给你配置的模型服务商。语音播报仅使用 DeepSeek 官方服务地址。",
       acceptAndContinue: "同意并继续",
       exit: "退出",
       cacheTitle: "题目缓存",
@@ -324,23 +329,22 @@
       cacheSourceValue: "当前来源：{s}",
       sourceLocal: "本地出题",
       sourceCloud: "云端题库",
-      cacheRebuild: "按当前挑战重建缓存",
+      cacheRebuild: "按当前闯关重建缓存",
       cacheClear: "清空未使用题目",
       cacheRebuilt: "缓存已重建。",
       cacheCleared: "未使用题目已清空。",
-      confirmClearCache: "确定清空尚未使用的题目？已发布但未开始的挑战也会受影响。",
-      err_NO_SESSION: "当前没有可重建的挑战。",
-      err_LEGACY_SESSION: "旧版挑战不能重建缓存，请重新发布。",
+      confirmClearCache: "确定清空尚未使用的题目？已发布但未开始的闯关也会受影响。",
+      err_NO_SESSION: "当前没有可重建的闯关。",
+      err_LEGACY_SESSION: "旧版闯关不能重建缓存，请重新发布。",
       err_CACHE_UNAVAILABLE: "题目缓存暂不可用，请稍后再试。",
       err_SESSION_RUNNING: "答题进行中，暂不能操作缓存。",
-      err_NOT_READY: "当前挑战还没有发布，无法重建缓存。",
-      err_INVALID_CONFIG: "挑战规则不符合要求。",
-      footer: "答题挑战只在电视上开始和结算；临时解锁仅在电视锁屏时可用，关屏或重启后恢复守护。",
+      err_NOT_READY: "当前闯关还没有发布，无法重建缓存。",
+      err_INVALID_CONFIG: "闯关规则不符合要求。",
+      footer: "答题闯关只在电视上开始和结算；临时解锁仅在电视锁屏时可用，关屏或重启后恢复守护。",
     },
     en: {
       eyebrow: "Parent setup · Local network",
       title: "Parent web page",
-      securityNote: "This page configures the question bank and AI generation. Only while the TV is actually on its lock screen can the parent password temporarily unlock it; in manual mode it can also start one timed session. It cannot end a timer, leave study mode, or change the guard or system settings.",
       status_loading: "Connecting to the TV…",
       status_none: "No challenge on the TV",
       status_draft: "Draft saved",
@@ -472,7 +476,7 @@
       aiIntro: "Let a model draft multiple-choice questions, then choose which ones join this challenge. Manual questions work without AI.",
       aiUnsupported: "This TV's Android version cannot store an API key securely, so only manual questions are available.",
       aiUnsupportedBadge: "Unavailable",
-      consentText: "I agree that question requirements (subject, grade, difficulty, count, and similar settings) may be sent to the model service. No family information is sent. The API key is stored only on the TV (encrypted when the system supports it), is never sent back to the phone page, and is never saved to our cloud; when generating questions it is sent only to the model provider you configure.",
+      consentText: "I agree that question requirements (subject, grade, difficulty, count, and similar settings) may be sent to the model service. No family information is sent. The API key is stored only on the TV (encrypted when the system supports it), is never sent back to the phone page, and is never saved to our cloud; when generating questions it is sent only to the model provider you configure. When DeepSeek voice reading is enabled, question, option, answer, and explanation text is also sent to DeepSeek speech.",
       consentHint: "Without consent only manual questions are available. Revoking consent deletes the saved key from the TV.",
       manualNote: "Questions added manually are stored only on the TV and are not uploaded.",
       baseUrl: "Model service URL (HTTPS)",
@@ -572,6 +576,12 @@
       difficultyEasy: "Easy",
       difficultyMedium: "Medium",
       difficultyHard: "Hard",
+      genQuestionType: "Question type",
+      genTypeSingle: "Single answer",
+      genTypeMultiple: "Multiple answers",
+      genTypeMixed: "Mixed",
+      genTypeHint: "Multiple-answer questions need a confirm press on the TV. Review the answer key after generating.",
+      genMultiReviewWarning: "This batch has multiple-answer questions. AI may miss a correct option; review each answer key before adding them.",
       genPoints: "Points per question",
       genTime: "Time limit per question (seconds)",
       generateButton: "Generate questions",
@@ -644,9 +654,9 @@
       privacyLocalTitle: "Stored on the TV",
       privacyLocal: "Questions, answers, and progress stay on the TV and are deleted when the challenge ends.",
       privacyAiTitle: "AI questions",
-      privacyAi: "The subject, grade, difficulty, and similar requirements are sent to the model provider you configure. No family information is sent.",
+      privacyAi: "The subject, grade, difficulty, and similar requirements are sent to the model provider you configure. No family information is sent. If DeepSeek voice reading is enabled, question, option, answer, and explanation text is also sent to DeepSeek speech.",
       privacyKeyTitle: "API key",
-      privacyKey: "The key is stored only on the TV (encrypted when the system supports it) and is never shown again on this page. It is never saved to our cloud; when generating questions it is sent only to the model provider you configure.",
+      privacyKey: "The key is stored only on the TV (encrypted when the system supports it) and is never shown again on this page. It is never saved to our cloud; when generating questions it is sent only to the model provider you configure. Voice reading uses only the official DeepSeek endpoint.",
       acceptAndContinue: "Agree and continue",
       exit: "Exit",
       cacheTitle: "Question cache",
@@ -675,7 +685,6 @@
     ru: {
       eyebrow: "Настройка родителей · Локальная сеть",
       title: "Веб-страница для родителей",
-      securityNote: "Здесь настраиваются банк вопросов и генерация ИИ. Только когда телевизор действительно на экране блокировки, пароль родителя позволяет временно разблокировать его; в ручном режиме также можно запустить один сеанс. Страница не завершает таймер, не выходит из режима учёбы и не меняет защиту или системные настройки.",
       status_loading: "Подключение к телевизору…",
       status_none: "На телевизоре нет викторины",
       status_draft: "Черновик сохранён",
@@ -807,7 +816,7 @@
       aiIntro: "Модель создаёт вопросы с вариантами, а вы выбираете нужные для этой викторины. Можно добавлять вопросы вручную.",
       aiUnsupported: "Эта версия Android на телевизоре не позволяет безопасно хранить ключ API, поэтому доступны только вопросы, созданные вручную.",
       aiUnsupportedBadge: "Недоступно",
-      consentText: "Я согласен отправлять параметры задания (тема, класс, сложность, количество) сервису модели; семейные данные не отправляются. Ключ API хранится только на телевизоре (шифруется, если система это поддерживает), не возвращается на страницу телефона и не сохраняется в облаке продукта; при генерации вопросов он отправляется только выбранному вами сервису модели.",
+      consentText: "Я согласен отправлять параметры задания (тема, класс, сложность, количество) сервису модели; семейные данные не отправляются. Ключ API хранится только на телевизоре (шифруется, если система это поддерживает), не возвращается на страницу телефона и не сохраняется в облаке продукта; при генерации вопросов он отправляется только выбранному вами сервису модели. Если включено озвучивание DeepSeek, текст вопроса, вариантов, ответа и решения также отправляется в службу синтеза речи DeepSeek.",
       consentHint: "Без согласия доступны только ручные вопросы. Отзыв согласия удалит ключ с телевизора.",
       manualNote: "Вопросы, добавленные вручную, хранятся только на телевизоре и не отправляются в интернет.",
       baseUrl: "Адрес сервиса модели (HTTPS)",
@@ -907,6 +916,12 @@
       difficultyEasy: "Легко",
       difficultyMedium: "Средне",
       difficultyHard: "Сложно",
+      genQuestionType: "Тип вопросов",
+      genTypeSingle: "Один ответ",
+      genTypeMultiple: "Несколько ответов",
+      genTypeMixed: "Смешанные",
+      genTypeHint: "В вопросах с несколькими ответами на телевизоре нужно нажать «Подтвердить». После создания проверьте ключи ответов.",
+      genMultiReviewWarning: "В этой партии есть вопросы с несколькими ответами. ИИ может пропустить правильный вариант; проверьте каждый ключ перед добавлением.",
       genPoints: "Баллы за вопрос",
       genTime: "Лимит времени (секунды)",
       generateButton: "Создать вопросы",
@@ -979,9 +994,9 @@
       privacyLocalTitle: "Хранится на телевизоре",
       privacyLocal: "Вопросы, ответы и прогресс остаются на телевизоре и удаляются после завершения викторины.",
       privacyAiTitle: "Вопросы ИИ",
-      privacyAi: "Тема, класс, сложность и похожие параметры отправляются выбранному вами сервису модели. Семейные данные не отправляются.",
+      privacyAi: "Тема, класс, сложность и похожие параметры отправляются выбранному вами сервису модели. Семейные данные не отправляются. Если включено озвучивание DeepSeek, текст вопроса, вариантов, ответа и решения также отправляется в службу синтеза речи DeepSeek.",
       privacyKeyTitle: "Ключ API",
-      privacyKey: "Ключ хранится только на телевизоре (шифруется, если система это поддерживает) и больше не показывается на этой странице. Он не сохраняется в облаке продукта; при генерации вопросов он отправляется только выбранному вами сервису модели.",
+      privacyKey: "Ключ хранится только на телевизоре (шифруется, если система это поддерживает) и больше не показывается на этой странице. Он не сохраняется в облаке продукта; при генерации вопросов он отправляется только выбранному вами сервису модели. Для озвучивания используется только официальный адрес DeepSeek.",
       acceptAndContinue: "Согласиться и продолжить",
       exit: "Выйти",
       cacheTitle: "Кэш вопросов",
@@ -1010,7 +1025,6 @@
     uk: {
       eyebrow: "Налаштування батьків · Локальна мережа",
       title: "Вебсторінка для батьків",
-      securityNote: "Тут налаштовуються банк питань і генерація ШІ. Лише коли телевізор справді на екрані блокування, пароль батьків дозволяє тимчасово розблокувати його; у ручному режимі також можна запустити один сеанс. Сторінка не завершує таймер, не виходить із режиму навчання й не змінює захист чи системні налаштування.",
       status_loading: "Підключення до телевізора…",
       status_none: "На телевізорі немає вікторини",
       status_draft: "Чернетку збережено",
@@ -1142,7 +1156,7 @@
       aiIntro: "Модель створює питання з варіантами, а ви обираєте потрібні для цієї вікторини. Ручні питання працюють без ШІ.",
       aiUnsupported: "Ця версія Android на телевізорі не дозволяє безпечно зберігати ключ API, тому доступні лише питання, створені вручну.",
       aiUnsupportedBadge: "Недоступно",
-      consentText: "Я погоджуюся надсилати параметри завдання (тема, клас, складність, кількість) сервісу моделі; родинні дані не надсилаються. Ключ API зберігається лише на телевізорі (шифрується, якщо система це підтримує), не повертається на сторінку телефона й не зберігається у хмарі продукту; під час генерації питань він надсилається лише обраному вами сервісу моделі.",
+      consentText: "Я погоджуюся надсилати параметри завдання (тема, клас, складність, кількість) сервісу моделі; родинні дані не надсилаються. Ключ API зберігається лише на телевізорі (шифрується, якщо система це підтримує), не повертається на сторінку телефона й не зберігається у хмарі продукту; під час генерації питань він надсилається лише обраному вами сервісу моделі. Якщо ввімкнено озвучення DeepSeek, текст запитання, варіантів, відповіді та рішення також надсилається до служби синтезу мовлення DeepSeek.",
       consentHint: "Без згоди доступні лише ручні питання. Відкликання згоди видалить збережений ключ із телевізора.",
       manualNote: "Питання, додані вручну, зберігаються лише на телевізорі й не надсилаються в інтернет.",
       baseUrl: "Адреса сервісу моделі (HTTPS)",
@@ -1242,6 +1256,12 @@
       difficultyEasy: "Легко",
       difficultyMedium: "Середньо",
       difficultyHard: "Складно",
+      genQuestionType: "Тип питань",
+      genTypeSingle: "Одна відповідь",
+      genTypeMultiple: "Кілька відповідей",
+      genTypeMixed: "Змішані",
+      genTypeHint: "У питаннях із кількома відповідями на телевізорі треба натиснути «Підтвердити». Після створення перевірте ключі відповідей.",
+      genMultiReviewWarning: "У цій партії є питання з кількома відповідями. ШІ може пропустити правильний варіант; перевірте кожен ключ перед додаванням.",
       genPoints: "Балів за питання",
       genTime: "Ліміт часу (секунди)",
       generateButton: "Створити питання",
@@ -1314,9 +1334,9 @@
       privacyLocalTitle: "Зберігається на телевізорі",
       privacyLocal: "Питання, відповіді та поступ залишаються на телевізорі й видаляються після завершення вікторини.",
       privacyAiTitle: "Питання ШІ",
-      privacyAi: "Тема, клас, складність та подібні параметри надсилаються обраному вами сервісу моделі. Родинні дані не надсилаються.",
+      privacyAi: "Тема, клас, складність та подібні параметри надсилаються обраному вами сервісу моделі. Родинні дані не надсилаються. Якщо ввімкнено озвучення DeepSeek, текст запитання, варіантів, відповіді та рішення також надсилається до служби синтезу мовлення DeepSeek.",
       privacyKeyTitle: "Ключ API",
-      privacyKey: "Ключ зберігається лише на телевізорі (шифрується, якщо система це підтримує) й більше не показується на цій сторінці. Він не зберігається у хмарі продукту; під час генерації питань він надсилається лише обраному вами сервісу моделі.",
+      privacyKey: "Ключ зберігається лише на телевізорі (шифрується, якщо система це підтримує) й більше не показується на цій сторінці. Він не зберігається у хмарі продукту; під час генерації питань він надсилається лише обраному вами сервісу моделі. Для озвучення використовується лише офіційна адреса DeepSeek.",
       acceptAndContinue: "Погодитися й продовжити",
       exit: "Вийти",
       cacheTitle: "Кеш питань",
@@ -1345,7 +1365,6 @@
     kk: {
       eyebrow: "Ата-ана баптауы · Жергілікті желі",
       title: "Ата-анаға арналған веб-бет",
-      securityNote: "Мұнда сұрақтар банкі мен ЖИ генерациясы бапталады. Тек теледидар шынымен құлыптау экранында болғанда ғана ата-ана құпиясөзі оны уақытша аша алады; қолмен режимінде бір сеансты да бастауға болады. Бет таймерді аяқтамайды, оқу режимінен шықпайды және қорғанысты немесе жүйелік баптауларды өзгертпейді.",
       status_loading: "Теледидарға қосылу…",
       status_none: "Теледидарда викторина жоқ",
       status_draft: "Жоба сақталды",
@@ -1477,7 +1496,7 @@
       aiIntro: "Модель нұсқалары бар сұрақтар жасайды, ал сіз осы викторинаға қажеттерін таңдайсыз. Қолмен қосу AI-сыз да жұмыс істейді.",
       aiUnsupported: "Теледидардағы Android нұсқасы API кілтін қауіпсіз сақтауға мүмкіндік бермейді, сондықтан тек қолмен жасалған сұрақтар қолжетімді.",
       aiUnsupportedBadge: "Қолжетімсіз",
-      consentText: "Сұрақ талаптарын (тақырып, сынып, қиындық, саны) модель қызметіне жіберуге келісемін; отбасылық ақпарат жіберілмейді. API кілті тек теледидарда сақталады (жүйе қолдаса, шифрланады), телефон бетіне қайтарылмайды және өнім бұлтында сақталмайды; сұрақ жасау кезінде ол тек сіз баптаған модель қызметіне жіберіледі.",
+      consentText: "Сұрақ талаптарын (тақырып, сынып, қиындық, саны) модель қызметіне жіберуге келісемін; отбасылық ақпарат жіберілмейді. API кілті тек теледидарда сақталады (жүйе қолдаса, шифрланады), телефон бетіне қайтарылмайды және өнім бұлтында сақталмайды; сұрақ жасау кезінде ол тек сіз баптаған модель қызметіне жіберіледі. DeepSeek дауыстап оқу қосулы болса, сұрақ, нұсқалар, жауап және шешу жолы мәтіні де DeepSeek дауыс қызметіне жіберіледі.",
       consentHint: "Келісімсіз тек қолмен қосу қолжетімді. Келісімді қайтарып алсаңыз, теледидардағы кілт жойылады.",
       manualNote: "Қолмен қосылған сұрақтар тек теледидарда сақталады және интернетке жіберілмейді.",
       baseUrl: "Модель қызметінің мекенжайы (HTTPS)",
@@ -1577,6 +1596,12 @@
       difficultyEasy: "Оңай",
       difficultyMedium: "Орташа",
       difficultyHard: "Қиын",
+      genQuestionType: "Сұрақ түрі",
+      genTypeSingle: "Бір жауап",
+      genTypeMultiple: "Бірнеше жауап",
+      genTypeMixed: "Аралас",
+      genTypeHint: "Бірнеше жауапты сұрақтар теледидарда «Растау» түймесімен жіберіледі. Жасалғаннан кейін жауап кілттерін тексеріңіз.",
+      genMultiReviewWarning: "Бұл топта бірнеше жауапты сұрақтар бар. ЖИ дұрыс нұсқаны өткізіп жіберуі мүмкін; қосу алдында әр кілтті тексеріңіз.",
       genPoints: "Әр сұраққа ұпай",
       genTime: "Уақыт шегі (секунд)",
       generateButton: "Сұрақ жасау",
@@ -1649,9 +1674,9 @@
       privacyLocalTitle: "Теледидарда сақталады",
       privacyLocal: "Сұрақтар, жауаптар және барыс тек теледидарда қалады және викторина аяқталғанда жойылады.",
       privacyAiTitle: "AI сұрақтары",
-      privacyAi: "Тақырып, сынып, қиындық және сол сияқты талаптар сіз баптаған модель қызметіне жіберіледі. Отбасылық ақпарат жіберілмейді.",
+      privacyAi: "Тақырып, сынып, қиындық және сол сияқты талаптар сіз баптаған модель қызметіне жіберіледі. Отбасылық ақпарат жіберілмейді. DeepSeek дауыстап оқу қосулы болса, сұрақ, нұсқалар, жауап және шешу жолы мәтіні де DeepSeek дауыс қызметіне жіберіледі.",
       privacyKeyTitle: "API кілті",
-      privacyKey: "Кілт тек теледидарда сақталады (жүйе қолдаса, шифрланады) және бұл бетте қайта көрсетілмейді. Ол өнім бұлтында сақталмайды; сұрақ жасау кезінде тек сіз баптаған модель қызметіне жіберіледі.",
+      privacyKey: "Кілт тек теледидарда сақталады (жүйе қолдаса, шифрланады) және бұл бетте қайта көрсетілмейді. Ол өнім бұлтында сақталмайды; сұрақ жасау кезінде тек сіз баптаған модель қызметіне жіберіледі. Дауыстап оқу тек DeepSeek ресми мекенжайын пайдаланады.",
       acceptAndContinue: "Келісіп жалғастыру",
       exit: "Шығу",
       cacheTitle: "Сұрақтар кэші",
@@ -1751,7 +1776,7 @@
       clearAnswered: "清空已回答",
       clearWrong: "清空错题",
       clearAll: "清空全部题库",
-      confirmClearUnused: "清空所有未使用的题目？未开始的挑战会受影响，且不能撤销。",
+      confirmClearUnused: "清空所有未使用的题目？未开始的闯关会受影响，且不能撤销。",
       confirmClearAnswered: "删除所有已回答的记录？此操作不能撤销。",
       confirmClearWrong: "删除所有错题记录？此操作不能撤销。",
       confirmClearAll: "清空整个本地题库？此操作不能撤销。",
@@ -2625,7 +2650,9 @@
       levelEmptyTitle: "还没有设置关卡",
       levelEmptyText: "添加一个答题范围，孩子就能在电视上像选关一样答题。",
       levelMaxHint: "最多设置 {n} 个关卡。",
-      levelUndo: "撤销",
+      levelDeleteConfirmTitle: "删除关卡？",
+      levelDeleteConfirmText: "确定删除「{name}」？删除后不能恢复，题库中的题目不受影响。",
+      levelDeleteConfirmAction: "删除",
       levelDeleted: "已删除「{name}」",
       levelSaved: "关卡已保存",
       levelOrderSaved: "关卡顺序已保存",
@@ -2633,10 +2660,10 @@
       levelNamePlaceholder: "例如：语文期中冲刺",
       levelNameHint: "最多 10 个字；不填时电视显示范围摘要。",
       levelNameTooLong: "关卡名称最多 10 个字。",
-      levelAddTitle: "添加关卡",
+      levelAddTitle: "新建关卡",
       levelEditTitle: "编辑关卡",
-      levelAvailable: "可用 {n} 题",
-      levelShort: "每轮需要 {pull} 题，当前只有 {available} 题",
+      levelAvailable: "总题量 {total} 道 · 可用 {available} 题",
+      levelShort: "总题量 {total} 道 · 每轮需要 {pull} 题，当前可用 {available} 题",
       levelDuplicate: "这个范围已经存在于其他关卡，请换一个范围。",
       levelSave: "保存关卡",
       levelFallbackName: "关卡 {n}",
@@ -2659,7 +2686,9 @@
       levelEmptyTitle: "No levels yet",
       levelEmptyText: "Add an answer range so your child can pick it on the TV like a game level.",
       levelMaxHint: "Up to {n} levels.",
-      levelUndo: "Undo",
+      levelDeleteConfirmTitle: "Delete level?",
+      levelDeleteConfirmText: "Delete “{name}”? This cannot be undone. Questions in the bank are not affected.",
+      levelDeleteConfirmAction: "Delete",
       levelDeleted: "Deleted “{name}”",
       levelSaved: "Level saved",
       levelOrderSaved: "Level order saved",
@@ -2667,10 +2696,10 @@
       levelNamePlaceholder: "e.g. Chinese midterm sprint",
       levelNameHint: "Up to 10 characters. Leave empty to show the range summary on TV.",
       levelNameTooLong: "Level name must be 10 characters or fewer.",
-      levelAddTitle: "Add level",
+      levelAddTitle: "New level",
       levelEditTitle: "Edit level",
-      levelAvailable: "{n} questions ready",
-      levelShort: "Needs {pull} per round; only {available} ready",
+      levelAvailable: "{total} total · {available} usable",
+      levelShort: "{total} total · needs {pull} per round; only {available} usable",
       levelDuplicate: "This range already exists in another level. Choose a different range.",
       levelSave: "Save level",
       levelFallbackName: "Level {n}",
@@ -2693,7 +2722,9 @@
       levelEmptyTitle: "Уровней пока нет",
       levelEmptyText: "Добавьте диапазон вопросов, чтобы ребёнок мог выбрать его на ТВ как уровень игры.",
       levelMaxHint: "Можно добавить не больше {n} уровней.",
-      levelUndo: "Отменить",
+      levelDeleteConfirmTitle: "Удалить уровень?",
+      levelDeleteConfirmText: "Удалить «{name}»? Это нельзя отменить. Вопросы в банке не пострадают.",
+      levelDeleteConfirmAction: "Удалить",
       levelDeleted: "Удалён уровень «{name}»",
       levelSaved: "Уровень сохранён",
       levelOrderSaved: "Порядок уровней сохранён",
@@ -2701,10 +2732,10 @@
       levelNamePlaceholder: "например: Подготовка к четверти",
       levelNameHint: "До 10 символов. Если пусто, на ТВ показывается описание диапазона.",
       levelNameTooLong: "Название уровня — не больше 10 символов.",
-      levelAddTitle: "Добавить уровень",
+      levelAddTitle: "Новый уровень",
       levelEditTitle: "Изменить уровень",
-      levelAvailable: "Готово вопросов: {n}",
-      levelShort: "Нужно {pull} за раунд, готово только {available}",
+      levelAvailable: "Всего {total} · доступно {available}",
+      levelShort: "Всего {total} · нужно {pull} за раунд, доступно {available}",
       levelDuplicate: "Такой диапазон уже есть в другом уровне. Выберите другой диапазон.",
       levelSave: "Сохранить уровень",
       levelFallbackName: "Уровень {n}",
@@ -2727,7 +2758,9 @@
       levelEmptyTitle: "Рівнів ще немає",
       levelEmptyText: "Додайте діапазон питань, щоб дитина могла вибрати його на ТБ як рівень гри.",
       levelMaxHint: "Можна додати щонайбільше {n} рівнів.",
-      levelUndo: "Скасувати",
+      levelDeleteConfirmTitle: "Видалити рівень?",
+      levelDeleteConfirmText: "Видалити «{name}»? Це неможливо скасувати. Питання в банку не постраждають.",
+      levelDeleteConfirmAction: "Видалити",
       levelDeleted: "Видалено рівень «{name}»",
       levelSaved: "Рівень збережено",
       levelOrderSaved: "Порядок рівнів збережено",
@@ -2735,10 +2768,10 @@
       levelNamePlaceholder: "наприклад: Підготовка до семестру",
       levelNameHint: "До 10 символів. Якщо порожньо, на ТБ показується опис діапазону.",
       levelNameTooLong: "Назва рівня — не більше 10 символів.",
-      levelAddTitle: "Додати рівень",
+      levelAddTitle: "Новий рівень",
       levelEditTitle: "Змінити рівень",
-      levelAvailable: "Готово питань: {n}",
-      levelShort: "Потрібно {pull} за раунд, готово лише {available}",
+      levelAvailable: "Усього {total} · доступно {available}",
+      levelShort: "Усього {total} · потрібно {pull} за раунд, доступно {available}",
       levelDuplicate: "Такий діапазон уже є в іншому рівні. Виберіть інший діапазон.",
       levelSave: "Зберегти рівень",
       levelFallbackName: "Рівень {n}",
@@ -2761,7 +2794,9 @@
       levelEmptyTitle: "Деңгейлер әзірге жоқ",
       levelEmptyText: "Бала ТВ-де ойын деңгейі ретінде таңдай алатындай сұрақ ауқымын қосыңыз.",
       levelMaxHint: "Ең көбі {n} деңгей қосуға болады.",
-      levelUndo: "Қайтару",
+      levelDeleteConfirmTitle: "Деңгейді жою керек пе?",
+      levelDeleteConfirmText: "«{name}» деңгейін жою керек пе? Бұны қайтару мүмкін емес. Банктегі сұрақтарға әсер етпейді.",
+      levelDeleteConfirmAction: "Жою",
       levelDeleted: "«{name}» деңгейі жойылды",
       levelSaved: "Деңгей сақталды",
       levelOrderSaved: "Деңгей реті сақталды",
@@ -2769,10 +2804,10 @@
       levelNamePlaceholder: "мысалы: Тоқсанға дайындық",
       levelNameHint: "10 таңбаға дейін. Бос болса, ТВ-де ауқым сипаттамасы көрсетіледі.",
       levelNameTooLong: "Деңгей атауы 10 таңбадан аспауы керек.",
-      levelAddTitle: "Деңгей қосу",
+      levelAddTitle: "Жаңа деңгей",
       levelEditTitle: "Деңгейді өзгерту",
-      levelAvailable: "Дайын сұрақтар: {n}",
-      levelShort: "Раундқа {pull} керек, дайын тек {available}",
+      levelAvailable: "Барлығы {total} · қолжетімді {available}",
+      levelShort: "Барлығы {total} · раундқа {pull} керек, қолжетімді {available}",
       levelDuplicate: "Бұл ауқым басқа деңгейде бар. Басқа ауқым таңдаңыз.",
       levelSave: "Деңгейді сақтау",
       levelFallbackName: "{n}-деңгей",
@@ -2895,12 +2930,12 @@
     zh: {
       bankImport: "导入题库",
       bankEmptyImportTitle: "题库还是空的。可以手动导入题目，或让 AI 生成。",
-      bankSourceLine: "课程/AI {course} 道 · 自定义 {custom} 道 · 总 {total} / {capacity}",
+      bankSourceLine: "教材/AI {course} 道 · 自定义 {custom} 道 · 错题 {wrong} 道 · 总 {total} / {capacity}",
       bankSourceCustomTag: "标签：{name}",
       goImportBank: "导入题库",
       importTitle: "导入题库",
-      importSingleOnlyBadge: "仅支持单选",
-      importSingleOnlyHint: "仅导入单选题；多选、填空、听力、图片题和无答案题不会入库。",
+      importSingleOnlyBadge: "支持单选和多选",
+      importSingleOnlyHint: "支持单选题和多选题；填空、听力、图片题和无答案题不会入库。",
       importCloudNotice: "绑定云端题库时不能导入本地题目。请先解绑云端。",
       importTargetLabel: "导入到标签",
       importTagPlaceholder: "输入或选择标签",
@@ -2918,17 +2953,20 @@
       importInputLabel: "题目内容",
       importChooseFile: "选择 .json 或 .txt 文件",
       importPasteLabel: "也可以直接粘贴题目",
-      importTextPlaceholder: "粘贴规范 JSON，或编号文本（1. 题干 / A. 选项 / 答案：B）",
-      importDownloadTemplate: "下载 JSON 模板",
-      importCopyPrompt: "复制 AI 整理提示词",
-      importViewPrompt: "查看整理提示词",
+      importTextPlaceholder: "粘贴规范 JSON，或编号文本（1. 题干 / A. 选项 / 答案：B 或 A、C）",
+      importCopyConvertPrompt: "复制格式转换提示词",
+      importCopyGeneratePrompt: "复制出题提示词",
+      importPromptConvertTitle: "格式转换提示词",
+      importPromptGenerateTitle: "出题提示词",
+      importPromptHint: "已有题目用「格式转换」，从零出题用「出题」；复制后粘贴给任意 AI 助手，再把结果保存为 JSON 或直接粘贴到这里。",
       importAiHint: "可先把照片、PDF 或杂乱的文字交给常用的 AI 网页助手整理；导入前请删除姓名、学校、学号等隐私。导入器只校验文本，不会上传内容。",
       importDefaultDifficulty: "题目没写难度时使用",
       importParse: "解析并预览",
       importParsing: "正在解析…",
       importEmptyInput: "请先选择文件或粘贴题目。",
-      importTooLarge: "文件超过 512 KB，请拆成更小的文件。",
+      importTooLarge: "文件超过 16 MB，请拆成更小的文件。",
       importTooMany: "一次最多导入 {max} 道题，请拆成多个文件。",
+      importLargeRisk: "大文件导入可能需要数分钟，请保持页面打开。题目只保存在电视本机，不参与备份；清除应用数据会丢失。",
       importJsonInvalid: "JSON 格式不正确，请检查引号、逗号和括号。",
       importNoQuestions: "没有找到题目。",
       importFileReadFailed: "文件读取失败，请换一个文件或直接粘贴。",
@@ -2953,11 +2991,39 @@
       importConfirm: "导入 {n} 道题",
       importImporting: "正在导入…",
       importResultTitle: "已导入 {n} 道到「{name}」",
-      importResultDetail: "文件内重复 {file} 道 · 本标签已有 {collection} 道",
+      importResultDetail: "批内重复 {file} 道 · 本标签已有 {collection} 道",
       importResultCross: "其他来源重复 {n} 道（已保留）",
       importResultRemaining: "题库剩余 {remaining} / {capacity} 道",
+      importPreviewFormat: "文件格式",
+      importPreviewFileSize: "文件大小",
+      importPreviewBatches: "导入批次",
+      importFormatJson: "JSON",
+      importFormatText: "编号文本",
+      importPreviewLocalNote: "本预览只在本机解析文件用于确认格式，固定每页 10 条；去重和校验以实际导入结果为准。单次最多 {max} 道、{size}。",
+      importPagePrev: "上一页",
+      importPageNext: "下一页",
+      importPageGo: "跳转",
+      importPageJump: "跳转到页码",
+      importPreviewPage: "第 {page} / {pages} 页",
+      importProgressCount: "已处理 {processed} / {total} 题",
+      importProgressBatch: "第 {batch} / {batches} 批",
+      importProgressStats: "已新增 {appended} · 批内重复 {file} · 本标签已有 {collection} · 其他来源重复 {cross} · 校验失败 {rejected}",
+      importProgressHint: "导入期间请不要关闭页面。已完成的批次会保留；取消只停止后续批次。",
+      importCancel: "取消导入",
+      importCancelRequested: "正在停止…",
+      importResultPartialTitle: "部分导入：已写入 {n} 道到「{name}」",
+      importResultProcessed: "已处理 {processed} / {total} 题",
+      importResultCancelled: "已取消；已写入的批次会保留。修复文件后可以重试，重复题不会再次写入。",
+      importResultFailed: "第 {batch} 批失败，后续批次未导入。已写入的批次保留；修复后重试不会重复写入。",
       importPromptCopied: "提示词已复制。",
       importCopyFailed: "复制失败，请展开提示词后手动复制。",
+      importErrorCopy: "复制错误给 AI 修复",
+      importErrorCopied: "已复制，可直接粘贴给 AI。",
+      importErrorCopyFailed: "复制失败，请手动复制错误信息。",
+      importErrorCopyIntro: "我在导入学习机题库时遇到以下错误：",
+      importErrorCopyAsk: "请按上面的题号修复，并给出修复后的完整结果。要求：\n1. 只输出完整的 JSON（version 和 items），不要解释，不要 Markdown 代码块，不要前后缀。\n2. 除列出的错误题目外，不要改动其他题目；不要删题、合并题目。\n3. 使用英文双引号，没有尾逗号，答案下标都在 options 范围内。\n4. 多选题至少 3 个选项、至少 2 个正确答案，且不能全选（至少保留 1 个错误选项）。如果原题所有选项都正确，请把其中一个选项改成明确错误的说法，不要改成单选，也不要删题。",
+      importErrorCopySource: "原始数据：",
+      importErrorCopySourceOmitted: "（原始数据过长，未自动带上；请把完整原始数据一并粘贴给 AI。）",
       importField_item: "题目",
       importField_items: "题目列表",
       importField_text: "文本",
@@ -2975,9 +3041,12 @@
       importCode_COUNT: "选项数量必须是 2–6 个",
       importCode_INVALID_TEXT: "内容为空或超出长度",
       importCode_TOO_LONG: "内容太长",
-      importCode_ANSWER_FORMAT: "只支持单选：答案须是一个字母（A–F）或一个选项原文",
+      importCode_ANSWER_FORMAT: "答案格式不正确：单选写一个字母（A–F）或一个选项原文；多选写多个字母或 answerIndices 数组",
+      importCode_OPTIONS_TOO_FEW: "多选题至少要有 3 个选项",
+      importCode_ANSWER_TOO_FEW: "多选题至少要有 2 个正确答案",
+      importCode_ANSWER_ALL: "多选题不能全选，至少要保留 1 个错误选项",
       importCode_ANSWER_RANGE: "答案不在选项范围内",
-      importCode_ANSWER_CONFLICT: "answer 和 answerIndex 不能同时填写",
+      importCode_ANSWER_CONFLICT: "answer、answerIndex、answerIndices 只能填写一个",
       importCode_INVALID_DIFFICULTY: "难度只能是 easy、medium 或 hard",
       importCode_NO_ITEMS: "没有题目",
       importCode_TOO_MANY_ITEMS: "一次最多 200 道题",
@@ -3055,50 +3124,134 @@
       err_TOO_MANY_ITEMS: "一次最多导入 200 道题。",
       err_TOO_MANY_LEVELS: "课程、自定义与错题复习关卡合计最多 20 个。",
       err_INVALID_INDEX: "题目位置不正确，请重新解析。",
-      importAiPrompt: `你是题库整理助手。请把我给你的题目资料整理成学习机能导入的 JSON，只输出 JSON。只整理单选题。
+      importConvertPrompt: `你是题库格式转换助手。我会给你一批已有题目，请原样转换成学习机能导入的 JSON，只输出 JSON。不要新增、改写、合并题目。
 
-输出格式（必须严格遵守）：
+输出字段：
+version 固定为 1。
+items 是题目数组。
+prompt 是题干。
+options 是选项数组。
+type 只能是 single 或 multiple。
+单选使用 answerIndex，多选使用 answerIndices，下标都从 0 开始。
+硬性格式（先检查再输出）：
+- 单选：type 为 "single"，只写一个 answerIndex（从 0 开始），只能有 1 个正确项。
+- 多选：type 为 "multiple"，只写 answerIndices（升序、不重复）；至少 2 项，且必须少于 options 数量；不能全选，至少留 1 个错误项。4 个选项时 [0,1,2,3] 会被拒绝。
+- 不要同时写 answerIndex 和 answerIndices；不要输出上面字段以外的字段。
+explanation 是解析，可选。
+difficulty 只能是 easy、medium、hard，可选。
+
+参考样例：
 {
   "version": 1,
   "items": [
     {
-      "prompt": "题干",
-      "options": ["选项1", "选项2", "选项3", "选项4"],
-      "answer": "B",
-      "explanation": "解析，没有就省略这个字段",
-      "difficulty": "easy、medium 或 hard，不确定就省略"
+      "prompt": "12 + 8 等于多少？",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20，所以选 20。",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "下列哪些是哺乳动物？",
+      "options": ["鲸", "企鹅", "蝙蝠", "海豚"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "鲸、蝙蝠和海豚都是哺乳动物，企鹅是鸟类。",
+      "difficulty": "medium"
     }
   ]
 }
 
-规则：
-1. 只输出 JSON 本身：不要解释，不要 Markdown 代码块，不要前后缀。
-2. prompt：原题题干，去掉题号，不改写、不补全、不合并；不超过 200 字。
-3. options：2–6 个，保持原题顺序；去掉“A.”“B、”“C）”等前缀；不要编号；每项不超过 60 字；内容不能重复。
-4. answer：只写一个大写字母（A–F），对应正确选项；不要写选项内容，不要写多个字母。
-5. explanation：原题有解析才写，最多 600 字；没有就省略，禁止自己编解析。
-6. difficulty：只能是 easy/medium/hard；原题没标就不写。
-7. 判断题写成两个选项 ["正确","错误"]，answer 写对应字母；组合选项（如 A. ①②）算单选，可以保留。
-8. 只保留单选题：多选题、不定项选择题、填空题、听力题、需要图片才能作答的题、缺少答案的题，整题跳过，不要猜答案；不要从多个正确项中任选一个，也不要把多选题改写成单选题。
-9. 不要生成资料里没有的题，不要修改题干里的数字、单位和选项。
-10. 一次最多输出 100 道。资料超过 100 道时，先输出前 100 道；我回复“继续”后，再输出下一批，不要重复已经输出的题。
-11. 输出前自检：每道题只有一个正确答案，题干没有要求选择多个；JSON 可解析；引号是英文双引号；没有尾逗号；每个 answer 都在 options 范围内；items 数量与整理出的题数一致。
+转换规则：
+1. 只输出 JSON，不要解释，不要 Markdown 代码块，不要任何前后缀。
+2. prompt 保留原题题意，去掉题号和选项，不改写、不补全、不合并，不超过 200 字。
+3. options 保留原题选项和顺序，至少 2 个、至多 6 个；去掉选项前面的字母编号；每项不超过 60 字；内容不能重复。
+4. 单选只写一个 answerIndex；多选写 answerIndices，按从小到大排列、去掉重复、至少两项。不要同时写两个答案字段，也不要把多选题压成一个答案。
+5. explanation 只在原题有解析时保留，最多 600 字；原题没有解析就省略，不要自己编写。
+6. difficulty 只在原题标注难度时填写，只能写 easy、medium、hard。
+7. 判断题写成两个选项 ["正确", "错误"]，用 answerIndex 表示答案；组合选项按单选处理并原样保留。
+8. 多选题至少 3 个选项、至少 2 个正确项，并至少保留 1 个错误项；不满足就整题跳过，不要猜答案，不要只挑一个正确项，也不要改成单选。
+9. 填空题、听力题、看图题、缺少答案或答案不确定的题，整题跳过。
+10. 不要生成资料里没有的题目，不要修改题干里的数字、单位和选项。
+11. 题目数量不设上限，资料里的题全部转换，不要为了数量删减。
+12. 输出前自检：JSON 能直接解析；所有字符串都用英文双引号；没有多余的逗号；每个答案下标都在 options 范围内；type 和答案字段匹配；items 数量与转换出的题数一致。
+13. 资料是图片或 PDF 时，先完整识别文字再转换；看不清的字用“□”代替，不要猜测。
+14. 如果一次回复放不下全部内容，先输出完整可解析的 JSON，我回复“继续”后再输出剩下的题，不要重复已经输出过的题。
 
-示例：
-{"version":1,"items":[{"prompt":"12 + 8 = ?","options":["18","20","22","24"],"answer":"B","explanation":"12 + 8 = 20","difficulty":"easy"}]}
+下面是我要转换的题目资料：`,
+      importGeneratePrompt: `你是出题助手。请按我给出的出题要求原创单选题和多选题，并整理成学习机能导入的 JSON，只输出 JSON。
 
-下面是要整理的资料：
-（在这里粘贴题目文字。如果是图片或 PDF，请先完整识别文字再整理；看不清的字用“□”代替，不要猜测。）`,
+输出字段：
+version 固定为 1。
+items 是题目数组。
+prompt 是题干。
+options 是选项数组。
+type 只能是 single 或 multiple。
+单选使用 answerIndex，多选使用 answerIndices，下标都从 0 开始。
+硬性格式（先检查再输出）：
+- 单选：type 为 "single"，只写一个 answerIndex（从 0 开始），只能有 1 个正确项。
+- 多选：type 为 "multiple"，只写 answerIndices（升序、不重复）；至少 2 项，且必须少于 options 数量；不能全选，至少留 1 个错误项。4 个选项时 [0,1,2,3] 会被拒绝。
+- 不要同时写 answerIndex 和 answerIndices；不要输出上面字段以外的字段。
+explanation 是解析。
+difficulty 只能是 easy、medium、hard。
+
+参考样例：
+{
+  "version": 1,
+  "items": [
+    {
+      "prompt": "12 + 8 等于多少？",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20。",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "下列哪些是哺乳动物？",
+      "options": ["鲸", "企鹅", "蝙蝠", "海豚"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "鲸、蝙蝠和海豚都是哺乳动物，企鹅是鸟类。",
+      "difficulty": "medium"
+    }
+  ]
+}
+
+出题规则：
+1. 只输出 JSON，不要解释，不要 Markdown 代码块，不要任何前后缀。
+2. 按题型要求出题：单选写 "type":"single" 和 "answerIndex"；多选写 "type":"multiple" 和 "answerIndices"；混合题型两种都要有；没有写题型就默认单选。
+3. prompt 完整、明确、无歧义，不带题号，不超过 200 字。
+4. options 至少 2 个、至多 6 个，互不重复；多选至少 3 个选项；去掉选项前面的字母编号；每项不超过 60 字；干扰项要合理但明确错误；不要使用“以上都对”“以上都不对”这类依赖其他选项的答案。
+5. 单选只能有一个正确项；多选至少有 2 个正确项，并至少保留 1 个错误项，不能把所有选项都标成正确。不要出填空题、听力题、看图题和需要图片才能作答的题。
+6. explanation 用 1 到 3 句话说明为什么选这些答案，不超过 600 字；不确定就省略，不要编造。
+7. difficulty 按题目实际难度填写，只能写 easy、medium、hard。
+8. 题目必须符合指定年级和学科水平，不超纲；数字、单位、事实和答案都必须正确。
+9. 同一批题目不要重复，也不要用只换数字或近义词的题凑数。
+10. 题目数量不设上限，按出题要求里的题量输出，不要因为数量多就删减、跳过或重复。
+11. 输出前自检：JSON 能直接解析；所有字符串都用英文双引号；没有多余的逗号；type 和答案字段匹配；单选只有一个答案；多选答案不少于 2 项且没有占满全部选项；每个答案下标都在 options 范围内；items 数量与题目数量一致。
+12. 如果一次回复放不下全部内容，先输出完整可解析的 JSON，我回复“继续”后再输出剩下的题，不要重复已经输出过的题。
+
+出题要求：
+学段/年级：小学三年级
+科目：数学
+教材/知识点：人教版三年级上册 第一单元
+题型：混合
+题量：20 道
+难度分布：easy 40%、medium 40%、hard 20%
+输出语言：中文
+额外要求：无`,
     },
     en: {
       bankImport: "Import bank",
       bankEmptyImportTitle: "The bank is empty. Import questions manually or generate them with AI.",
-      bankSourceLine: "Course/AI {course} · Custom {custom} · Total {total} / {capacity}",
+      bankSourceLine: "Textbook/AI {course} · Custom {custom} · Wrong {wrong} · Total {total} / {capacity}",
       bankSourceCustomTag: "Tag: {name}",
       goImportBank: "Import bank",
       importTitle: "Import question bank",
-      importSingleOnlyBadge: "Single choice only",
-      importSingleOnlyHint: "Only single-choice questions are imported; multiple-answer, fill-in, listening, image-based and answerless questions are skipped.",
+      importSingleOnlyBadge: "Single and multiple choice",
+      importSingleOnlyHint: "Single- and multiple-answer questions are imported; fill-in, listening, image-based and answerless questions are skipped.",
       importCloudNotice: "Local imports are unavailable while a cloud bank is linked. Unlink it first.",
       importTargetLabel: "Import into tag",
       importTagPlaceholder: "Type or choose a tag",
@@ -3116,17 +3269,20 @@
       importInputLabel: "Question content",
       importChooseFile: "Choose a .json or .txt file",
       importPasteLabel: "Or paste questions directly",
-      importTextPlaceholder: "Paste canonical JSON or numbered text (1. question / A. option / Answer: B)",
-      importDownloadTemplate: "Download JSON template",
-      importCopyPrompt: "Copy AI organizing prompt",
-      importViewPrompt: "View organizing prompt",
+      importTextPlaceholder: "Paste canonical JSON or numbered text (1. question / A. option / Answer: B or A, C)",
+      importCopyConvertPrompt: "Copy format-conversion prompt",
+      importCopyGeneratePrompt: "Copy question-generation prompt",
+      importPromptConvertTitle: "Format-conversion prompt",
+      importPromptGenerateTitle: "Question-generation prompt",
+      importPromptHint: "Have existing questions? Use format conversion. Starting from scratch? Use question generation. Copy one into any AI assistant, then save its JSON or paste it here.",
       importAiHint: "You can first have a familiar AI web assistant organize photos, PDFs, or messy text; remove names, school, student numbers, and other private data before importing. The importer only validates text and uploads nothing.",
       importDefaultDifficulty: "Used when a question has no difficulty",
       importParse: "Parse and preview",
       importParsing: "Parsing…",
       importEmptyInput: "Choose a file or paste questions first.",
-      importTooLarge: "The file is larger than 512 KB; split it into smaller files.",
+      importTooLarge: "The file is larger than 16 MB; split it into smaller files.",
       importTooMany: "At most {max} questions can be imported at once; split the file.",
+      importLargeRisk: "A large import can take several minutes; keep this page open. Questions are stored only on this TV and are not backed up; clearing app data deletes them.",
       importJsonInvalid: "Invalid JSON; check quotes, commas, and brackets.",
       importNoQuestions: "No questions were found.",
       importFileReadFailed: "Could not read the file. Choose another file or paste the text.",
@@ -3151,11 +3307,39 @@
       importConfirm: "Import {n} questions",
       importImporting: "Importing…",
       importResultTitle: "Imported {n} questions into “{name}”",
-      importResultDetail: "Duplicates in file: {file} · already in this tag: {collection}",
+      importResultDetail: "Duplicates within each batch: {file} · already in this tag: {collection}",
       importResultCross: "Duplicates in other sources: {n} (kept)",
       importResultRemaining: "Bank space left: {remaining} / {capacity}",
+      importPreviewFormat: "File format",
+      importPreviewFileSize: "File size",
+      importPreviewBatches: "Import batches",
+      importFormatJson: "JSON",
+      importFormatText: "Numbered text",
+      importPreviewLocalNote: "This preview parses the file locally only to confirm its format and shows 10 items per page. Deduplication and validation are final only in the import result. Up to {max} questions and {size} per import.",
+      importPagePrev: "Previous",
+      importPageNext: "Next",
+      importPageGo: "Go",
+      importPageJump: "Jump to page",
+      importPreviewPage: "Page {page} / {pages}",
+      importProgressCount: "Processed {processed} / {total} questions",
+      importProgressBatch: "Batch {batch} / {batches}",
+      importProgressStats: "Added {appended} · duplicates within each batch {file} · already in tag {collection} · other sources {cross} · rejected {rejected}",
+      importProgressHint: "Keep this page open while importing. Finished batches are kept; cancel stops only the remaining batches.",
+      importCancel: "Cancel import",
+      importCancelRequested: "Stopping…",
+      importResultPartialTitle: "Partial import: wrote {n} questions into “{name}”",
+      importResultProcessed: "Processed {processed} / {total} questions",
+      importResultCancelled: "Cancelled; batches already written are kept. Fix the file and retry; duplicates will not be written twice.",
+      importResultFailed: "Batch {batch} failed and later batches were not imported. Batches already written are kept; retrying after a fix will not duplicate them.",
       importPromptCopied: "Prompt copied.",
       importCopyFailed: "Copy failed. Open the prompt and copy it manually.",
+      importErrorCopy: "Copy errors for AI repair",
+      importErrorCopied: "Copied. Paste it into your AI assistant.",
+      importErrorCopyFailed: "Copy failed. Select the error messages and copy them manually.",
+      importErrorCopyIntro: "I got these errors while importing questions into a study device:",
+      importErrorCopyAsk: "Fix the questions by number above and return the complete repaired result. Requirements:\n1. Output only the complete JSON (version and items): no explanation, no Markdown code fence, no prefix or suffix.\n2. Do not change any question except the ones listed above; do not delete or merge questions.\n3. Use ASCII double quotes, no trailing commas, and keep every answer index within options.\n4. Multiple-choice questions need at least 3 options and at least 2 correct answers, and must not mark every option correct: leave at least 1 incorrect option. If every option in the original question is correct, change one option to a clearly incorrect statement; do not convert it to single choice or delete it.",
+      importErrorCopySource: "Original data:",
+      importErrorCopySourceOmitted: "(The original data is too large to include automatically; paste the complete original data for the AI.)",
       importField_item: "Question",
       importField_items: "Question list",
       importField_text: "Text",
@@ -3173,9 +3357,12 @@
       importCode_COUNT: "There must be 2–6 options",
       importCode_INVALID_TEXT: "Text is empty or too long",
       importCode_TOO_LONG: "Text is too long",
-      importCode_ANSWER_FORMAT: "Single choice only: use one letter (A–F) or one exact option text",
+      importCode_ANSWER_FORMAT: "Invalid answer format: use one letter (A–F) or one exact option text for single choice, or several letters or an answerIndices array for multiple choice",
+      importCode_OPTIONS_TOO_FEW: "Multiple-choice questions need at least 3 options",
+      importCode_ANSWER_TOO_FEW: "Multiple-choice questions need at least 2 correct answers",
+      importCode_ANSWER_ALL: "Multiple-choice answers cannot include every option; leave at least 1 incorrect option",
       importCode_ANSWER_RANGE: "The answer is outside the options",
-      importCode_ANSWER_CONFLICT: "answer and answerIndex cannot be used together",
+      importCode_ANSWER_CONFLICT: "Use only one of answer, answerIndex, or answerIndices",
       importCode_INVALID_DIFFICULTY: "Difficulty must be easy, medium, or hard",
       importCode_NO_ITEMS: "No questions",
       importCode_TOO_MANY_ITEMS: "At most 200 questions at a time",
@@ -3253,50 +3440,134 @@
       err_TOO_MANY_ITEMS: "At most 200 questions can be imported at once.",
       err_TOO_MANY_LEVELS: "Course, custom, and wrong-review levels together cannot exceed 20.",
       err_INVALID_INDEX: "The question position is invalid; parse the import again.",
-      importAiPrompt: `You organize question banks. Turn the material I give you into JSON that a study device can import. Output only JSON. Include single-choice questions only.
+      importConvertPrompt: `You convert question banks into the import format. I will give you a set of existing questions; convert them as-is into JSON that a study device can import. Output only JSON. Do not add, rewrite, or merge questions.
 
-Output format (strictly follow this):
+Output fields:
+version is always 1.
+items is the array of questions.
+prompt is the question stem.
+options is the array of options.
+type is either single or multiple.
+Use answerIndex for single-answer questions and answerIndices for multiple-answer questions; indices start at 0.
+Hard format rules (check before output):
+- Single choice: type is "single", use exactly one answerIndex (0-based); exactly one correct option.
+- Multiple choice: type is "multiple", use only answerIndices (ascending, no duplicates); at least 2 entries and fewer than the number of options; never mark every option correct (leave at least 1 wrong option). With 4 options, [0,1,2,3] is rejected.
+- Never write both answerIndex and answerIndices; do not output fields other than those listed above.
+explanation is the solution and is optional.
+difficulty is only easy, medium, or hard and is optional.
+
+Reference sample:
 {
   "version": 1,
   "items": [
     {
-      "prompt": "question stem",
-      "options": ["option 1", "option 2", "option 3", "option 4"],
-      "answer": "B",
-      "explanation": "solution; omit this field if there is none",
-      "difficulty": "easy, medium or hard; omit if unsure"
+      "prompt": "What is 12 + 8?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20, so the answer is 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Which of these are mammals?",
+      "options": ["whale", "penguin", "bat", "dolphin"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Whales, bats, and dolphins are mammals; a penguin is a bird.",
+      "difficulty": "medium"
     }
   ]
 }
 
-Rules:
-1. Output only the JSON itself: no explanation, no Markdown code fence, no prefix or suffix.
-2. prompt: the original stem without the question number. Do not rewrite, complete, or merge questions; at most 200 characters.
-3. options: 2–6 entries in the original order. Remove prefixes such as "A.", "B、", "C)". Do not number them; each at most 60 characters; no duplicate content.
-4. answer: one uppercase letter (A–F) for the correct option. Do not write option text or multiple letters.
-5. explanation: include only if the source has one, at most 600 characters; otherwise omit it. Never invent a solution.
-6. difficulty: only easy/medium/hard; omit if the source does not mark it.
-7. True/false questions: use two options ["True","False"] and the matching letter in answer. Combination options such as A. ①② are single-choice and may stay.
-8. Keep single-choice questions only. Skip multiple-answer, multiple-select, fill-in-the-blank, listening, image-dependent, and answerless questions entirely. Never guess, never pick one answer from a multiple-answer question, and never rewrite a multiple-answer question as single-choice.
-9. Do not create questions that are not in the material, and do not change numbers, units, or options in the stem.
-10. Output at most 100 questions at a time. If the material has more, output the first 100; wait for me to reply "continue" before the next batch, and do not repeat questions already output.
-11. Self-check before output: each question has exactly one correct answer and its stem does not ask for more than one selection; JSON parses; quotes are ASCII double quotes; no trailing commas; every answer is within options; items count matches the questions you organized.
+Conversion rules:
+1. Output only the JSON: no explanation, no Markdown code fence, no prefix or suffix.
+2. prompt keeps the original meaning and removes the question number and options; do not rewrite, complete, or merge it; at most 200 characters.
+3. options keeps the original options and order, at least 2 and at most 6; remove letter prefixes; each at most 60 characters; no duplicate content.
+4. Single-answer questions use exactly one answerIndex. Multiple-answer questions use answerIndices, sorted ascending, deduplicated, with at least two entries. Never write both answer fields, and never collapse a multiple-answer question into one answer.
+5. explanation is kept only when the source has a solution, at most 600 characters; omit it otherwise and never invent one.
+6. difficulty is filled only when the source marks it, and only easy, medium, or hard.
+7. True/false questions become two options ["True", "False"] with an answerIndex. Combination options are treated as single-answer and kept as-is.
+8. A multiple-answer question needs at least 3 options, at least 2 correct options, and at least 1 wrong option. If it does not, skip the whole question; do not guess, do not pick one correct option, and do not turn it into a single-answer question.
+9. Skip fill-in-the-blank, listening, image-based, answerless, or uncertain-answer questions entirely.
+10. Do not create questions that are not in the material, and do not change numbers, units, or options in the stem.
+11. There is no limit on the number of questions; convert every question in the material and do not drop any for length.
+12. Self-check before output: the JSON parses; all strings use ASCII double quotes; no trailing commas; every answer index is within options; type matches the answer fields; the number of items matches the number of converted questions.
+13. If the material is an image or PDF, recognize all text first; replace unclear characters with "□" and do not guess.
+14. If one reply cannot hold everything, output a complete parseable JSON first; after I reply "continue", output the remaining questions and do not repeat any.
 
-Example:
-{"version":1,"items":[{"prompt":"12 + 8 = ?","options":["18","20","22","24"],"answer":"B","explanation":"12 + 8 = 20","difficulty":"easy"}]}
+Here is the question material I want to convert:`,
+      importGeneratePrompt: `You create quiz questions. Create original single- and multiple-answer questions according to the requirements I give you, and format them as JSON that a study device can import. Output only JSON.
 
-Material to organize:
-(paste the question text here. If it is an image or PDF, recognize all text first; replace unclear characters with "□", do not guess.)`,
+Output fields:
+version is always 1.
+items is the array of questions.
+prompt is the question stem.
+options is the array of options.
+type is either single or multiple.
+Use answerIndex for single-answer questions and answerIndices for multiple-answer questions; indices start at 0.
+Hard format rules (check before output):
+- Single choice: type is "single", use exactly one answerIndex (0-based); exactly one correct option.
+- Multiple choice: type is "multiple", use only answerIndices (ascending, no duplicates); at least 2 entries and fewer than the number of options; never mark every option correct (leave at least 1 wrong option). With 4 options, [0,1,2,3] is rejected.
+- Never write both answerIndex and answerIndices; do not output fields other than those listed above.
+explanation is the solution.
+difficulty is only easy, medium, or hard.
+
+Reference sample:
+{
+  "version": 1,
+  "items": [
+    {
+      "prompt": "What is 12 + 8?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Which of these are mammals?",
+      "options": ["whale", "penguin", "bat", "dolphin"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Whales, bats, and dolphins are mammals; a penguin is a bird.",
+      "difficulty": "medium"
+    }
+  ]
+}
+
+Generation rules:
+1. Output only the JSON: no explanation, no Markdown code fence, no prefix or suffix.
+2. Follow the requested question type: single-answer questions use "type":"single" and "answerIndex"; multiple-answer questions use "type":"multiple" and "answerIndices"; mixed means both types; if no type is given, default to single-answer.
+3. prompt is complete, clear, and unambiguous, without a question number; at most 200 characters.
+4. options has at least 2 and at most 6 entries with no duplicates; multiple-answer questions need at least 3; remove letter prefixes; each at most 60 characters; distractors must look plausible but be clearly wrong; do not use options such as "all of the above" or "none of the above".
+5. Single-answer questions have exactly one correct option. Multiple-answer questions have at least 2 correct options and at least 1 wrong option; never mark every option correct. Do not create fill-in-the-blank, listening, image-based, or picture-dependent questions.
+6. explanation uses 1 to 3 sentences to explain why these answers are correct, at most 600 characters; omit it if unsure and never invent facts.
+7. difficulty reflects the actual difficulty and is only easy, medium, or hard.
+8. Questions must fit the requested grade and subject and stay within the curriculum; numbers, units, facts, and answers must be correct.
+9. Do not repeat questions in one batch, and do not pad the count with variants that only change numbers or synonyms.
+10. There is no limit on the number of questions; follow the number in the requirements; do not drop, skip, or repeat questions because there are many.
+11. Self-check before output: the JSON parses; all strings use ASCII double quotes; no trailing commas; type matches the answer fields; single-answer questions have exactly one answer; multiple-answer questions have at least two answers and do not mark every option correct; every answer index is within options; the number of items matches the number of questions.
+12. If one reply cannot hold everything, output a complete parseable JSON first; after I reply "continue", output the remaining questions and do not repeat any.
+
+Question requirements:
+Grade/level: Grade 3, primary school
+Subject: Mathematics
+Textbook/topic: Unit 1, first semester
+Question type: mixed
+Number of questions: 20
+Difficulty mix: easy 40%, medium 40%, hard 20%
+Output language: English
+Extra requirements: none`,
     },
     ru: {
       bankImport: "Импорт банка",
       bankEmptyImportTitle: "Банк пуст. Импортируйте вопросы вручную или создайте их с помощью ИИ.",
-      bankSourceLine: "Курс/ИИ {course} · Свои {custom} · Всего {total} / {capacity}",
+      bankSourceLine: "Учебник/ИИ {course} · Свои {custom} · Ошибки {wrong} · Всего {total} / {capacity}",
       bankSourceCustomTag: "Тег: {name}",
       goImportBank: "Импортировать банк",
       importTitle: "Импорт банка вопросов",
-      importSingleOnlyBadge: "Только один ответ",
-      importSingleOnlyHint: "Импортируются только вопросы с одним ответом; вопросы с несколькими ответами, пропусками, аудированием, изображениями и без ответа пропускаются.",
+      importSingleOnlyBadge: "Один или несколько ответов",
+      importSingleOnlyHint: "Импортируются вопросы с одним и несколькими ответами; вопросы с пропусками, аудированием, изображениями и без ответа пропускаются.",
       importCloudNotice: "При привязке к облачному банку импорт локальных вопросов недоступен. Сначала отвяжите облако.",
       importTargetLabel: "Импортировать в тег",
       importTagPlaceholder: "Введите или выберите тег",
@@ -3314,17 +3585,20 @@ Material to organize:
       importInputLabel: "Содержимое вопросов",
       importChooseFile: "Выбрать файл .json или .txt",
       importPasteLabel: "Или вставьте вопросы",
-      importTextPlaceholder: "Вставьте канонический JSON или нумерованный текст (1. вопрос / A. вариант / Ответ: B)",
-      importDownloadTemplate: "Скачать шаблон JSON",
-      importCopyPrompt: "Копировать промпт для ИИ",
-      importViewPrompt: "Показать промпт",
+      importTextPlaceholder: "Вставьте канонический JSON или нумерованный текст (1. вопрос / A. вариант / Ответ: B или A, C)",
+      importCopyConvertPrompt: "Копировать промпт для преобразования формата",
+      importCopyGeneratePrompt: "Копировать промпт для создания вопросов",
+      importPromptConvertTitle: "Промпт для преобразования формата",
+      importPromptGenerateTitle: "Промпт для создания вопросов",
+      importPromptHint: "Есть готовые вопросы? Используйте преобразование формата. Нужно создать с нуля? Используйте создание вопросов. Скопируйте промпт в любой ИИ-помощник, затем сохраните полученный JSON или вставьте его сюда.",
       importAiHint: "Фото, PDF или неаккуратный текст можно сначала упорядочить в обычном веб-помощнике ИИ; перед импортом удалите имена, школу, номер ученика и другие личные данные. Импортёр только проверяет текст и ничего не загружает.",
       importDefaultDifficulty: "Использовать, если сложность не указана",
       importParse: "Проверить и показать",
       importParsing: "Проверка…",
       importEmptyInput: "Сначала выберите файл или вставьте вопросы.",
-      importTooLarge: "Файл больше 512 КБ; разделите его на части.",
+      importTooLarge: "Файл больше 16 МБ; разделите его на части.",
       importTooMany: "За один раз можно импортировать не более {max} вопросов; разделите файл.",
+      importLargeRisk: "Большой импорт может занять несколько минут; не закрывайте страницу. Вопросы хранятся только на этом телевизоре и не резервируются; очистка данных приложения их удалит.",
       importJsonInvalid: "Неверный JSON: проверьте кавычки, запятые и скобки.",
       importNoQuestions: "Вопросы не найдены.",
       importFileReadFailed: "Не удалось прочитать файл. Выберите другой или вставьте текст.",
@@ -3349,11 +3623,39 @@ Material to organize:
       importConfirm: "Импортировать {n} вопр.",
       importImporting: "Импорт…",
       importResultTitle: "Импортировано {n} в «{name}»",
-      importResultDetail: "Повторов в файле: {file} · уже в теге: {collection}",
+      importResultDetail: "Повторов внутри пакетов: {file} · уже в теге: {collection}",
       importResultCross: "Повторов из других источников: {n} (сохранены)",
       importResultRemaining: "Осталось {remaining} / {capacity}",
+      importPreviewFormat: "Формат файла",
+      importPreviewFileSize: "Размер файла",
+      importPreviewBatches: "Пакеты импорта",
+      importFormatJson: "JSON",
+      importFormatText: "Нумерованный текст",
+      importPreviewLocalNote: "Предпросмотр разбирает файл локально только для проверки формата и показывает 10 вопросов на страницу. Дедупликация и проверка окончательны только в результате импорта. За раз не более {max} вопросов и {size}.",
+      importPagePrev: "Назад",
+      importPageNext: "Далее",
+      importPageGo: "Перейти",
+      importPageJump: "Перейти к странице",
+      importPreviewPage: "Страница {page} / {pages}",
+      importProgressCount: "Обработано {processed} / {total} вопр.",
+      importProgressBatch: "Пакет {batch} / {batches}",
+      importProgressStats: "Добавлено {appended} · повторов внутри пакетов {file} · уже в теге {collection} · из других источников {cross} · не прошли {rejected}",
+      importProgressHint: "Не закрывайте страницу во время импорта. Завершённые пакеты сохраняются; отмена останавливает только следующие.",
+      importCancel: "Отменить импорт",
+      importCancelRequested: "Остановка…",
+      importResultPartialTitle: "Частичный импорт: записано {n} в «{name}»",
+      importResultProcessed: "Обработано {processed} / {total} вопр.",
+      importResultCancelled: "Отменено; уже записанные пакеты сохранены. Исправьте файл и повторите — дубли не запишутся повторно.",
+      importResultFailed: "Пакет {batch} завершился ошибкой, следующие пакеты не импортированы. Записанные пакеты сохранены; повтор после исправления не создаст дубли.",
       importPromptCopied: "Промпт скопирован.",
       importCopyFailed: "Не удалось скопировать. Откройте промпт и скопируйте вручную.",
+      importErrorCopy: "Скопировать ошибки для ИИ",
+      importErrorCopied: "Скопировано. Вставьте в ИИ-помощник.",
+      importErrorCopyFailed: "Не удалось скопировать. Выделите сообщения об ошибках и скопируйте вручную.",
+      importErrorCopyIntro: "При импорте вопросов в учебное устройство возникли ошибки:",
+      importErrorCopyAsk: "Исправьте вопросы по указанным выше номерам и верните полный исправленный результат. Требования:\n1. Выводите только полный JSON (version и items): без пояснений, без блока Markdown, без префиксов и суффиксов.\n2. Не изменяйте вопросы, кроме перечисленных выше; не удаляйте и не объединяйте вопросы.\n3. Используйте прямые двойные кавычки, без висячих запятых; все индексы ответов должны быть в пределах options.\n4. В вопросе с несколькими ответами должно быть не менее 3 вариантов и не менее 2 правильных ответов; нельзя отмечать все варианты как правильные — оставьте хотя бы 1 неверный вариант. Если в исходном вопросе все варианты правильные, измените один вариант на явно неверное утверждение; не превращайте вопрос в вопрос с одним ответом и не удаляйте его.",
+      importErrorCopySource: "Исходные данные:",
+      importErrorCopySourceOmitted: "(Исходные данные слишком велики для автоматического добавления; вставьте полный текст для ИИ.)",
       importField_item: "Вопрос",
       importField_items: "Список вопросов",
       importField_text: "Текст",
@@ -3371,9 +3673,12 @@ Material to organize:
       importCode_COUNT: "Должно быть 2–6 вариантов",
       importCode_INVALID_TEXT: "Пустой текст или превышена длина",
       importCode_TOO_LONG: "Слишком длинный текст",
-      importCode_ANSWER_FORMAT: "Только один ответ: одна заглавная буква A–F или точный текст варианта",
+      importCode_ANSWER_FORMAT: "Неверный формат ответа: для одного ответа — одна буква A–F или точный текст варианта; для нескольких — несколько букв или массив answerIndices",
+      importCode_OPTIONS_TOO_FEW: "В вопросе с несколькими ответами должно быть не менее 3 вариантов",
+      importCode_ANSWER_TOO_FEW: "В вопросе с несколькими ответами должно быть не менее 2 правильных вариантов",
+      importCode_ANSWER_ALL: "Нельзя отмечать все варианты как правильные: оставьте хотя бы 1 неверный вариант",
       importCode_ANSWER_RANGE: "Ответ вне диапазона вариантов",
-      importCode_ANSWER_CONFLICT: "answer и answerIndex нельзя указывать вместе",
+      importCode_ANSWER_CONFLICT: "Укажите только одно из полей answer, answerIndex или answerIndices",
       importCode_INVALID_DIFFICULTY: "Сложность: только easy, medium или hard",
       importCode_NO_ITEMS: "Нет вопросов",
       importCode_TOO_MANY_ITEMS: "Не более 200 вопросов за раз",
@@ -3451,50 +3756,134 @@ Material to organize:
       err_TOO_MANY_ITEMS: "Не более 200 вопросов за один раз.",
       err_TOO_MANY_LEVELS: "Всего можно создать не более 20 курсовых, своих уровней и уровней повторения ошибок.",
       err_INVALID_INDEX: "Неверная позиция вопроса. Проверьте импорт заново.",
-      importAiPrompt: `Ты помощник по упорядочиванию банка вопросов. Преврати присланный материал в JSON, который можно импортировать на учебное устройство. Выводи только JSON. Оставляй только вопросы с одним правильным ответом.
+      importConvertPrompt: `Ты помощник по преобразованию банка вопросов. Я дам тебе готовые вопросы; преобразуй их как есть в JSON, который можно импортировать на учебное устройство. Выводи только JSON. Не добавляй, не переписывай и не объединяй вопросы.
 
-Формат вывода (строго):
+Поля вывода:
+version всегда 1.
+items — массив вопросов.
+prompt — условие вопроса.
+options — массив вариантов.
+type — только single или multiple.
+Для одного ответа используй answerIndex, для нескольких — answerIndices; индексы начинаются с 0.
+Жёсткие правила формата (проверь перед выводом):
+- Один ответ: type "single", ровно один answerIndex (с 0); только один правильный вариант.
+- Несколько ответов: type "multiple", только answerIndices (по возрастанию, без повторов); не менее 2 элементов и меньше числа вариантов; нельзя отмечать все варианты правильными (оставь хотя бы 1 неверный). При 4 вариантах [0,1,2,3] будет отклонён.
+- Не пиши одновременно answerIndex и answerIndices; не выводи поля, которых нет в списке выше.
+explanation — решение, необязательно.
+difficulty — только easy, medium или hard, необязательно.
+
+Образец:
 {
   "version": 1,
   "items": [
     {
-      "prompt": "условие вопроса",
-      "options": ["вариант 1", "вариант 2", "вариант 3", "вариант 4"],
-      "answer": "B",
-      "explanation": "решение; если его нет, опусти поле",
-      "difficulty": "easy, medium или hard; если не уверен, опусти"
+      "prompt": "Сколько будет 12 + 8?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20, поэтому правильный ответ 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Какие из этих животных — млекопитающие?",
+      "options": ["кит", "пингвин", "летучая мышь", "дельфин"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Кит, летучая мышь и дельфин — млекопитающие, пингвин — птица.",
+      "difficulty": "medium"
     }
   ]
 }
 
-Правила:
-1. Выводи только сам JSON: без объяснений, без блока Markdown и без префиксов/суффиксов.
-2. prompt: исходное условие без номера вопроса. Не переписывай, не дополняй и не объединяй вопросы; не более 200 символов.
-3. options: 2–6 вариантов в исходном порядке. Удали префиксы «A.», «B、», «C)». Не нумеруй; каждый не длиннее 60 символов; содержимое не должно повторяться.
-4. answer: одна заглавная буква (A–F), соответствующая верному варианту. Не пиши текст варианта и не пиши несколько букв.
-5. explanation: только если в исходнике есть решение, не более 600 символов; иначе опусти. Никогда не придумывай решение.
-6. difficulty: только easy/medium/hard; если в исходнике не указано, не пиши.
-7. Вопросы «верно/неверно» оформи как два варианта ["Верно","Неверно"] и укажи соответствующую букву. Составные варианты вроде «A. ①②» считаются одним ответом и допустимы.
-8. Оставляй только вопросы с одним правильным ответом. Вопросы с несколькими ответами, выбором нескольких вариантов, пропусками, аудированием, зависимостью от картинки или без ответа целиком пропускай. Не угадывай, не выбирай один ответ из нескольких и не переделывай вопрос с несколькими ответами в один.
-9. Не создавай вопросов, которых нет в материале, и не меняй числа, единицы и варианты в условии.
-10. Выводи не более 100 вопросов за раз. Если материала больше, выведи первые 100; после моего ответа «продолжай» выведи следующую партию и не повторяй уже выведенные вопросы.
-11. Перед выводом проверь: у каждого вопроса ровно один правильный ответ и в условии не требуется выбрать несколько; JSON разбирается; кавычки — прямые двойные; нет лишних запятых; каждый answer входит в options; число items совпадает с числом вопросов.
+Правила преобразования:
+1. Выводи только JSON: без объяснений, без блока Markdown, без префиксов и суффиксов.
+2. prompt сохраняет смысл исходного вопроса, без номера и вариантов; не переписывай, не дополняй и не объединяй вопросы; не более 200 символов.
+3. options сохраняет исходные варианты и порядок, от 2 до 6; удали буквенные префиксы; каждый не длиннее 60 символов; содержимое не должно повторяться.
+4. Вопрос с одним ответом использует ровно один answerIndex. Вопрос с несколькими ответами использует answerIndices по возрастанию, без повторов, не менее двух. Не пиши одновременно два поля ответа и не своди вопрос с несколькими ответами к одному.
+5. explanation сохраняй только если в исходнике есть решение, не более 600 символов; иначе опусти и не придумывай.
+6. difficulty заполняй только если в исходнике указана сложность; допустимо только easy, medium, hard.
+7. Вопросы «верно или неверно» оформляй как два варианта ["Верно", "Неверно"] и указывай answerIndex. Составные варианты считаются одним ответом и сохраняются как есть.
+8. Вопрос с несколькими ответами требует не менее 3 вариантов, не менее 2 верных и хотя бы 1 неверного. Иначе пропусти вопрос целиком; не угадывай, не выбирай один верный вариант и не превращай вопрос в вопрос с одним ответом.
+9. Вопросы с пропусками, аудированием, картинками, без ответа или с неопределённым ответом пропускай целиком.
+10. Не создавай вопросов, которых нет в материале, и не меняй числа, единицы и варианты в условии.
+11. Количество вопросов не ограничено; преобразуй все вопросы из материала и не сокращай их.
+12. Перед выводом проверь: JSON разбирается; все строки в ASCII-двойных кавычках; нет висячих запятых; каждый индекс входит в options; type соответствует полям ответа; число items совпадает с числом преобразованных вопросов.
+13. Если материал — фото или PDF, сначала полностью распознай текст; неразборчивые символы замени на «□» и не угадывай.
+14. Если всё не помещается в один ответ, сначала выведи полный JSON, который можно разобрать; после моего ответа «продолжай» выведи оставшиеся вопросы и не повторяй уже выведенные.
 
-Пример:
-{"version":1,"items":[{"prompt":"12 + 8 = ?","options":["18","20","22","24"],"answer":"B","explanation":"12 + 8 = 20","difficulty":"easy"}]}
+Материал вопросов для преобразования:`,
+      importGeneratePrompt: `Ты помощник по созданию вопросов. Составь оригинальные вопросы с одним и несколькими ответами по моим требованиям и оформи их в JSON, который можно импортировать на учебное устройство. Выводи только JSON.
 
-Материал для обработки:
-(вставь сюда текст вопросов. Если это фото или PDF, сначала полностью распознай текст; неразборчивые символы замени на «□», не угадывай.)`,
+Поля вывода:
+version всегда 1.
+items — массив вопросов.
+prompt — условие вопроса.
+options — массив вариантов.
+type — только single или multiple.
+Для одного ответа используй answerIndex, для нескольких — answerIndices; индексы начинаются с 0.
+Жёсткие правила формата (проверь перед выводом):
+- Один ответ: type "single", ровно один answerIndex (с 0); только один правильный вариант.
+- Несколько ответов: type "multiple", только answerIndices (по возрастанию, без повторов); не менее 2 элементов и меньше числа вариантов; нельзя отмечать все варианты правильными (оставь хотя бы 1 неверный). При 4 вариантах [0,1,2,3] будет отклонён.
+- Не пиши одновременно answerIndex и answerIndices; не выводи поля, которых нет в списке выше.
+explanation — решение.
+difficulty — только easy, medium или hard.
+
+Образец:
+{
+  "version": 1,
+  "items": [
+    {
+      "prompt": "Сколько будет 12 + 8?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Какие из этих животных — млекопитающие?",
+      "options": ["кит", "пингвин", "летучая мышь", "дельфин"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Кит, летучая мышь и дельфин — млекопитающие, пингвин — птица.",
+      "difficulty": "medium"
+    }
+  ]
+}
+
+Правила создания:
+1. Выводи только JSON: без объяснений, без блока Markdown, без префиксов и суффиксов.
+2. Соблюдай указанный тип вопросов: для одного ответа пиши "type":"single" и "answerIndex"; для нескольких — "type":"multiple" и "answerIndices"; для смешанных нужны оба типа; если тип не указан, используй вопросы с одним ответом.
+3. prompt полный, ясный и однозначный, без номера вопроса; не более 200 символов.
+4. options от 2 до 6, без повторов; для вопросов с несколькими ответами не менее 3; удали буквенные префиксы; каждый не длиннее 60 символов; неверные варианты должны выглядеть правдоподобно, но быть однозначно ошибочными; не используй варианты «всё вышеперечисленное» и «ничего из перечисленного».
+5. Вопрос с одним ответом имеет ровно один верный вариант. Вопрос с несколькими ответами имеет не менее 2 верных и хотя бы 1 неверный; никогда не помечай все варианты верными. Не создавай вопросы с пропусками, аудированием, картинками или зависимостью от изображения.
+6. explanation объясняет ответ в 1–3 предложениях, не более 600 символов; если не уверен, опусти и не выдумывай факты.
+7. difficulty соответствует реальной сложности; только easy, medium, hard.
+8. Вопросы должны соответствовать указанному классу и предмету и не выходить за программу; числа, единицы, факты и ответы должны быть верными.
+9. Не повторяй вопросы в одном пакете и не добивай количество вариантами, где меняются только числа или синонимы.
+10. Количество вопросов не ограничено; выведи столько, сколько указано в требованиях; не сокращай, не пропускай и не повторяй вопросы из-за количества.
+11. Перед выводом проверь: JSON разбирается; все строки в ASCII-двойных кавычках; нет висячих запятых; type соответствует полям ответа; у вопроса с одним ответом ровно один ответ; у вопроса с несколькими ответами не менее двух ответов и не все варианты верные; каждый индекс входит в options; число items совпадает с числом вопросов.
+12. Если всё не помещается в один ответ, сначала выведи полный JSON, который можно разобрать; после моего ответа «продолжай» выведи оставшиеся вопросы и не повторяй уже выведенные.
+
+Требования к вопросам:
+Класс/уровень: 3 класс
+Предмет: математика
+Учебник/тема: 1-й семестр, тема 1
+Тип вопросов: смешанные
+Количество вопросов: 20
+Распределение сложности: easy 40%, medium 40%, hard 20%
+Язык вывода: русский
+Дополнительные требования: нет`,
     },
     uk: {
       bankImport: "Імпорт банку",
       bankEmptyImportTitle: "Банк порожній. Імпортуйте питання вручну або створіть їх за допомогою ШІ.",
-      bankSourceLine: "Курс/ШІ {course} · Власні {custom} · Усього {total} / {capacity}",
+      bankSourceLine: "Підручник/ШІ {course} · Власні {custom} · Помилки {wrong} · Усього {total} / {capacity}",
       bankSourceCustomTag: "Тег: {name}",
       goImportBank: "Імпортувати банк",
       importTitle: "Імпорт банку питань",
-      importSingleOnlyBadge: "Лише одна відповідь",
-      importSingleOnlyHint: "Імпортуються лише питання з однією відповіддю; питання з кількома відповідями, пропусками, аудіюванням, зображеннями та без відповіді пропускаються.",
+      importSingleOnlyBadge: "Один або кілька відповідей",
+      importSingleOnlyHint: "Імпортуються питання з однією та кількома відповідями; питання з пропусками, аудіюванням, зображеннями та без відповіді пропускаються.",
       importCloudNotice: "Під час прив’язки до хмарного банку імпорт локальних питань недоступний. Спершу відв’яжіть хмару.",
       importTargetLabel: "Імпортувати в тег",
       importTagPlaceholder: "Введіть або виберіть тег",
@@ -3512,17 +3901,20 @@ Material to organize:
       importInputLabel: "Вміст питань",
       importChooseFile: "Вибрати файл .json або .txt",
       importPasteLabel: "Або вставте питання",
-      importTextPlaceholder: "Вставте канонічний JSON або нумерований текст (1. питання / A. варіант / Відповідь: B)",
-      importDownloadTemplate: "Завантажити шаблон JSON",
-      importCopyPrompt: "Копіювати промпт для ШІ",
-      importViewPrompt: "Показати промпт",
+      importTextPlaceholder: "Вставте канонічний JSON або нумерований текст (1. питання / A. варіант / Відповідь: B або A, C)",
+      importCopyConvertPrompt: "Копіювати промпт для перетворення формату",
+      importCopyGeneratePrompt: "Копіювати промпт для створення питань",
+      importPromptConvertTitle: "Промпт для перетворення формату",
+      importPromptGenerateTitle: "Промпт для створення питань",
+      importPromptHint: "Є готові питання? Використовуйте перетворення формату. Потрібно створити з нуля? Використовуйте створення питань. Скопіюйте промпт у будь-який ШІ-помічник, потім збережіть отриманий JSON або вставте його сюди.",
       importAiHint: "Фото, PDF або неохайний текст можна спершу впорядкувати у звичайному веб-помічнику ШІ; перед імпортом видаліть імена, школу, номер учня та інші особисті дані. Імпортер лише перевіряє текст і нічого не завантажує.",
       importDefaultDifficulty: "Використовувати, якщо складність не вказана",
       importParse: "Перевірити й показати",
       importParsing: "Перевірка…",
       importEmptyInput: "Спершу виберіть файл або вставте питання.",
-      importTooLarge: "Файл більший за 512 КБ; розділіть його на частини.",
+      importTooLarge: "Файл більший за 16 МБ; розділіть його на частини.",
       importTooMany: "За один раз можна імпортувати не більше {max} питань; розділіть файл.",
+      importLargeRisk: "Великий імпорт може тривати кілька хвилин; не закривайте сторінку. Питання зберігаються лише на цьому телевізорі й не резервуються; очищення даних застосунку їх видалить.",
       importJsonInvalid: "Неправильний JSON: перевірте лапки, коми та дужки.",
       importNoQuestions: "Питань не знайдено.",
       importFileReadFailed: "Не вдалося прочитати файл. Виберіть інший або вставте текст.",
@@ -3547,11 +3939,39 @@ Material to organize:
       importConfirm: "Імпортувати {n} пит.",
       importImporting: "Імпорт…",
       importResultTitle: "Імпортовано {n} у «{name}»",
-      importResultDetail: "Повторів у файлі: {file} · уже в тезі: {collection}",
+      importResultDetail: "Повторів усередині пакетів: {file} · уже в тезі: {collection}",
       importResultCross: "Повторів з інших джерел: {n} (збережено)",
       importResultRemaining: "Залишилось {remaining} / {capacity}",
+      importPreviewFormat: "Формат файлу",
+      importPreviewFileSize: "Розмір файлу",
+      importPreviewBatches: "Пакети імпорту",
+      importFormatJson: "JSON",
+      importFormatText: "Нумерований текст",
+      importPreviewLocalNote: "Попередній перегляд розбирає файл локально лише для перевірки формату й показує 10 питань на сторінку. Дедуплікація та перевірка остаточні лише в результаті імпорту. За раз не більше {max} питань і {size}.",
+      importPagePrev: "Назад",
+      importPageNext: "Далі",
+      importPageGo: "Перейти",
+      importPageJump: "Перейти до сторінки",
+      importPreviewPage: "Сторінка {page} / {pages}",
+      importProgressCount: "Оброблено {processed} / {total} пит.",
+      importProgressBatch: "Пакет {batch} / {batches}",
+      importProgressStats: "Додано {appended} · повторів усередині пакетів {file} · уже в тезі {collection} · з інших джерел {cross} · не пройшли {rejected}",
+      importProgressHint: "Не закривайте сторінку під час імпорту. Завершені пакети зберігаються; скасування зупиняє лише наступні.",
+      importCancel: "Скасувати імпорт",
+      importCancelRequested: "Зупинка…",
+      importResultPartialTitle: "Частковий імпорт: записано {n} у «{name}»",
+      importResultProcessed: "Оброблено {processed} / {total} пит.",
+      importResultCancelled: "Скасовано; уже записані пакети збережено. Виправте файл і повторіть — повтори не запишуться вдруге.",
+      importResultFailed: "Пакет {batch} завершився помилкою, наступні пакети не імпортовано. Записані пакети збережено; повтор після виправлення не створить повторів.",
       importPromptCopied: "Промпт скопійовано.",
       importCopyFailed: "Не вдалося скопіювати. Розгорніть промпт і скопіюйте вручну.",
+      importErrorCopy: "Скопіювати помилки для ШІ",
+      importErrorCopied: "Скопійовано. Вставте в ШІ-помічник.",
+      importErrorCopyFailed: "Не вдалося скопіювати. Виділіть повідомлення про помилки та скопіюйте вручну.",
+      importErrorCopyIntro: "Під час імпорту питань у навчальний пристрій виникли помилки:",
+      importErrorCopyAsk: "Виправте питання за вказаними вище номерами та поверніть повний виправлений результат. Вимоги:\n1. Виводьте лише повний JSON (version і items): без пояснень, без блоку Markdown, без префіксів і суфіксів.\n2. Не змінюйте питання, крім перелічених вище; не видаляйте й не об’єднуйте питання.\n3. Використовуйте прямі подвійні лапки, без висячих ком, усі індекси відповідей мають бути в межах options.\n4. У питанні з кількома відповідями має бути щонайменше 3 варіанти й щонайменше 2 правильні відповіді; не можна позначати всі варіанти як правильні — залиште щонайменше 1 неправильний варіант. Якщо в початковому питанні всі варіанти правильні, змініть один варіант на явно неправильне твердження; не перетворюйте питання на питання з однією відповіддю й не видаляйте його.",
+      importErrorCopySource: "Початкові дані:",
+      importErrorCopySourceOmitted: "(Початкові дані завеликі для автоматичного додавання; вставте повний текст для ШІ.)",
       importField_item: "Питання",
       importField_items: "Список питань",
       importField_text: "Текст",
@@ -3569,9 +3989,12 @@ Material to organize:
       importCode_COUNT: "Повинно бути 2–6 варіантів",
       importCode_INVALID_TEXT: "Порожній текст або перевищена довжина",
       importCode_TOO_LONG: "Текст задовгий",
-      importCode_ANSWER_FORMAT: "Лише одна відповідь: одна велика літера A–F або точний текст варіанта",
+      importCode_ANSWER_FORMAT: "Неверний формат відповіді: для однієї відповіді — одна буква A–F або точний текст варіанта; для кількох — кілька букв або масив answerIndices",
+      importCode_OPTIONS_TOO_FEW: "У питанні з кількома відповідями має бути щонайменше 3 варіанти",
+      importCode_ANSWER_TOO_FEW: "У питанні з кількома відповідями має бути щонайменше 2 правильні відповіді",
+      importCode_ANSWER_ALL: "Не можна позначати всі варіанти як правильні: залиште щонайменше 1 неправильний варіант",
       importCode_ANSWER_RANGE: "Відповідь поза діапазоном варіантів",
-      importCode_ANSWER_CONFLICT: "answer і answerIndex не можна вказувати разом",
+      importCode_ANSWER_CONFLICT: "Укажіть лише одне з полів answer, answerIndex або answerIndices",
       importCode_INVALID_DIFFICULTY: "Складність: лише easy, medium або hard",
       importCode_NO_ITEMS: "Немає питань",
       importCode_TOO_MANY_ITEMS: "Не більше 200 питань за раз",
@@ -3649,50 +4072,134 @@ Material to organize:
       err_TOO_MANY_ITEMS: "Не більше 200 питань за один раз.",
       err_TOO_MANY_LEVELS: "Усього можна створити не більше 20 курсових, власних рівнів і рівнів повторення помилок.",
       err_INVALID_INDEX: "Неправильна позиція питання. Перевірте імпорт ще раз.",
-      importAiPrompt: `Ти помічник з упорядкування банку питань. Перетвори надісланий матеріал на JSON, який можна імпортувати на навчальний пристрій. Виводь лише JSON. Залишай лише питання з однією правильною відповіддю.
+      importConvertPrompt: `Ти помічник з перетворення банку питань. Я дам тобі готові питання; перетвори їх як є на JSON, який можна імпортувати на навчальний пристрій. Виводь лише JSON. Не додавай, не переписуй і не об’єднуй питання.
 
-Формат виводу (суворо):
+Поля виводу:
+version завжди 1.
+items — масив питань.
+prompt — умова питання.
+options — масив варіантів.
+type — лише single або multiple.
+Для однієї відповіді використовуй answerIndex, для кількох — answerIndices; індекси починаються з 0.
+Жорсткі правила формату (перевір перед виводом):
+- Одна відповідь: type "single", рівно один answerIndex (з 0); лише один правильний варіант.
+- Кілька відповідей: type "multiple", лише answerIndices (за зростанням, без повторів); щонайменше 2 елементи й менше, ніж варіантів; не можна позначати всі варіанти правильними (залиш хоча б 1 неправильний). За 4 варіантів [0,1,2,3] буде відхилено.
+- Не пиши одночасно answerIndex і answerIndices; не виводь поля, яких немає у списку вище.
+explanation — розв’язання, необов’язково.
+difficulty — лише easy, medium або hard, необов’язково.
+
+Зразок:
 {
   "version": 1,
   "items": [
     {
-      "prompt": "умова питання",
-      "options": ["варіант 1", "варіант 2", "варіант 3", "варіант 4"],
-      "answer": "B",
-      "explanation": "розв’язання; якщо його немає, опусти поле",
-      "difficulty": "easy, medium або hard; якщо не впевнений, опусти"
+      "prompt": "Скільки буде 12 + 8?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20, тому правильна відповідь 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Які з цих тварин — ссавці?",
+      "options": ["кит", "пінгвін", "кажан", "дельфін"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Кит, кажан і дельфін — ссавці, пінгвін — птах.",
+      "difficulty": "medium"
     }
   ]
 }
 
-Правила:
-1. Виводь лише сам JSON: без пояснень, без блоку Markdown і без префіксів/суфіксів.
-2. prompt: початкова умова без номера питання. Не переписуй, не доповнюй і не об’єднуй питання; не більше 200 символів.
-3. options: 2–6 варіантів у початковому порядку. Видали префікси «A.», «B、», «C)». Не нумеруй; кожен не довший за 60 символів; вміст не має повторюватися.
-4. answer: одна велика літера (A–F), що відповідає правильному варіанту. Не пиши текст варіанта й не пиши кілька літер.
-5. explanation: лише якщо в джерелі є розв’язання, не більше 600 символів; інакше опусти. Ніколи не вигадуй розв’язання.
-6. difficulty: лише easy/medium/hard; якщо в джерелі не позначено, не пиши.
-7. Питання «правильно/неправильно» оформлюй як два варіанти ["Правильно","Неправильно"] і вкажи відповідну літеру. Складені варіанти на кшталт «A. ①②» вважаються однією відповіддю і допустимі.
-8. Залишай лише питання з однією правильною відповіддю. Питання з кількома відповідями, вибором кількох варіантів, пропусками, аудіюванням, залежністю від зображення або без відповіді повністю пропускай. Не вгадуй, не вибирай одну відповідь із кількох і не переробляй питання з кількома відповідями на одноваріантне.
-9. Не створюй питань, яких немає в матеріалі, і не змінюй числа, одиниці та варіанти в умові.
-10. Виводь не більше 100 питань за раз. Якщо матеріалу більше, виведи перші 100; після моєї відповіді «продовжуй» виведи наступну партію й не повторюй уже виведені питання.
-11. Перед виводом перевір: у кожного питання рівно одна правильна відповідь і умова не вимагає вибрати кілька; JSON розбирається; лапки — прямі подвійні; немає зайвих ком; кожен answer входить до options; кількість items збігається з кількістю питань.
+Правила перетворення:
+1. Виводь лише JSON: без пояснень, без блоку Markdown, без префіксів і суфіксів.
+2. prompt зберігає зміст початкового питання, без номера й варіантів; не переписуй, не доповнюй і не об’єднуй питання; не більше 200 символів.
+3. options зберігає початкові варіанти й порядок, від 2 до 6; видали літерні префікси; кожен не довший за 60 символів; вміст не має повторюватися.
+4. Питання з однією відповіддю використовує рівно один answerIndex. Питання з кількома відповідями використовує answerIndices за зростанням, без повторів, щонайменше два. Не пиши одночасно два поля відповіді й не зводь питання з кількома відповідями до однієї.
+5. explanation зберігай лише якщо в джерелі є розв’язання, не більше 600 символів; інакше опусти й не вигадуй.
+6. difficulty заповнюй лише якщо в джерелі позначено складність; допустимо лише easy, medium, hard.
+7. Питання «правильно чи неправильно» оформлюй як два варіанти ["Правильно", "Неправильно"] і вказуй answerIndex. Складені варіанти вважаються однією відповіддю і зберігаються як є.
+8. Питання з кількома відповідями потребує щонайменше 3 варіантів, щонайменше 2 правильних і хоча б 1 неправильного. Інакше пропусти питання повністю; не вгадуй, не вибирай один правильний варіант і не переробляй його на питання з однією відповіддю.
+9. Питання з пропусками, аудіюванням, зображеннями, без відповіді або з невизначеною відповіддю пропускай повністю.
+10. Не створюй питань, яких немає в матеріалі, і не змінюй числа, одиниці та варіанти в умові.
+11. Кількість питань не обмежена; перетвори всі питання з матеріалу й не скорочуй їх.
+12. Перед виводом перевір: JSON розбирається; усі рядки в ASCII-подвійних лапках; немає висячих ком; кожен індекс входить до options; type відповідає полям відповіді; кількість items збігається з кількістю перетворених питань.
+13. Якщо матеріал — фото або PDF, спершу повністю розпізнай текст; нерозбірливі символи заміни на «□» і не вгадуй.
+14. Якщо все не вміщується в одну відповідь, спершу виведи повний JSON, який можна розібрати; після моєї відповіді «продовжуй» виведи решту питань і не повторюй уже виведені.
 
-Приклад:
-{"version":1,"items":[{"prompt":"12 + 8 = ?","options":["18","20","22","24"],"answer":"B","explanation":"12 + 8 = 20","difficulty":"easy"}]}
+Матеріал питань для перетворення:`,
+      importGeneratePrompt: `Ти помічник зі створення питань. Створи оригінальні питання з однією та кількома відповідями за моїми вимогами й оформи їх у JSON, який можна імпортувати на навчальний пристрій. Виводь лише JSON.
 
-Матеріал для обробки:
-(встав сюди текст питань. Якщо це фото або PDF, спершу повністю розпізнай текст; нерозбірливі символи заміни на «□», не вгадуй.)`,
+Поля виводу:
+version завжди 1.
+items — масив питань.
+prompt — умова питання.
+options — масив варіантів.
+type — лише single або multiple.
+Для однієї відповіді використовуй answerIndex, для кількох — answerIndices; індекси починаються з 0.
+Жорсткі правила формату (перевір перед виводом):
+- Одна відповідь: type "single", рівно один answerIndex (з 0); лише один правильний варіант.
+- Кілька відповідей: type "multiple", лише answerIndices (за зростанням, без повторів); щонайменше 2 елементи й менше, ніж варіантів; не можна позначати всі варіанти правильними (залиш хоча б 1 неправильний). За 4 варіантів [0,1,2,3] буде відхилено.
+- Не пиши одночасно answerIndex і answerIndices; не виводь поля, яких немає у списку вище.
+explanation — розв’язання.
+difficulty — лише easy, medium або hard.
+
+Зразок:
+{
+  "version": 1,
+  "items": [
+    {
+      "prompt": "Скільки буде 12 + 8?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Які з цих тварин — ссавці?",
+      "options": ["кит", "пінгвін", "кажан", "дельфін"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Кит, кажан і дельфін — ссавці, пінгвін — птах.",
+      "difficulty": "medium"
+    }
+  ]
+}
+
+Правила створення:
+1. Виводь лише JSON: без пояснень, без блоку Markdown, без префіксів і суфіксів.
+2. Дотримуйся вказаного типу питань: для однієї відповіді пиши "type":"single" і "answerIndex"; для кількох — "type":"multiple" і "answerIndices"; для змішаних потрібні обидва типи; якщо тип не вказано, використовуй питання з однією відповіддю.
+3. prompt повна однозначна умова без номера питання; не більше 200 символів.
+4. options від 2 до 6, без повторів; для питань із кількома відповідями щонайменше 3; видали літерні префікси; кожен не довший за 60 символів; неправильні варіанти мають виглядати правдоподібно, але бути однозначно хибними; не використовуй варіанти «усе перелічене вище» і «нічого з переліченого».
+5. Питання з однією відповіддю має рівно один правильний варіант. Питання з кількома відповідями має щонайменше 2 правильних і хоча б 1 неправильний; ніколи не позначай усі варіанти правильними. Не створюй питань із пропусками, аудіюванням, зображеннями або залежністю від малюнка.
+6. explanation пояснює відповідь у 1–3 реченнях, не більше 600 символів; якщо не впевнений, опусти й не вигадуй факти.
+7. difficulty відповідає реальній складності; лише easy, medium, hard.
+8. Питання мають відповідати вказаному класу й предмету та не виходити за програму; числа, одиниці, факти й відповіді мають бути правильними.
+9. Не повторюй питання в одному пакеті й не добирай кількість варіантами, де змінюються лише числа чи синоніми.
+10. Кількість питань не обмежена; виведи стільки, скільки вказано у вимогах; не скорочуй, не пропускай і не повторюй питання через кількість.
+11. Перед виводом перевір: JSON розбирається; усі рядки в ASCII-подвійних лапках; немає висячих ком; type відповідає полям відповіді; у питання з однією відповіддю рівно одна відповідь; у питання з кількома відповідями щонайменше дві відповіді й не всі варіанти правильні; кожен індекс входить до options; кількість items збігається з кількістю питань.
+12. Якщо все не вміщується в одну відповідь, спершу виведи повний JSON, який можна розібрати; після моєї відповіді «продовжуй» виведи решту питань і не повторюй уже виведені.
+
+Вимоги до питань:
+Клас/рівень: 3 клас
+Предмет: математика
+Підручник/тема: 1-й семестр, тема 1
+Тип питань: змішані
+Кількість питань: 20
+Розподіл складності: easy 40%, medium 40%, hard 20%
+Мова виводу: українська
+Додаткові вимоги: немає`,
     },
     kk: {
       bankImport: "Банкіні импорттау",
       bankEmptyImportTitle: "Банк бос. Сұрақтарды қолмен импорттаңыз немесе AI арқылы жасаңыз.",
-      bankSourceLine: "Курс/AI {course} · Жеке {custom} · Барлығы {total} / {capacity}",
+      bankSourceLine: "Оқулық/AI {course} · Жеке {custom} · Қателер {wrong} · Барлығы {total} / {capacity}",
       bankSourceCustomTag: "Тег: {name}",
       goImportBank: "Банкіні импорттау",
       importTitle: "Сұрақ банкін импорттау",
-      importSingleOnlyBadge: "Тек бір жауап",
-      importSingleOnlyHint: "Тек бір жауапты сұрақтар импортталады; бірнеше жауапты, бос орынды, тыңдауға арналған, суретке тәуелді және жауабы жоқ сұрақтар өткізіп жіберіледі.",
+      importSingleOnlyBadge: "Бір немесе бірнеше жауап",
+      importSingleOnlyHint: "Бір жауапты және бірнеше жауапты сұрақтар импортталады; бос орынды, тыңдауға арналған, суретке тәуелді және жауабы жоқ сұрақтар өткізіп жіберіледі.",
       importCloudNotice: "Бұлтты банкке байланғанда жергілікті сұрақтарды импорттауға болмайды. Алдымен бұлтты ажыратыңыз.",
       importTargetLabel: "Тегке импорттау",
       importTagPlaceholder: "Тегті енгізіңіз немесе таңдаңыз",
@@ -3710,17 +4217,20 @@ Material to organize:
       importInputLabel: "Сұрақ мазмұны",
       importChooseFile: ".json немесе .txt файлын таңдау",
       importPasteLabel: "Немесе сұрақтарды тікелей қойыңыз",
-      importTextPlaceholder: "Канондық JSON немесе нөмірленген мәтін қойыңыз (1. сұрақ / A. нұсқа / Жауап: B)",
-      importDownloadTemplate: "JSON үлгісін жүктеу",
-      importCopyPrompt: "AI реттеу промптын көшіру",
-      importViewPrompt: "Реттеу промптын көру",
+      importTextPlaceholder: "Канондық JSON немесе нөмірленген мәтін қойыңыз (1. сұрақ / A. нұсқа / Жауап: B немесе A, C)",
+      importCopyConvertPrompt: "Форматты түрлендіру промптын көшіру",
+      importCopyGeneratePrompt: "Сұрақ құрастыру промптын көшіру",
+      importPromptConvertTitle: "Форматты түрлендіру промпты",
+      importPromptGenerateTitle: "Сұрақ құрастыру промпты",
+      importPromptHint: "Дайын сұрақтарыңыз бар ма? Форматты түрлендіруді қолданыңыз. Нөлден құрастыру керек пе? Сұрақ құрастыруды қолданыңыз. Промптты кез келген AI көмекшісіне көшіріп, алынған JSON-ды сақтаңыз немесе осында қойыңыз.",
       importAiHint: "Фото, PDF немесе ретсіз мәтінді алдымен әдеттегі AI веб-көмекшісіне реттетуге болады; импорттау алдында аты-жөні, мектеп, оқушы нөмірі сияқты жеке деректерді жойыңыз. Импорттаушы тек мәтінді тексереді, ештеңе жүктемейді.",
       importDefaultDifficulty: "Сұрақта қиындық көрсетілмесе қолданылады",
       importParse: "Тексеріп, алдын ала көру",
       importParsing: "Тексерілуде…",
       importEmptyInput: "Алдымен файл таңдаңыз немесе сұрақтарды қойыңыз.",
-      importTooLarge: "Файл 512 КБ-тан үлкен; оны бөліктерге бөліңіз.",
+      importTooLarge: "Файл 16 МБ-тан үлкен; оны бөліктерге бөліңіз.",
       importTooMany: "Бір ретте ең көбі {max} сұрақ импорттауға болады; файлды бөліңіз.",
+      importLargeRisk: "Үлкен импорт бірнеше минутқа созылуы мүмкін; бетті жаппаңыз. Сұрақтар тек осы теледидарда сақталады және резервтік көшірмеге кірмейді; қолданба деректерін тазалау оларды жояды.",
       importJsonInvalid: "JSON дұрыс емес: тырнақшаларды, үтірлерді және жақшаларды тексеріңіз.",
       importNoQuestions: "Сұрақтар табылмады.",
       importFileReadFailed: "Файлды оқу мүмкін болмады. Басқа файл таңдаңыз немесе мәтінді қойыңыз.",
@@ -3745,11 +4255,39 @@ Material to organize:
       importConfirm: "{n} сұрақты импорттау",
       importImporting: "Импортталуда…",
       importResultTitle: "«{name}» тегіне {n} сұрақ импортталды",
-      importResultDetail: "Файлдағы қайталау: {file} · тегте бұрыннан бар: {collection}",
+      importResultDetail: "Топтама ішіндегі қайталау: {file} · тегте бұрыннан бар: {collection}",
       importResultCross: "Басқа көздердегі қайталау: {n} (сақталды)",
       importResultRemaining: "Банкте қалды: {remaining} / {capacity}",
+      importPreviewFormat: "Файл пішімі",
+      importPreviewFileSize: "Файл өлшемі",
+      importPreviewBatches: "Импорт топтамалары",
+      importFormatJson: "JSON",
+      importFormatText: "Нөмірленген мәтін",
+      importPreviewLocalNote: "Бұл алдын ала көру файлды тек пішімін тексеру үшін жергілікті талдайды және әр бетте 10 сұрақ көрсетеді. Қайталауды жою мен тексеру тек импорт нәтижесінде нақты болады. Бір ретте ең көбі {max} сұрақ және {size}.",
+      importPagePrev: "Артқа",
+      importPageNext: "Алға",
+      importPageGo: "Өту",
+      importPageJump: "Бетке өту",
+      importPreviewPage: "{page} / {pages} бет",
+      importProgressCount: "Өңделді {processed} / {total} сұрақ",
+      importProgressBatch: "Топтама {batch} / {batches}",
+      importProgressStats: "Қосылды {appended} · топтама ішіндегі қайталау {file} · тегте бар {collection} · басқа көздерден {cross} · тексеруден өтпеді {rejected}",
+      importProgressHint: "Импорт кезінде бетті жаппаңыз. Аяқталған топтамалар сақталады; тоқтату тек келесі топтамаларды тоқтатады.",
+      importCancel: "Импортты тоқтату",
+      importCancelRequested: "Тоқтатылуда…",
+      importResultPartialTitle: "Ішінара импорт: «{name}» тегіне {n} сұрақ жазылды",
+      importResultProcessed: "Өңделді {processed} / {total} сұрақ",
+      importResultCancelled: "Тоқтатылды; жазылған топтамалар сақталады. Файлды түзетіп қайталаңыз — қайталаулар қайта жазылмайды.",
+      importResultFailed: "{batch}-топтама сәтсіз аяқталды, келесі топтамалар импортталмады. Жазылған топтамалар сақталады; түзеткеннен кейін қайталау қайталау жасамайды.",
       importPromptCopied: "Промпт көшірілді.",
       importCopyFailed: "Көшіру сәтсіз. Промптты ашып, қолмен көшіріңіз.",
+      importErrorCopy: "Қателерді AI-ға жөндеуге көшіру",
+      importErrorCopied: "Көшірілді. AI көмекшісіне қойыңыз.",
+      importErrorCopyFailed: "Көшіру сәтсіз. Қате хабарламаларын таңдап, қолмен көшіріңіз.",
+      importErrorCopyIntro: "Оқу құрылғысына сұрақтарды импорттау кезінде мына қателер шықты:",
+      importErrorCopyAsk: "Жоғарыдағы нөмірлер бойынша сұрақтарды жөндеп, толық жөнделген нәтижені қайтарыңыз. Талаптар:\n1. Тек толық JSON (version және items) шығарыңыз: түсіндірме жоқ, Markdown блогы жоқ, префикс пен суффикс жоқ.\n2. Жоғарыда көрсетілген қате сұрақтардан басқа сұрақтарды өзгертпеңіз; сұрақтарды жоймаңыз немесе біріктірмеңіз.\n3. Тік қос тырнақшаларды қолданыңыз, артық үтір қалдырмаңыз, барлық жауап индекстері options шегінде болуы керек.\n4. Бірнеше жауапты сұрақта кемінде 3 нұсқа және кемінде 2 дұрыс жауап болуы керек; барлық нұсқаны дұрыс деп белгілеуге болмайды — кемінде 1 қате нұсқа қалдырыңыз. Егер бастапқы сұрақта барлық нұсқа дұрыс болса, бір нұсқаны анық қате тұжырымға өзгертіңіз; сұрақты бір жауапты сұраққа айналдырмаңыз және жоймаңыз.",
+      importErrorCopySource: "Бастапқы деректер:",
+      importErrorCopySourceOmitted: "(Бастапқы деректер автоматты қосу үшін тым үлкен; AI үшін толық мәтінді қойыңыз.)",
       importField_item: "Сұрақ",
       importField_items: "Сұрақтар тізімі",
       importField_text: "Мәтін",
@@ -3767,9 +4305,12 @@ Material to organize:
       importCode_COUNT: "2–6 нұсқа болуы керек",
       importCode_INVALID_TEXT: "Мәтін бос немесе ұзындығы асып кеткен",
       importCode_TOO_LONG: "Мәтін тым ұзын",
-      importCode_ANSWER_FORMAT: "Тек бір жауап: A–F аралығындағы бір бас әріп немесе нұсқаның нақты мәтіні",
+      importCode_ANSWER_FORMAT: "Жауап форматы дұрыс емес: бір жауап үшін — A–F аралығындағы бір әріп немесе нұсқаның нақты мәтіні; бірнеше жауап үшін — бірнеше әріп немесе answerIndices массиві",
+      importCode_OPTIONS_TOO_FEW: "Бірнеше жауапты сұрақта кемінде 3 нұсқа болуы керек",
+      importCode_ANSWER_TOO_FEW: "Бірнеше жауапты сұрақта кемінде 2 дұрыс жауап болуы керек",
+      importCode_ANSWER_ALL: "Барлық нұсқаны дұрыс деп белгілеуге болмайды: кемінде 1 қате нұсқа қалдырыңыз",
       importCode_ANSWER_RANGE: "Жауап нұсқалар ауқымынан тыс",
-      importCode_ANSWER_CONFLICT: "answer және answerIndex бірге болмайды",
+      importCode_ANSWER_CONFLICT: "answer, answerIndex және answerIndices өрістерінің тек біреуін ғана толтырыңыз",
       importCode_INVALID_DIFFICULTY: "Қиындық тек easy, medium немесе hard болуы керек",
       importCode_NO_ITEMS: "Сұрақ жоқ",
       importCode_TOO_MANY_ITEMS: "Бір ретте ең көбі 200 сұрақ",
@@ -3847,49 +4388,132 @@ Material to organize:
       err_TOO_MANY_ITEMS: "Бір ретте ең көбі 200 сұрақ импорттауға болады.",
       err_TOO_MANY_LEVELS: "Курстық, жеке және қателерді қайталау деңгейлерінің барлығы 20-дан аспауы керек.",
       err_INVALID_INDEX: "Сұрақ орны дұрыс емес. Импортты қайта тексеріңіз.",
-      importAiPrompt: `Сен сұрақ банкін реттеуші көмекшісің. Маған берілген материалды оқу құрылғысына импорттауға болатын JSON-ға айналдыр. Тек JSON шығар. Тек бір дұрыс жауабы бар сұрақтарды ғана қалдыр.
+      importConvertPrompt: `Сен сұрақ банкін түрлендіруші көмекшісің. Мен саған дайын сұрақтар беремін; оларды сол күйінде оқу құрылғысына импорттауға болатын JSON-ға түрлендір. Тек JSON шығар. Сұрақтарды қоспа, қайта жазба және біріктірме.
 
-Шығыс форматы (қатаң сақта):
+Шығыс өрістері:
+version әрқашан 1.
+items — сұрақтар массиві.
+prompt — сұрақ шарты.
+options — нұсқалар массиві.
+type — тек single немесе multiple.
+Бір жауап үшін answerIndex, бірнеше жауап үшін answerIndices қолдан; индекстер 0-ден басталады.
+Қатаң формат ережелері (шығарар алдында тексер):
+- Бір жауап: type "single", дәл бір answerIndex (0-ден); тек бір дұрыс нұсқа.
+- Бірнеше жауап: type "multiple", тек answerIndices (өсу ретімен, қайталанбай); кемінде 2 элемент және нұсқалар санынан аз болуы керек; барлық нұсқаны дұрыс деп белгілеуге болмайды (кемінде 1 қате нұсқа қалдыр). 4 нұсқа болса, [0,1,2,3] қабылданбайды.
+- answerIndex пен answerIndices-ті бір мезгілде жазба; жоғарыдағы өрістерден басқа өрістерді шығарма.
+explanation — шешім, міндетті емес.
+difficulty — тек easy, medium немесе hard, міндетті емес.
+
+Үлгі:
 {
   "version": 1,
   "items": [
     {
-      "prompt": "сұрақ шарты",
-      "options": ["нұсқа 1", "нұсқа 2", "нұсқа 3", "нұсқа 4"],
-      "answer": "B",
-      "explanation": "шешім; жоқ болса өрісті өткізіп жібер",
-      "difficulty": "easy, medium немесе hard; сенімді болмасаң өткізіп жібер"
+      "prompt": "12 + 8 нешеге тең?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20, сондықтан дұрыс жауап 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Мына жануарлардың қайсысы сүтқоректілер?",
+      "options": ["кит", "пингвин", "жарғанат", "дельфин"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Кит, жарғанат және дельфин — сүтқоректілер, пингвин — құс.",
+      "difficulty": "medium"
     }
   ]
 }
 
-Ережелер:
-1. Тек JSON-ның өзін шығар: түсіндірме жоқ, Markdown блогы жоқ, алдыңғы/соңғы қосымша мәтін жоқ.
-2. prompt: сұрақ нөмірінсіз бастапқы мәтін. Сұрақты қайта жазба, толықтырма және біріктірме; 200 таңбадан аспасын.
-3. options: 2–6 нұсқа, бастапқы ретімен. «A.», «B、», «C)» сияқты префикстерді жой. Нөмірлеме; әрқайсысы 60 таңбадан аспасын; мазмұны қайталанбасын.
-4. answer: дұрыс нұсқаға сәйкес бір бас әріп (A–F). Нұсқа мәтінін немесе бірнеше әріп жазба.
-5. explanation: бастапқы материалда шешім болса ғана жаз, 600 таңбадан аспасын; әйтпесе өткізіп жібер. Шешімді өзің ойлап таппа.
-6. difficulty: тек easy/medium/hard; бастапқы материалда көрсетілмесе жазба.
-7. «Дұрыс/бұрыс» сұрақтарын екі нұсқамен ["Дұрыс","Бұрыс"] жаз және сәйкес әріпті көрсет. «A. ①②» сияқты құрама нұсқалар бір жауап болып саналады және қалдыруға болады.
-8. Тек бір дұрыс жауабы бар сұрақтарды ғана қалдыр. Бірнеше жауапты, бірнеше нұсқаны таңдауды талап ететін, бос орынды, тыңдауға арналған, суретке тәуелді немесе жауабы жоқ сұрақтарды толығымен өткізіп жібер. Жауапты болжама, бірнеше жауаптың бірін таңдама және көп жауапты сұрақты бір жауапты етіп қайта жазба.
-9. Материалда жоқ сұрақтарды жасама, шарттағы сандарды, өлшем бірліктерін және нұсқаларды өзгертпе.
-10. Бір ретте ең көбі 100 сұрақ шығар. Материал көп болса, алдымен 100 сұрақты шығар; мен «жалғастыр» деп жазған соң келесі топтаманы шығар және бұрын шығарылған сұрақтарды қайталама.
-11. Шығарар алдында өзіңді тексер: әр сұрақтың дәл бір дұрыс жауабы бар және шарт бірнеше нұсқаны таңдауды талап етпейді; JSON талданады; тырнақшалар тік қос тырнақша; артық үтір жоқ; әрбір answer options ауқымында; items саны реттелген сұрақ санына сәйкес.
+Түрлендіру ережелері:
+1. Тек JSON шығар: түсіндірме жоқ, Markdown блогы жоқ, алдыңғы және соңғы қосымша мәтін жоқ.
+2. prompt бастапқы сұрақтың мағынасын сақтайды, нөмірі мен нұсқаларын алып тастайды; сұрақты қайта жазба, толықтырма және біріктірме; 200 таңбадан аспасын.
+3. options бастапқы нұсқалар мен ретті сақтайды, кемінде 2, ең көбі 6; әріптік префикстерді жой; әрқайсысы 60 таңбадан аспасын; мазмұны қайталанбасын.
+4. Бір жауапты сұрақта дәл бір answerIndex. Бірнеше жауапты сұрақта answerIndices өсу ретімен, қайталанбай, кемінде екі. Бір мезгілде екі жауап өрісін жазба және бірнеше жауапты сұрақты бір жауапқа қысқартпа.
+5. explanation бастапқы материалда шешім болса ғана сақталады, 600 таңбадан аспасын; әйтпесе өткізіп жібер және өзің ойлап таппа.
+6. difficulty бастапқы материалда қиындық көрсетілсе ғана толтырылады; тек easy, medium, hard.
+7. «Дұрыс/бұрыс» сұрақтарын екі нұсқамен ["Дұрыс", "Бұрыс"] жаз және answerIndex көрсет. Құрама нұсқалар бір жауап болып саналады және сол күйінде қалады.
+8. Бірнеше жауабы бар сұрақта кемінде 3 нұсқа, кемінде 2 дұрыс және кемінде 1 қате нұсқа болсын. Бұл орындалмаса, сұрақты толығымен өткізіп жібер; болжама, бір дұрыс нұсқаны таңдама және оны бір жауапты сұраққа айналдырма.
+9. Бос орынды, тыңдауға арналған, суретке тәуелді, жауабы жоқ немесе жауабы анық емес сұрақтарды толығымен өткізіп жібер.
+10. Материалда жоқ сұрақтарды жасама және шарттағы сандарды, өлшем бірліктерін, нұсқаларды өзгертпе.
+11. Сұрақ саны шектелмейді; материалдағы барлық сұрақты түрлендір және санын азайтпа.
+12. Шығарар алдында тексер: JSON талданады; барлық жолдар ASCII қос тырнақшада; соңғы үтір жоқ; әр индекс options ауқымында; type жауап өрістеріне сәйкес; items саны түрлендірілген сұрақтар санына тең.
+13. Материал фото немесе PDF болса, алдымен мәтінді толық таны; анық емес таңбаларды «□»-пен алмастыр және болжама.
+14. Барлығы бір жауапқа сыймаса, алдымен толық талданатын JSON шығар; мен «жалғастыр» деп жазған соң қалған сұрақтарды шығар және бұрын шығарылғандарды қайталама.
 
-Мысал:
-{"version":1,"items":[{"prompt":"12 + 8 = ?","options":["18","20","22","24"],"answer":"B","explanation":"12 + 8 = 20","difficulty":"easy"}]}
+Түрлендіретін сұрақ материалы:`,
+      importGeneratePrompt: `Сен сұрақ құрастырушы көмекшісің. Менің талаптарым бойынша бір дұрыс жауабы бар және бірнеше дұрыс жауабы бар түпнұсқа сұрақтар құрастырып, оларды оқу құрылғысына импорттауға болатын JSON етіп рәсімде. Тек JSON шығар.
 
-Реттелетін материал:
-(сұрақ мәтінін осында қой. Егер фото немесе PDF болса, алдымен мәтінді толық таны; анық емес таңбаларды «□»-пен алмастыр, болжама.)`,
+Шығыс өрістері:
+version әрқашан 1.
+items — сұрақтар массиві.
+prompt — сұрақ шарты.
+options — нұсқалар массиві.
+type — тек single немесе multiple.
+Бір жауап үшін answerIndex, бірнеше жауап үшін answerIndices қолдан; индекстер 0-ден басталады.
+Қатаң формат ережелері (шығарар алдында тексер):
+- Бір жауап: type "single", дәл бір answerIndex (0-ден); тек бір дұрыс нұсқа.
+- Бірнеше жауап: type "multiple", тек answerIndices (өсу ретімен, қайталанбай); кемінде 2 элемент және нұсқалар санынан аз болуы керек; барлық нұсқаны дұрыс деп белгілеуге болмайды (кемінде 1 қате нұсқа қалдыр). 4 нұсқа болса, [0,1,2,3] қабылданбайды.
+- answerIndex пен answerIndices-ті бір мезгілде жазба; жоғарыдағы өрістерден басқа өрістерді шығарма.
+explanation — шешім.
+difficulty — тек easy, medium немесе hard.
+
+Үлгі:
+{
+  "version": 1,
+  "items": [
+    {
+      "prompt": "12 + 8 нешеге тең?",
+      "options": ["18", "20", "22", "24"],
+      "type": "single",
+      "answerIndex": 1,
+      "explanation": "12 + 8 = 20.",
+      "difficulty": "easy"
+    },
+    {
+      "prompt": "Мына жануарлардың қайсысы сүтқоректілер?",
+      "options": ["кит", "пингвин", "жарғанат", "дельфин"],
+      "type": "multiple",
+      "answerIndices": [0, 2, 3],
+      "explanation": "Кит, жарғанат және дельфин — сүтқоректілер, пингвин — құс.",
+      "difficulty": "medium"
+    }
+  ]
+}
+
+Құрастыру ережелері:
+1. Тек JSON шығар: түсіндірме жоқ, Markdown блогы жоқ, алдыңғы және соңғы қосымша мәтін жоқ.
+2. Көрсетілген сұрақ түрін сақта: бір жауап үшін "type":"single" және "answerIndex"; бірнеше жауап үшін "type":"multiple" және "answerIndices"; аралас болса, екі түр де болсын; сұрақ түрі көрсетілмесе, бір жауапты сұрақ қолдан.
+3. prompt толық, анық, бір мағыналы, нөмірсіз; 200 таңбадан аспасын.
+4. options кемінде 2, ең көбі 6, қайталанбасын; бірнеше жауапты сұрақтарда кемінде 3; әріптік префикстерді жой; әрқайсысы 60 таңбадан аспасын; қате нұсқалар шынайы көрініп, бірақ анық қате болсын; «жоғарыдағылардың барлығы» және «жоғарыдағылардың ешқайсысы» сияқты нұсқаларды қолданба.
+5. Бір жауапты сұрақта дәл бір дұрыс нұсқа; бірнеше жауапты сұрақта кемінде 2 дұрыс және кемінде 1 қате нұсқа; барлық нұсқаны дұрыс деп белгілеме. Бос орынды, тыңдауға арналған, суретке тәуелді немесе суретсіз орындалмайтын сұрақтарды құрастырма.
+6. explanation жауапты түсіндіретін 1-3 сөйлем, 600 таңбадан аспасын; сенімді болмасаң өткізіп жібер, фактілерді ойлап таппа.
+7. difficulty нақты қиындыққа сай, тек easy, medium, hard.
+8. Сұрақтар көрсетілген сынып пен пәнге сай, оқу бағдарламасынан аспауы керек; сандар, өлшем бірліктері, фактілер және жауаптар дұрыс болсын.
+9. Бір пакетте сұрақтарды қайталама және тек сандар немесе синонимдер ауысатын нұсқалармен санын толтырма.
+10. Сұрақ саны шектелмейді; талаптағы санды шығар; сан көп болғандықтан қысқартпа, өткізіп жіберме және қайталама.
+11. Шығарар алдында тексер: JSON талданады; барлық жолдар ASCII қос тырнақшада; соңғы үтір жоқ; type жауап өрістеріне сәйкес; бір жауапты сұрақта бір жауап; бірнеше жауапты сұрақта кемінде екі жауап және барлық нұсқа дұрыс болмайды; әр индекс options ауқымында; items саны сұрақтар санына сәйкес.
+12. Барлығы бір жауапқа сыймаса, алдымен толық талданатын JSON шығар; мен «жалғастыр» деп жазған соң қалған сұрақтарды шығар және бұрын шығарылғандарды қайталама.
+
+Сұрақ құрастыру талаптары:
+Сынып/деңгей: 3-сынып
+Пән: математика
+Оқулық/тақырып: 1-тоқсан, 1-тақырып
+Сұрақ түрі: аралас
+Сұрақ саны: 20
+Қиындық үлесі: easy 40%, medium 40%, hard 20%
+Шығару тілі: қазақша
+Қосымша талаптар: жоқ`,
     },
   };
 
   const V23_TEXTS = {
     zh: {
       title: "家长网页",
-      securityNote: "本页可配置题库与 AI 出题；仅在电视实际锁屏时，输入家长密码才能临时解锁；手动模式下还可开启一次计时。它不能结束计时、退出学习模式或修改守护与系统设置。",
       gate_pair_text: "请输入电视上的 6 位家长密码。验证后当天内再次打开无需输入；次日 0 点后需要重新验证。临时解锁只作用于电视锁屏。",
-      footer: "答题挑战只在电视上开始和结算；临时解锁仅在电视锁屏时可用，关屏或重启后恢复守护。",
+      footer: "答题闯关只在电视上开始和结算；临时解锁仅在电视锁屏时可用，关屏或重启后恢复守护。",
       unlockTitle: "临时解锁",
       unlockLead: "仅在电视锁屏时可用。输入家长密码后，电视临时解锁；关屏或重启电视即恢复守护。",
       unlockAction: "临时解锁电视",
@@ -3940,7 +4564,6 @@ Material to organize:
     },
     en: {
       title: "Parent web page",
-      securityNote: "This page configures the question bank and AI generation. Only while the TV is actually on its lock screen can the parent password temporarily unlock it; in manual mode it can also start one timed session. It cannot end a timer, leave study mode, or change the guard or system settings.",
       gate_pair_text: "Enter the 6-digit parent password shown on the TV. After verification, this phone can reopen the page without a PIN until local midnight. The temporary unlock only applies on the TV lock screen.",
       footer: "Quizzes start and settle on the TV only; temporary unlock is available only on the TV lock screen and ends when the screen turns off or the TV restarts.",
       unlockTitle: "Temporary unlock",
@@ -3993,7 +4616,6 @@ Material to organize:
     },
     ru: {
       title: "Веб-страница для родителей",
-      securityNote: "Здесь настраиваются банк вопросов и генерация ИИ. Только когда телевизор действительно на экране блокировки, пароль родителя позволяет временно разблокировать его; в ручном режиме также можно запустить один сеанс. Страница не завершает таймер, не выходит из режима учёбы и не меняет защиту или системные настройки.",
       gate_pair_text: "Введите 6-значный пароль родителя с телевизора. После проверки страница открывается без пароля до местной полуночи. Временная разблокировка действует только на экране блокировки телевизора.",
       footer: "Викторина начинается и завершается только на телевизоре; временная разблокировка доступна только на экране блокировки и снимается при выключении экрана или перезапуске.",
       unlockTitle: "Временная разблокировка",
@@ -4046,7 +4668,6 @@ Material to organize:
     },
     uk: {
       title: "Веб-сторінка для батьків",
-      securityNote: "Тут налаштовуються банк питань і генерація ШІ. Лише коли телевізор справді на екрані блокування, пароль батьків дозволяє тимчасово розблокувати його; у ручному режимі також можна запустити один сеанс. Сторінка не завершує таймер, не виходить із режиму навчання й не змінює захист чи системні налаштування.",
       gate_pair_text: "Введіть 6-значний пароль батьків із телевізора. Після перевірки сторінка відкривається без пароля до місцевої півночі. Тимчасове розблокування діє лише на екрані блокування телевізора.",
       footer: "Вікторина починається й завершується лише на телевізорі; тимчасове розблокування доступне лише на екрані блокування і знімається після вимкнення екрана або перезапуску.",
       unlockTitle: "Тимчасове розблокування",
@@ -4099,7 +4720,6 @@ Material to organize:
     },
     kk: {
       title: "Ата-аналарға арналған веб-бет",
-      securityNote: "Мұнда сұрақтар банкі мен ЖИ генерациясы бапталады. Тек теледидар шынымен құлыптау экранында болғанда ғана ата-ана құпиясөзі оны уақытша аша алады; қолмен режимінде бір сеансты да бастауға болады. Бет таймерді аяқтамайды, оқу режимінен шықпайды және қорғанысты немесе жүйелік баптауларды өзгертпейді.",
       gate_pair_text: "Теледидардағы 6 таңбалы ата-ана құпиясөзін енгізіңіз. Тексеруден кейін бет жергілікті түн ортасына дейін құпиясөзсіз ашылады. Уақытша ашу тек теледидар құлыптау экранында әрекет етеді.",
       footer: "Викторина тек теледидарда басталады және есептеледі; уақытша ашу тек құлыптау экранында қолжетімді және экран өшкенде немесе теледидар қайта іске қосылғанда жойылады.",
       unlockTitle: "Уақытша ашу",
@@ -4294,22 +4914,28 @@ Material to organize:
   const V34_TEXTS = {
     zh: {
       bankManageEntry: "题库管理",
-      bankManageEntryState: "课程/AI {course} · 自定义 {custom}",
+      bankManageEntryState: "教材/AI {course} · 自定义 {custom} · 错题 {wrong}",
       bankManageTitle: "题库管理",
-      bankManageLead: "清空会永久删除题目和作答记录；每次清空需要两步确认。",
-      bankManageCourseTitle: "课程 / AI 题库",
+      bankManageLead: "教材/AI、每个自定义标签和错题可分别清空；清空会永久删除题目和作答记录，每次需要两步确认。",
+      bankManageCourseTitle: "教材 / AI 题库",
       bankManageCourseMeta: "共 {n} 道",
+      bankManageCourseStateLead: "按状态单独清除（同样会永久删除）：",
       bankManageCustomTitle: "自定义题库",
+      bankManageCustomLead: "每个标签单独一行，可只看数量或单独清空。",
       bankManageCustomMeta: "共 {n} 道 · {tags} 个标签",
       bankManageTagMeta: "共 {n} 道 · 未使用 {unused}",
       bankManageClear: "清空",
-      bankManageClearCourse: "清空课程 / AI 题库",
+      bankManageClearCourse: "清空教材 / AI 题库",
       bankManageClearCustom: "清空全部自定义题库",
       bankManageClearTag: "清空「{name}」",
+      bankManageWrongTitle: "错题题库",
+      bankManageWrongMeta: "共 {n} 道 · 来自课程/AI 和自定义题库",
+      bankManageClearWrong: "清空错题题库",
       bankManageAllTitle: "全部题库",
-      bankManageAllMeta: "共 {n} 道",
+      bankManageAllMeta: "共 {n} 道 · 含错题 {wrong} 道",
       bankManageClearAll: "清空全部题库",
-      bankClearScopeCourse: "课程 / AI 题库",
+      bankClearScopeCourse: "教材 / AI 题库",
+      bankClearScopeAllWrong: "全部错题",
       bankClearScopeCustomTag: "自定义题库「{name}」",
       bankClearScopeCustomAll: "全部自定义题库",
       bankClearScopeAll: "全部题库",
@@ -4319,6 +4945,7 @@ Material to organize:
       bankClearUnusedDetail: "将删除{scope}中未使用（含已过期）的题目。",
       bankClearAnsweredDetail: "将删除{scope}中已回答的题目。",
       bankClearWrongDetail: "将删除{scope}中答错的题目。",
+      bankClearWrongAllDetail: "所有答错的题目和作答记录将被永久删除。",
       bankClearFirstWarning: "此操作不能撤销，还需要再确认一次。",
       bankClearFinalWarning: "这是最后一次确认，清空后无法恢复。",
       bankClearContinue: "继续",
@@ -4330,22 +4957,28 @@ Material to organize:
     },
     en: {
       bankManageEntry: "Manage banks",
-      bankManageEntryState: "Course/AI {course} · Custom {custom}",
+      bankManageEntryState: "Textbook/AI {course} · Custom {custom} · Wrong {wrong}",
       bankManageTitle: "Manage banks",
-      bankManageLead: "Clearing permanently deletes questions and answer history. Every clear needs two confirmations.",
-      bankManageCourseTitle: "Course / AI bank",
+      bankManageLead: "Textbook/AI, each custom tag, and wrong questions can be cleared separately. Clearing permanently deletes questions and answer history; every clear needs two confirmations.",
+      bankManageCourseTitle: "Textbook / AI bank",
       bankManageCourseMeta: "{n} questions",
+      bankManageCourseStateLead: "Clear by state instead (also permanent):",
       bankManageCustomTitle: "Custom banks",
+      bankManageCustomLead: "Each tag has its own row, so you can check counts or clear it alone.",
       bankManageCustomMeta: "{n} questions · {tags} tags",
       bankManageTagMeta: "{n} questions · {unused} unused",
       bankManageClear: "Clear",
-      bankManageClearCourse: "Clear course / AI bank",
+      bankManageClearCourse: "Clear textbook / AI bank",
       bankManageClearCustom: "Clear all custom banks",
       bankManageClearTag: "Clear “{name}”",
+      bankManageWrongTitle: "Wrong-answer bank",
+      bankManageWrongMeta: "{n} questions · from course/AI and custom banks",
+      bankManageClearWrong: "Clear wrong-answer bank",
       bankManageAllTitle: "All banks",
-      bankManageAllMeta: "{n} questions",
+      bankManageAllMeta: "{n} questions · includes {wrong} wrong",
       bankManageClearAll: "Clear all banks",
-      bankClearScopeCourse: "the course / AI bank",
+      bankClearScopeCourse: "the textbook / AI bank",
+      bankClearScopeAllWrong: "all wrong questions",
       bankClearScopeCustomTag: "the custom bank “{name}”",
       bankClearScopeCustomAll: "all custom banks",
       bankClearScopeAll: "all banks",
@@ -4355,6 +4988,7 @@ Material to organize:
       bankClearUnusedDetail: "Unused (and expired) questions in {scope} will be deleted.",
       bankClearAnsweredDetail: "Answered questions in {scope} will be deleted.",
       bankClearWrongDetail: "Wrongly answered questions in {scope} will be deleted.",
+      bankClearWrongAllDetail: "All wrongly answered questions and their answer history will be permanently deleted.",
       bankClearFirstWarning: "This cannot be undone; one more confirmation is required.",
       bankClearFinalWarning: "Final confirmation. This cannot be undone.",
       bankClearContinue: "Continue",
@@ -4366,22 +5000,28 @@ Material to organize:
     },
     ru: {
       bankManageEntry: "Управление банками",
-      bankManageEntryState: "Курс/ИИ {course} · Свои {custom}",
+      bankManageEntryState: "Учебник/ИИ {course} · Свои {custom} · Ошибки {wrong}",
       bankManageTitle: "Управление банками",
-      bankManageLead: "Очистка навсегда удаляет вопросы и историю ответов. Каждая очистка требует двух подтверждений.",
-      bankManageCourseTitle: "Банк курса / ИИ",
+      bankManageLead: "Банк учебника/ИИ, каждый свой тег и ошибки можно очищать отдельно. Очистка навсегда удаляет вопросы и историю ответов; каждая требует двух подтверждений.",
+      bankManageCourseTitle: "Банк учебника / ИИ",
       bankManageCourseMeta: "Всего: {n}",
+      bankManageCourseStateLead: "Можно очистить по состоянию (тоже необратимо):",
       bankManageCustomTitle: "Свои банки",
+      bankManageCustomLead: "Каждый тег в своей строке: можно проверить количество или очистить только его.",
       bankManageCustomMeta: "Всего: {n} · тегов: {tags}",
       bankManageTagMeta: "Всего: {n} · не использовано: {unused}",
       bankManageClear: "Очистить",
-      bankManageClearCourse: "Очистить банк курса / ИИ",
+      bankManageClearCourse: "Очистить банк учебника / ИИ",
       bankManageClearCustom: "Очистить все свои банки",
       bankManageClearTag: "Очистить «{name}»",
+      bankManageWrongTitle: "Банк ошибок",
+      bankManageWrongMeta: "Всего: {n} · из курса/ИИ и своих банков",
+      bankManageClearWrong: "Очистить банк ошибок",
       bankManageAllTitle: "Все банки",
-      bankManageAllMeta: "Всего: {n}",
+      bankManageAllMeta: "Всего: {n} · включая ошибок: {wrong}",
       bankManageClearAll: "Очистить все банки",
-      bankClearScopeCourse: "банк курса / ИИ",
+      bankClearScopeCourse: "банк учебника / ИИ",
+      bankClearScopeAllWrong: "все ошибки",
       bankClearScopeCustomTag: "свой банк «{name}»",
       bankClearScopeCustomAll: "все свои банки",
       bankClearScopeAll: "все банки",
@@ -4391,6 +5031,7 @@ Material to organize:
       bankClearUnusedDetail: "{scope}: будут удалены неиспользованные (и просроченные) вопросы.",
       bankClearAnsweredDetail: "{scope}: будут удалены отвеченные вопросы.",
       bankClearWrongDetail: "{scope}: будут удалены вопросы с неверными ответами.",
+      bankClearWrongAllDetail: "Все вопросы с неверными ответами и история ответов будут удалены навсегда.",
       bankClearFirstWarning: "Это нельзя отменить; потребуется ещё одно подтверждение.",
       bankClearFinalWarning: "Последнее подтверждение. Отменить будет нельзя.",
       bankClearContinue: "Продолжить",
@@ -4402,22 +5043,28 @@ Material to organize:
     },
     uk: {
       bankManageEntry: "Керування банками",
-      bankManageEntryState: "Курс/ШІ {course} · Власні {custom}",
+      bankManageEntryState: "Підручник/ШІ {course} · Власні {custom} · Помилки {wrong}",
       bankManageTitle: "Керування банками",
-      bankManageLead: "Очищення назавжди видаляє питання й історію відповідей. Кожне очищення потребує двох підтверджень.",
-      bankManageCourseTitle: "Банк курсу / ШІ",
+      bankManageLead: "Банк підручника/ШІ, кожен власний тег і помилки можна очищати окремо. Очищення назавжди видаляє питання й історію відповідей; кожне потребує двох підтверджень.",
+      bankManageCourseTitle: "Банк підручника / ШІ",
       bankManageCourseMeta: "Усього: {n}",
+      bankManageCourseStateLead: "Можна очистити за станом (також незворотно):",
       bankManageCustomTitle: "Власні банки",
+      bankManageCustomLead: "Кожен тег має окремий рядок: можна перевірити кількість або очистити лише його.",
       bankManageCustomMeta: "Усього: {n} · тегів: {tags}",
       bankManageTagMeta: "Усього: {n} · не використано: {unused}",
       bankManageClear: "Очистити",
-      bankManageClearCourse: "Очистити банк курсу / ШІ",
+      bankManageClearCourse: "Очистити банк підручника / ШІ",
       bankManageClearCustom: "Очистити всі власні банки",
       bankManageClearTag: "Очистити «{name}»",
+      bankManageWrongTitle: "Банк помилок",
+      bankManageWrongMeta: "Усього: {n} · з курсу/ШІ та власних банків",
+      bankManageClearWrong: "Очистити банк помилок",
       bankManageAllTitle: "Усі банки",
-      bankManageAllMeta: "Усього: {n}",
+      bankManageAllMeta: "Усього: {n} · включно з помилками: {wrong}",
       bankManageClearAll: "Очистити всі банки",
-      bankClearScopeCourse: "банк курсу / ШІ",
+      bankClearScopeCourse: "банк підручника / ШІ",
+      bankClearScopeAllWrong: "усі помилки",
       bankClearScopeCustomTag: "власний банк «{name}»",
       bankClearScopeCustomAll: "усі власні банки",
       bankClearScopeAll: "усі банки",
@@ -4427,6 +5074,7 @@ Material to organize:
       bankClearUnusedDetail: "{scope}: буде видалено невикористані (і прострочені) питання.",
       bankClearAnsweredDetail: "{scope}: буде видалено питання з відповідями.",
       bankClearWrongDetail: "{scope}: буде видалено питання з неправильними відповідями.",
+      bankClearWrongAllDetail: "Усі питання з неправильними відповідями та історію відповідей буде остаточно видалено.",
       bankClearFirstWarning: "Це не можна скасувати; потрібне ще одне підтвердження.",
       bankClearFinalWarning: "Останнє підтвердження. Скасувати буде неможливо.",
       bankClearContinue: "Продовжити",
@@ -4438,22 +5086,28 @@ Material to organize:
     },
     kk: {
       bankManageEntry: "Банктерді басқару",
-      bankManageEntryState: "Курс/AI {course} · Жеке {custom}",
+      bankManageEntryState: "Оқулық/AI {course} · Жеке {custom} · Қателер {wrong}",
       bankManageTitle: "Банктерді басқару",
-      bankManageLead: "Тазалау сұрақтар мен жауап тарихын біржола жояды. Әр тазалау екі рет растауды қажет етеді.",
-      bankManageCourseTitle: "Курс / AI банкі",
+      bankManageLead: "Оқулық/AI банкін, әр жеке тегті және қателерді бөлек тазалауға болады. Тазалау сұрақтар мен жауап тарихын біржола жояды; әрқайсысы екі рет растауды қажет етеді.",
+      bankManageCourseTitle: "Оқулық / AI банкі",
       bankManageCourseMeta: "Барлығы: {n}",
+      bankManageCourseStateLead: "Күйі бойынша да тазалауға болады (қайтарылмайды):",
       bankManageCustomTitle: "Жеке банктер",
+      bankManageCustomLead: "Әр тег жеке жолда: санын тексеруге немесе тек соны тазалауға болады.",
       bankManageCustomMeta: "Барлығы: {n} · тег: {tags}",
       bankManageTagMeta: "Барлығы: {n} · пайдаланылмаған: {unused}",
       bankManageClear: "Тазалау",
-      bankManageClearCourse: "Курс / AI банкін тазалау",
+      bankManageClearCourse: "Оқулық / AI банкін тазалау",
       bankManageClearCustom: "Барлық жеке банкті тазалау",
       bankManageClearTag: "«{name}» тазалау",
+      bankManageWrongTitle: "Қателер банкі",
+      bankManageWrongMeta: "Барлығы: {n} · курс/AI және жеке банктерден",
+      bankManageClearWrong: "Қателер банкін тазалау",
       bankManageAllTitle: "Барлық банктер",
-      bankManageAllMeta: "Барлығы: {n}",
+      bankManageAllMeta: "Барлығы: {n} · қателермен қоса: {wrong}",
       bankManageClearAll: "Барлық банкті тазалау",
-      bankClearScopeCourse: "курс / AI банкі",
+      bankClearScopeCourse: "оқулық / AI банкі",
+      bankClearScopeAllWrong: "барлық қателер",
       bankClearScopeCustomTag: "«{name}» жеке банкі",
       bankClearScopeCustomAll: "барлық жеке банктер",
       bankClearScopeAll: "барлық банктер",
@@ -4463,6 +5117,7 @@ Material to organize:
       bankClearUnusedDetail: "{scope}: пайдаланылмаған (және мерзімі өткен) сұрақтар жойылады.",
       bankClearAnsweredDetail: "{scope}: жауапталған сұрақтар жойылады.",
       bankClearWrongDetail: "{scope}: қате жауапталған сұрақтар жойылады.",
+      bankClearWrongAllDetail: "Барлық қате жауапталған сұрақтар мен жауап тарихы біржола жойылады.",
       bankClearFirstWarning: "Бұны қайтару мүмкін емес; тағы бір растау қажет.",
       bankClearFinalWarning: "Соңғы растау. Тазалағаннан кейін қайтару мүмкін емес.",
       bankClearContinue: "Жалғастыру",
@@ -4471,6 +5126,380 @@ Material to organize:
       maxEarnedHint: "Бір раунд ең көбі осы минутты әкеле алады; шекке жеткенде уақыт қосылмайды.",
       maxEarnedDecrease: "5 минутқа азайту",
       maxEarnedIncrease: "5 минутқа қосу",
+    },
+  };
+
+  // V35: DeepSeek voice reading. The module only appears for the official
+  // DeepSeek host because speech uses a fixed DeepSeek endpoint and the stored
+  // key must never be forwarded to an unrelated compatible gateway.
+  const V35_TEXTS = {
+    zh: {
+      speechTitle: "开启语音播报",
+      speechHint: "答题时自动朗读；答错或超时后再朗读答案和解题过程。",
+      speechContent: "朗读内容",
+      speechQuestion: "题目",
+      speechOptions: "选项",
+      speechAnswer: "答案和解题过程（答错或超时后）",
+      speechKeepHint: "关闭开关不会清空勾选，下次开启时沿用。",
+      speechModelHint: "语音播报使用 DeepSeek 语音接口和音色 stella，不使用上方的对话模型，只复用 Key。",
+      speechSaveToApply: "保存 AI 设置后生效。",
+      speechBillingHint: "使用上方 DeepSeek Key 和 DeepSeek 语音服务；题目、选项、答案和解题过程会发送给 DeepSeek，并按字符计费。朗读失败不影响答题。",
+      speechSelectAtLeastOne: "开启语音播报时，请至少勾选一项朗读内容。",
+      err_INVALID_SPEECH_SETTINGS: "语音播报设置无法读取，请重新打开设置。",
+      err_SPEECH_CONTENT_REQUIRED: "请至少勾选一项朗读内容。",
+    },
+    en: {
+      speechTitle: "Read questions aloud",
+      speechHint: "Reads each question automatically; the answer and explanation are read after a wrong or timed-out reply.",
+      speechContent: "Read aloud",
+      speechQuestion: "Question",
+      speechOptions: "Options",
+      speechAnswer: "Answer and explanation (after a wrong or timed-out reply)",
+      speechKeepHint: "Turning this off keeps your selections for next time.",
+      speechModelHint: "Voice uses the DeepSeek speech endpoint and the stella voice, not the chat model above; only the key is shared.",
+      speechSaveToApply: "Takes effect after you save the AI settings.",
+      speechBillingHint: "Uses the DeepSeek key above and DeepSeek speech; question, options, answer, and explanation text are sent to DeepSeek and billed by character. A speech failure never blocks the quiz.",
+      speechSelectAtLeastOne: "Select at least one item to read when voice is on.",
+      err_INVALID_SPEECH_SETTINGS: "The voice settings could not be read. Reopen the settings.",
+      err_SPEECH_CONTENT_REQUIRED: "Select at least one item to read.",
+    },
+    ru: {
+      speechTitle: "Озвучивать вопросы",
+      speechHint: "Вопрос читается автоматически; ответ и решение — только после неверного ответа или тайм-аута.",
+      speechContent: "Что читать",
+      speechQuestion: "Вопрос",
+      speechOptions: "Варианты",
+      speechAnswer: "Ответ и решение (после ошибки или тайм-аута)",
+      speechKeepHint: "При выключении выбранные пункты сохраняются.",
+      speechModelHint: "Озвучивание использует голосовой интерфейс DeepSeek и голос stella, а не модель чата выше; общий только ключ.",
+      speechSaveToApply: "Вступит в силу после сохранения настроек ИИ.",
+      speechBillingHint: "Использует ключ DeepSeek выше и синтез речи DeepSeek; текст вопроса, вариантов, ответа и решения отправляется в DeepSeek и оплачивается по символам. Сбой озвучивания не мешает ответу.",
+      speechSelectAtLeastOne: "Выберите хотя бы один пункт для озвучивания.",
+      err_INVALID_SPEECH_SETTINGS: "Не удалось прочитать настройки озвучивания. Откройте настройки снова.",
+      err_SPEECH_CONTENT_REQUIRED: "Выберите хотя бы один пункт для озвучивания.",
+    },
+    uk: {
+      speechTitle: "Озвучувати запитання",
+      speechHint: "Запитання читається автоматично; відповідь і рішення — лише після помилки або тайм-ауту.",
+      speechContent: "Що озвучувати",
+      speechQuestion: "Запитання",
+      speechOptions: "Варіанти",
+      speechAnswer: "Відповідь і рішення (після помилки або тайм-ауту)",
+      speechKeepHint: "Вимкнення зберігає вибрані пункти для наступного разу.",
+      speechModelHint: "Озвучення використовує мовний інтерфейс DeepSeek і голос stella, а не модель чату вище; спільним є лише ключ.",
+      speechSaveToApply: "Набуде чинності після збереження налаштувань ШІ.",
+      speechBillingHint: "Використовує ключ DeepSeek вище та синтез мовлення DeepSeek; текст запитання, варіантів, відповіді та рішення надсилається до DeepSeek і оплачується за символами. Збій озвучення не заважає відповідати.",
+      speechSelectAtLeastOne: "Виберіть принаймні один пункт для озвучення.",
+      err_INVALID_SPEECH_SETTINGS: "Не вдалося прочитати налаштування озвучення. Відкрийте налаштування знову.",
+      err_SPEECH_CONTENT_REQUIRED: "Виберіть принаймні один пункт для озвучення.",
+    },
+    kk: {
+      speechTitle: "Сұрақтарды дауыстап оқу",
+      speechHint: "Сұрақ автоматты түрде оқылады; жауап пен шешу жолы қате немесе уақыт біткеннен кейін ғана оқылады.",
+      speechContent: "Дауыстап оқылатындар",
+      speechQuestion: "Сұрақ",
+      speechOptions: "Нұсқалар",
+      speechAnswer: "Жауап және шешу жолы (қате немесе уақыт біткеннен кейін)",
+      speechKeepHint: "Өшіргенде таңдаулар сақталады.",
+      speechModelHint: "Дауыстап оқу DeepSeek дауыс интерфейсін және stella дауысын пайдаланады, жоғарыдағы чат моделін емес; ортақ тек кілт.",
+      speechSaveToApply: "AI параметрлерін сақтағаннан кейін күшіне енеді.",
+      speechBillingHint: "Жоғарыдағы DeepSeek кілтін және DeepSeek дауыс қызметін пайдаланады; сұрақ, нұсқалар, жауап және шешу жолы мәтіні DeepSeek-ке жіберіліп, таңба бойынша төленеді. Дауыс қатесі жауап беруге кедергі келмейді.",
+      speechSelectAtLeastOne: "Дауыс қосулы кезде кемінде бір элементті таңдаңыз.",
+      err_INVALID_SPEECH_SETTINGS: "Дауыс параметрлерін оқу мүмкін болмады. Параметрлерді қайта ашыңыз.",
+      err_SPEECH_CONTENT_REQUIRED: "Кемінде бір дауыстап оқылатын элементті таңдаңыз.",
+    },
+  };
+
+  // V37: one level is a package of ordered question sources.
+  const V36_TEXTS = {
+    zh: {
+      levelAddPackageTitle: "添加关卡",
+      levelAddPackageMeta: "一个关卡可组合教材、自定义标签和错题",
+      levelSourcesTitle: "题目来源",
+      levelSourcesLead: "答题时从每个来源轮流抽题；某个来源用完就跳过，直到抽满一轮。可继续添加来源，点底部「创建关卡」后才会生成关卡。",
+      levelDraftBadge: "待保存",
+      levelSourceIndex: "来源 {n}",
+      levelCreate: "创建关卡",
+      levelSourceCourse: "教材题目",
+      levelSourceCourseMeta: "按年级、学期、学科和单元选择",
+      levelSourceCustom: "自定义题库",
+      levelSourceCustomMeta: "选择导入题目时创建的标签",
+      levelSourceWrong: "错题复习",
+      levelSourceWrongMeta: "自动收录本机所有错题",
+      levelTypeFilterTitle: "题目类型",
+      levelTypeAny: "混合",
+      levelTypeSingle: "单选",
+      levelTypeMultiple: "多选",
+      levelTypeCountsAll: "共 {total} 道 · 单选 {single} · 多选 {multiple}",
+      levelTypeCountsWith: "{kind} {n} 道 · 共 {total} 道",
+      levelTypeEmpty: "当前范围没有{kind}题，请换一个范围或类型。",
+      levelSourceSave: "保存来源",
+      levelSourceLimit: "每个关卡最多 {n} 个来源。",
+      levelSourceDuplicateCourse: "这个范围和类型的教材来源已存在。",
+      levelSourceDuplicateTag: "这个标签已在关卡中。",
+      levelSourceDuplicateWrong: "错题复习已在关卡中。",
+      levelSourceMissingTag: "请选择一个标签。",
+      levelSourcesCount: "{n}/{max} 个来源",
+      levelSourcesTotal: "总题量 {n} 道",
+      levelSourceAvailable: "可用 {n} 道",
+      levelSourceBankCount: "题库 {n} 道",
+      levelSourceWrongCount: "错题 {n} 道",
+      levelSourceTotalAvailable: "共 {total} 道 · 可用 {available} 道",
+      levelWrongIncluded: "含错题 {n} 道",
+      levelAtLeastOneSource: "至少添加一个来源才能保存关卡。",
+      levelPackageHint: "每个来源每轮抽一道题，来源之间轮流出现。",
+      levelSourceAdded: "来源已加入关卡，可继续添加或创建关卡。",
+      levelSourceUpdated: "来源已更新。",
+      levelPackageFallbackName: "关卡 {n}",
+      levelPackagesUnreadable: "电视上的关卡数据无法读取，请重新打开家长设置。",
+      levelModelUnsupported: "电视版本不支持新的关卡结构，请刷新页面。",
+      err_LEVEL_MODEL_UPGRADED: "电视已升级关卡结构，请刷新页面后重试。",
+      err_LEVEL_MODEL_UNREADABLE: "关卡数据无法读取，请在电视上重新保存。",
+      err_INVALID_LEVEL_PACKAGES: "关卡内容不符合要求，请检查后重试。",
+      err_TOO_MANY_LEVELS: "关卡数量已达上限。",
+      err_LEVEL_SOURCE_LIMIT: "单个关卡的题目来源太多。",
+      err_INVALID_LEVEL_SOURCE: "题目来源无效，请重新选择。",
+    },
+    en: {
+      levelAddPackageTitle: "Add level",
+      levelAddPackageMeta: "Combine textbook, custom tags, and mistakes in one level",
+      levelSourcesTitle: "Question sources",
+      levelSourcesLead: "Questions rotate between sources. A source that runs out is skipped until the round is full. Add as many sources as you need; the level is created only after you tap Create level.",
+      levelDraftBadge: "Unsaved",
+      levelSourceIndex: "Source {n}",
+      levelCreate: "Create level",
+      levelSourceCourse: "Textbook questions",
+      levelSourceCourseMeta: "Pick grade, semester, subject, and unit",
+      levelSourceCustom: "Custom bank",
+      levelSourceCustomMeta: "Pick a tag created when questions were imported",
+      levelSourceWrong: "Wrong review",
+      levelSourceWrongMeta: "Automatically covers every mistake on this TV",
+      levelTypeFilterTitle: "Question type",
+      levelTypeAny: "Mixed",
+      levelTypeSingle: "Single choice",
+      levelTypeMultiple: "Multiple choice",
+      levelTypeCountsAll: "{total} total · {single} single · {multiple} multiple",
+      levelTypeCountsWith: "{kind}: {n} · {total} total",
+      levelTypeEmpty: "No {kind} questions in this range. Choose another range or type.",
+      levelSourceSave: "Save source",
+      levelSourceLimit: "A level can hold at most {n} sources.",
+      levelSourceDuplicateCourse: "This range and type are already in the level.",
+      levelSourceDuplicateTag: "This tag is already in the level.",
+      levelSourceDuplicateWrong: "Wrong review is already in the level.",
+      levelSourceMissingTag: "Choose a tag.",
+      levelSourcesCount: "{n}/{max} sources",
+      levelSourcesTotal: "{n} questions total",
+      levelSourceAvailable: "{n} available",
+      levelSourceBankCount: "{n} in bank",
+      levelSourceWrongCount: "{n} wrong",
+      levelSourceTotalAvailable: "{total} total · {available} available",
+      levelWrongIncluded: "includes {n} wrong",
+      levelAtLeastOneSource: "Add at least one source before saving the level.",
+      levelPackageHint: "Each source contributes one question per cycle, rotating between sources.",
+      levelSourceAdded: "Source added. Add more sources or create the level.",
+      levelSourceUpdated: "Source updated.",
+      levelPackageFallbackName: "Level {n}",
+      levelPackagesUnreadable: "The level data on this TV could not be read. Reopen parent settings.",
+      levelModelUnsupported: "This TV does not support the new level structure. Refresh the page.",
+      err_LEVEL_MODEL_UPGRADED: "The TV upgraded its level structure. Refresh the page and try again.",
+      err_LEVEL_MODEL_UNREADABLE: "The level data could not be read. Save it again on the TV.",
+      err_INVALID_LEVEL_PACKAGES: "The level contents are not valid. Check them and try again.",
+      err_TOO_MANY_LEVELS: "The level limit has been reached.",
+      err_LEVEL_SOURCE_LIMIT: "This level has too many question sources.",
+      err_INVALID_LEVEL_SOURCE: "A question source is invalid. Choose it again.",
+    },
+    ru: {
+      levelAddPackageTitle: "Добавить уровень",
+      levelAddPackageMeta: "Объедините учебник, свои теги и ошибки в одном уровне",
+      levelSourcesTitle: "Источники вопросов",
+      levelSourcesLead: "Вопросы чередуются между источниками. Исчерпанный источник пропускается до конца раунда. Добавляйте источники по одному: уровень создаётся только после нажатия «Создать уровень».",
+      levelDraftBadge: "Не сохранено",
+      levelSourceIndex: "Источник {n}",
+      levelCreate: "Создать уровень",
+      levelSourceCourse: "Вопросы учебника",
+      levelSourceCourseMeta: "Выберите класс, полугодие, предмет и раздел",
+      levelSourceCustom: "Свой банк",
+      levelSourceCustomMeta: "Выберите тег, созданный при импорте вопросов",
+      levelSourceWrong: "Повторение ошибок",
+      levelSourceWrongMeta: "Автоматически включает все ошибки на этом ТВ",
+      levelTypeFilterTitle: "Тип вопроса",
+      levelTypeAny: "Смешанные",
+      levelTypeSingle: "Один ответ",
+      levelTypeMultiple: "Несколько ответов",
+      levelTypeCountsAll: "Всего {total} · один ответ {single} · несколько {multiple}",
+      levelTypeCountsWith: "{kind}: {n} · всего {total}",
+      levelTypeEmpty: "В этом диапазоне нет вопросов типа «{kind}». Выберите другой диапазон или тип.",
+      levelSourceSave: "Сохранить источник",
+      levelSourceLimit: "В уровне может быть не более {n} источников.",
+      levelSourceDuplicateCourse: "Этот диапазон и тип уже есть в уровне.",
+      levelSourceDuplicateTag: "Этот тег уже есть в уровне.",
+      levelSourceDuplicateWrong: "Повторение ошибок уже есть в уровне.",
+      levelSourceMissingTag: "Выберите тег.",
+      levelSourcesCount: "Источников: {n}/{max}",
+      levelSourcesTotal: "Всего вопросов: {n}",
+      levelSourceAvailable: "Доступно: {n}",
+      levelSourceBankCount: "В банке: {n}",
+      levelSourceWrongCount: "Ошибок: {n}",
+      levelSourceTotalAvailable: "Всего {total} · доступно {available}",
+      levelWrongIncluded: "включая ошибок: {n}",
+      levelAtLeastOneSource: "Добавьте хотя бы один источник, чтобы сохранить уровень.",
+      levelPackageHint: "Каждый источник даёт один вопрос за цикл, источники чередуются.",
+      levelSourceAdded: "Источник добавлен. Добавьте ещё или создайте уровень.",
+      levelSourceUpdated: "Источник обновлён.",
+      levelPackageFallbackName: "Уровень {n}",
+      levelPackagesUnreadable: "Не удалось прочитать данные уровней на ТВ. Откройте родительские настройки снова.",
+      levelModelUnsupported: "Этот ТВ не поддерживает новую структуру уровней. Обновите страницу.",
+      err_LEVEL_MODEL_UPGRADED: "ТВ обновил структуру уровней. Обновите страницу и повторите.",
+      err_LEVEL_MODEL_UNREADABLE: "Не удалось прочитать данные уровней. Сохраните их снова на ТВ.",
+      err_INVALID_LEVEL_PACKAGES: "Содержимое уровней недопустимо. Проверьте его и повторите.",
+      err_TOO_MANY_LEVELS: "Достигнут предел числа уровней.",
+      err_LEVEL_SOURCE_LIMIT: "В уровне слишком много источников вопросов.",
+      err_INVALID_LEVEL_SOURCE: "Источник вопросов недопустим. Выберите его снова.",
+    },
+    uk: {
+      levelAddPackageTitle: "Додати рівень",
+      levelAddPackageMeta: "Поєднайте підручник, власні теги й помилки в одному рівні",
+      levelSourcesTitle: "Джерела питань",
+      levelSourcesLead: "Питання чергуються між джерелами. Вичерпане джерело пропускається до кінця раунду. Додавайте джерела по одному: рівень створюється лише після натискання «Створити рівень».",
+      levelDraftBadge: "Не збережено",
+      levelSourceIndex: "Джерело {n}",
+      levelCreate: "Створити рівень",
+      levelSourceCourse: "Питання підручника",
+      levelSourceCourseMeta: "Виберіть клас, семестр, предмет і розділ",
+      levelSourceCustom: "Власний банк",
+      levelSourceCustomMeta: "Виберіть тег, створений під час імпорту питань",
+      levelSourceWrong: "Повторення помилок",
+      levelSourceWrongMeta: "Автоматично включає всі помилки на цьому ТБ",
+      levelTypeFilterTitle: "Тип питання",
+      levelTypeAny: "Змішані",
+      levelTypeSingle: "Одна відповідь",
+      levelTypeMultiple: "Кілька відповідей",
+      levelTypeCountsAll: "Усього {total} · одна відповідь {single} · кілька {multiple}",
+      levelTypeCountsWith: "{kind}: {n} · усього {total}",
+      levelTypeEmpty: "У цьому діапазоні немає питань типу «{kind}». Виберіть інший діапазон або тип.",
+      levelSourceSave: "Зберегти джерело",
+      levelSourceLimit: "У рівні може бути не більше {n} джерел.",
+      levelSourceDuplicateCourse: "Цей діапазон і тип уже є в рівні.",
+      levelSourceDuplicateTag: "Цей тег уже є в рівні.",
+      levelSourceDuplicateWrong: "Повторення помилок уже є в рівні.",
+      levelSourceMissingTag: "Виберіть тег.",
+      levelSourcesCount: "Джерел: {n}/{max}",
+      levelSourcesTotal: "Усього питань: {n}",
+      levelSourceAvailable: "Доступно: {n}",
+      levelSourceBankCount: "У банку: {n}",
+      levelSourceWrongCount: "Помилок: {n}",
+      levelSourceTotalAvailable: "Усього {total} · доступно {available}",
+      levelWrongIncluded: "включно з помилками: {n}",
+      levelAtLeastOneSource: "Додайте принаймні одне джерело, щоб зберегти рівень.",
+      levelPackageHint: "Кожне джерело дає одне питання за цикл, джерела чергуються.",
+      levelSourceAdded: "Джерело додано. Додайте ще або створіть рівень.",
+      levelSourceUpdated: "Джерело оновлено.",
+      levelPackageFallbackName: "Рівень {n}",
+      levelPackagesUnreadable: "Не вдалося прочитати дані рівнів на ТБ. Відкрийте батьківські налаштування знову.",
+      levelModelUnsupported: "Цей ТБ не підтримує нову структуру рівнів. Оновіть сторінку.",
+      err_LEVEL_MODEL_UPGRADED: "ТБ оновив структуру рівнів. Оновіть сторінку та повторіть.",
+      err_LEVEL_MODEL_UNREADABLE: "Не вдалося прочитати дані рівнів. Збережіть їх знову на ТБ.",
+      err_INVALID_LEVEL_PACKAGES: "Вміст рівнів недійсний. Перевірте його та повторіть.",
+      err_TOO_MANY_LEVELS: "Досягнуто межі кількості рівнів.",
+      err_LEVEL_SOURCE_LIMIT: "У рівні забагато джерел питань.",
+      err_INVALID_LEVEL_SOURCE: "Джерело питань недійсне. Виберіть його знову.",
+    },
+    kk: {
+      levelAddPackageTitle: "Деңгей қосу",
+      levelAddPackageMeta: "Оқулық, өз тегтеріңіз және қателерді бір деңгейге біріктіріңіз",
+      levelSourcesTitle: "Сұрақ көздері",
+      levelSourcesLead: "Сұрақтар көздер арасында кезектеседі. Таусылған көз айналым толғанша өткізіледі. Көздерді біртіндеп қосыңыз: деңгей «Деңгей жасау» түймесін басқаннан кейін ғана жасалады.",
+      levelDraftBadge: "Сақталмаған",
+      levelSourceIndex: "Көз {n}",
+      levelCreate: "Деңгей жасау",
+      levelSourceCourse: "Оқулық сұрақтары",
+      levelSourceCourseMeta: "Сынып, семестр, пән және тарауды таңдаңыз",
+      levelSourceCustom: "Өз банкі",
+      levelSourceCustomMeta: "Сұрақтарды импорттау кезінде жасалған тегті таңдаңыз",
+      levelSourceWrong: "Қателерді қайталау",
+      levelSourceWrongMeta: "Осы ТВ-дегі барлық қателерді автоматты қамтиды",
+      levelTypeFilterTitle: "Сұрақ түрі",
+      levelTypeAny: "Аралас",
+      levelTypeSingle: "Бір жауап",
+      levelTypeMultiple: "Бірнеше жауап",
+      levelTypeCountsAll: "Барлығы {total} · бір жауап {single} · бірнеше {multiple}",
+      levelTypeCountsWith: "{kind}: {n} · барлығы {total}",
+      levelTypeEmpty: "Бұл ауқымда «{kind}» сұрақтары жоқ. Басқа ауқым немесе түр таңдаңыз.",
+      levelSourceSave: "Көзді сақтау",
+      levelSourceLimit: "Деңгейде ең көбі {n} көз болуы мүмкін.",
+      levelSourceDuplicateCourse: "Бұл ауқым мен түр деңгейде бар.",
+      levelSourceDuplicateTag: "Бұл тег деңгейде бар.",
+      levelSourceDuplicateWrong: "Қателерді қайталау деңгейде бар.",
+      levelSourceMissingTag: "Тег таңдаңыз.",
+      levelSourcesCount: "Көздер: {n}/{max}",
+      levelSourcesTotal: "Барлығы сұрақ: {n}",
+      levelSourceAvailable: "Қолжетімді: {n}",
+      levelSourceBankCount: "Банкте: {n}",
+      levelSourceWrongCount: "Қателер: {n}",
+      levelSourceTotalAvailable: "Барлығы {total} · қолжетімді {available}",
+      levelWrongIncluded: "қателермен қоса: {n}",
+      levelAtLeastOneSource: "Деңгейді сақтау үшін кемінде бір көз қосыңыз.",
+      levelPackageHint: "Әр көз цикл сайын бір сұрақ береді, көздер кезектеседі.",
+      levelSourceAdded: "Көз қосылды. Тағы қосыңыз немесе деңгей жасаңыз.",
+      levelSourceUpdated: "Көз жаңартылды.",
+      levelPackageFallbackName: "Деңгей {n}",
+      levelPackagesUnreadable: "ТВ-дегі деңгей деректерін оқу мүмкін болмады. Ата-ана параметрлерін қайта ашыңыз.",
+      levelModelUnsupported: "Бұл ТВ жаңа деңгей құрылымын қолдамайды. Бетті жаңартыңыз.",
+      err_LEVEL_MODEL_UPGRADED: "ТВ деңгей құрылымын жаңартты. Бетті жаңартып, қайталаңыз.",
+      err_LEVEL_MODEL_UNREADABLE: "Деңгей деректерін оқу мүмкін болмады. Оларды ТВ-де қайта сақтаңыз.",
+      err_INVALID_LEVEL_PACKAGES: "Деңгей мазмұны жарамсыз. Тексеріп, қайталаңыз.",
+      err_TOO_MANY_LEVELS: "Деңгей санының шегіне жеттіңіз.",
+      err_LEVEL_SOURCE_LIMIT: "Деңгейде тым көп сұрақ көзі бар.",
+      err_INVALID_LEVEL_SOURCE: "Сұрақ көзі жарамсыз. Оны қайта таңдаңыз.",
+    },
+  };
+
+  // V38: each saved level can be paused without deleting its sources.
+  const V37_TEXTS = {
+    zh: {
+      levelEnabledLabel: "启用",
+      levelPausedLabel: "已暂停",
+      levelToggleOnAria: "暂停关卡：{name}",
+      levelToggleOffAria: "启用关卡：{name}",
+      levelPausedHint: "已暂停，答题闯关中不显示",
+      levelPausedToast: "已暂停关卡「{name}」",
+      levelEnabledToast: "已启用关卡「{name}」",
+    },
+    en: {
+      levelEnabledLabel: "Enabled",
+      levelPausedLabel: "Paused",
+      levelToggleOnAria: "Pause level: {name}",
+      levelToggleOffAria: "Enable level: {name}",
+      levelPausedHint: "Paused — hidden from the answer challenge",
+      levelPausedToast: "Paused level “{name}”",
+      levelEnabledToast: "Enabled level “{name}”",
+    },
+    ru: {
+      levelEnabledLabel: "Включён",
+      levelPausedLabel: "Приостановлен",
+      levelToggleOnAria: "Приостановить уровень: {name}",
+      levelToggleOffAria: "Включить уровень: {name}",
+      levelPausedHint: "Приостановлен — скрыт в задании",
+      levelPausedToast: "Уровень «{name}» приостановлен",
+      levelEnabledToast: "Уровень «{name}» включён",
+    },
+    uk: {
+      levelEnabledLabel: "Увімкнено",
+      levelPausedLabel: "Призупинено",
+      levelToggleOnAria: "Призупинити рівень: {name}",
+      levelToggleOffAria: "Увімкнути рівень: {name}",
+      levelPausedHint: "Призупинено — приховано в завданні",
+      levelPausedToast: "Рівень «{name}» призупинено",
+      levelEnabledToast: "Рівень «{name}» увімкнено",
+    },
+    kk: {
+      levelEnabledLabel: "Қосулы",
+      levelPausedLabel: "Кідіртілді",
+      levelToggleOnAria: "Деңгейді кідірту: {name}",
+      levelToggleOffAria: "Деңгейді қосу: {name}",
+      levelPausedHint: "Кідіртілді — жауап тапсырмасында көрсетілмейді",
+      levelPausedToast: "«{name}» деңгейі кідіртілді",
+      levelEnabledToast: "«{name}» деңгейі қосылды",
     },
   };
 
@@ -4488,6 +5517,9 @@ Material to organize:
       V26_TEXTS[code],
       V28_TEXTS[code],
       V34_TEXTS[code],
+      V35_TEXTS[code],
+      V36_TEXTS[code],
+      V37_TEXTS[code],
     );
   }
 
@@ -4557,19 +5589,37 @@ Material to organize:
   // The title matches unit 1 of grade 4 / semester 1 / math / 人教版.
   const DEFAULT_GEN_REQUIREMENT = "一 万以上数的认识";
   const GEN_DIFFICULTY_VALUES = ["", "easy", "medium", "hard"];
+  const GEN_QUESTION_TYPE_VALUES = ["single", "multiple", "mixed"];
+  const GEN_QUESTION_TYPE_LABEL_KEYS = {
+    single: "genTypeSingle",
+    multiple: "genTypeMultiple",
+    mixed: "genTypeMixed",
+  };
   const GEN_PAGE_IDS = {
     home: "generateHome",
     gen: "genConfigPage",
     answer: "answerConfigPage",
     level: "levelEditorPage",
-    customLevel: "customLevelEditorPage",
     questions: "questionsPage",
   };
   const MAX_LEVELS = 20;
+  const MAX_LEVEL_SOURCES = 8;
   const LEVEL_NAME_MAX = 10;
+  // The package model is version 2. A session without it is served by a page
+  // cached from an older APK; the new page reports that instead of writing
+  // legacy fields the TV would reject.
+  const LEVEL_MODEL = 2;
+  const ANSWER_KIND_VALUES = ["any", "single", "multiple"];
+  const ANSWER_KIND_FILTERS = {
+    any: null,
+    single: "single",
+    multiple: "multiple",
+  };
   const TAG_NAME_MAX = 20;
-  const IMPORT_MAX_BYTES = 512 * 1024;
-  const IMPORT_MAX_ITEMS = 200;
+  const IMPORT_MAX_BYTES = 16 * 1024 * 1024;
+  const IMPORT_MAX_ITEMS = 10000;
+  const IMPORT_MAX_BATCH_ITEMS = 50;
+  const IMPORT_MAX_BATCH_BYTES = 400 * 1024;
   const IMPORT_PREVIEW_LIMIT = 10;
   const MAX_TAGS = 20;
   const BANK_PAGE_SIZE = 40;
@@ -4646,18 +5696,6 @@ Material to organize:
     REVIEW: "all",
   };
   const SCOPE_DIFFICULTY_VALUES = ["", "EASY", "MEDIUM", "HARD"];
-  // A new level starts on the widest playable scope in the bundled bank:
-  // grade 4, semester 1, all subjects, midterm, any difficulty. The parent can
-  // still narrow each step; saving it as-is gives the child mixed subjects.
-  const DEFAULT_LEVEL_SCOPE = Object.freeze({
-    grade: 4,
-    semester: 1,
-    subject: SUBJECT_ALL,
-    textbook: TEXTBOOK_ALL,
-    topic: "midterm",
-    unitNo: null,
-    difficulty: "",
-  });
   // Custom answer scope is a stepwise filter: each step shows only values that
   // still have bank questions under the upstream selections. Units are listed
   // individually in the topic step instead of being summarized into one chip.
@@ -4742,9 +5780,18 @@ Material to organize:
   let challengeConfig = null;
   let syncState = null;
   let cloudManaged = false;
-  let bankCapacity = 6000;
+  let bankCapacity = 100000;
   let bankCounts = null;
-  let providerState = { aiSupported: true, consentAccepted: false, configured: false, baseUrl: "", model: "" };
+  let providerState = { aiSupported: true, consentAccepted: false, configured: false, baseUrl: "", model: "", speech: null };
+  const DEFAULT_SPEECH = {
+    initialized: false,
+    enabled: true,
+    readPrompt: true,
+    readOptions: true,
+    readAnswer: true,
+  };
+  let speechState = Object.assign({}, DEFAULT_SPEECH);
+  let speechDirty = false;
   let providerMsg = null;
   let pendingGenerate = false;
   // The privacy notice is a gate, not a dismissible hint: the editor stays
@@ -4761,29 +5808,29 @@ Material to organize:
   let bankHasMore = false;
   let bankLoading = false;
   let bankRequest = 0;
-  // V22 local tags and the levels that draw from them. Course levels stay in
-  // answerLevels; the two lists are only merged for display and limits.
+  // V22 local tags. A level package may draw from any number of tags.
   let importCollections = [];
   let importTagSuggestItems = [];
   let importTagActiveIndex = -1;
   let importTagComposing = false;
   let importDefaultDifficulty = "medium";
   let importPreview = null;
-  let importRequest = null;
   let importResult = null;
   let importBusy = false;
+  let importRunning = false;
+  let importCancelRequested = false;
+  let importProgress = null;
+  let importPreviewPage = 0;
+  // The last import failure, kept so the user can copy the same error lines they
+  // see into an AI chat. Only data errors are copyable; target and file errors
+  // are not something a model can repair.
+  let importErrorInfo = { message: "", errors: [], copyable: false };
   let importFileName = "";
-  let customLevels = [];
-  let customLevelEditingId = null;
-  let customLevelDraftTag = "";
-  let customLevelSaving = false;
-  let customLevelMessageTimer = 0;
-  // A single optional level over the dynamic wrong-answer pool. It is kept
-  // apart from customLevels so the tag cap and tag editor never apply to it.
-  let wrongLevel = null;
-  let wrongLevelEditing = false;
-  let wrongLevelSaving = false;
-  let wrongLevelMessageTimer = 0;
+  // A large file is kept here instead of in the textarea. Rendering a 16 MB
+  // string in an editable field is what freezes older phone browsers.
+  let importFileText = null;
+  // Which prompt (convert or generate) the copy buttons currently show below.
+  let importPromptKind = "";
   let bankSourceCounts = { course: 0, custom: 0 };
   let localBankActive = true;
   let bankClearPending = null;
@@ -4812,22 +5859,70 @@ Material to organize:
   let genDifficultyValue = "";
   // 完全自由的题目要求；样例只是快捷填充，不再代表下拉选中项。
   let genRequirementValue = DEFAULT_GEN_REQUIREMENT;
+  let genQuestionTypeValue = "single";
   let genOptionsValue = 4;
   let genAutoAddValue = true;
   let genPromptDirty = false;
   let genPrefsSaveTimer = null;
   let genPage = "home";
   let answerTab = "scope";
-  // The ordered parent-designed levels. Each entry keeps the canonical API
-  // shape plus a normalised local scope for rendering and duplicate checks.
-  let answerLevels = [];
-  let levelEditingId = null;
-  let levelNameDraft = "";
+  // Android WebView can deliver a late compatibility click at the same screen
+  // point after a handler has already changed the page. Debounce every click
+  // briefly so one tap can never trigger an action on the page that replaced
+  // it (for example, adding a level and then reopening the source editor).
+  let clickSuppressUntil = 0;
+  document.addEventListener("click", (event) => {
+    // Only a trusted click can be the late compatibility click this guards
+    // against. Programmatic clicks are deliberate page actions -- cancelling
+    // their default action would silently block the hidden wallpaper upload
+    // input, whose click() must reach the WebView's file chooser.
+    if (!event.isTrusted) return;
+    // A label forwards its activation to the labeled control as a second
+    // trusted click right after the label's own click. That forwarded click is
+    // the real action: the file chooser opens, a checkbox or radio toggles, a
+    // field focuses. Form controls must never be treated as a late duplicate,
+    // or the parent center's app picker (label + hidden checkbox) and the
+    // import file input both stop responding.
+    const target = event.target;
+    if (target instanceof HTMLInputElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement) return;
+    const now = Date.now();
+    if (now < clickSuppressUntil) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+    clickSuppressUntil = now + 300;
+  }, true);
+  // The ordered parent-designed packages. A package holds one or more sources;
+  // the draft list is edited locally and saved as one `levelPackages` array.
+  let levelPackages = [];
+  let levelLimits = { maxLevels: MAX_LEVELS, maxSources: MAX_LEVEL_SOURCES, maxNameCodePoints: LEVEL_NAME_MAX };
+  let levelPackagesUnreadable = false;
+  // A package id while editing an existing package, null while adding one.
+  let packageEditingId = null;
+  let packageDraftSources = [];
+  let packageNameDraft = "";
+  let packageSaving = false;
+  // True while the package editor or one of its child pages is open, so the
+  // course-source and tag picker back buttons return to the draft.
+  let packageEditorActive = false;
+  let tagPickerOpen = false;
   let levelSaving = false;
-  let levelUndo = null;
-  let levelUndoTimer = 0;
+  let pendingLevelDeleteId = null;
   let levelMessageTimer = 0;
-  // Legacy single-scope view, derived from the first level for the old
+  // The course-source editor edits one source of packageDraftSources. A null
+  // index means the source will be appended; -1 is reserved for "not editing".
+  let courseSourceEditingIndex = null;
+  let courseSourceAnswerKind = "any";
+  // A new source reveals the type filter only after the parent has answered
+  // the difficulty step, even when that answer is "any difficulty".
+  let courseSourceDifficultyPicked = false;
+  let courseSourceCounts = null;
+  let courseSourceCountsKey = "";
+  let courseSourceCountsToken = 0;
+  // Legacy single-scope view, derived from the first course source for older
   // generation helpers and cached surfaces.
   let answerScope = null;
   let answerScopeMode = "bound";
@@ -5871,7 +6966,6 @@ Material to organize:
     renderBankManage();
     renderBankCounts();
     renderBank();
-    renderCustomLevels();
     renderBankImport();
     renderUnlockState();
     renderManualState();
@@ -5880,7 +6974,6 @@ Material to organize:
     }
     if (genPage === "answer") renderAnswerPage();
     if (genPage === "level") renderLevelEditor();
-    if (genPage === "customLevel") renderCustomLevelEditor();
     if (genPage === "questions") renderQuestions();
     updateParentAppDownloadRow();
     if (webDisabled) renderWebDisabled();
@@ -5926,6 +7019,10 @@ Material to organize:
     return t(key);
   }
 
+  function generationQuestionTypeText() {
+    return t(GEN_QUESTION_TYPE_LABEL_KEYS[genQuestionTypeValue] || "genTypeSingle");
+  }
+
   // The home card shows at most three level rows. One level keeps its full
   // name, two or three levels get a numbered row each, and longer lists keep
   // the first and last row with an ellipsis count between them. The hidden
@@ -5938,15 +7035,19 @@ Material to organize:
     host.classList.remove("single", "empty");
     if (hidden) hidden.textContent = "";
 
-    const entries = levels.map((level, index) => ({
-      ordinal: index + 1,
-      name: String(level.name || "").trim() ||
-        (level.wrongReview
-          ? t("wrongLevelFallbackName")
-          : level.collectionId
-            ? t("customLevelNameFallback", { name: customLevelTagName(level) })
-            : scopeSummaryText(level.scope)),
-    }));
+    const entries = levels.map((level, index) => {
+      const base = String(level.name || "").trim() ||
+        packageSummaryText(level) ||
+        t("levelFallbackName", { n: index + 1 });
+      return {
+        ordinal: index + 1,
+        // Keep paused levels in the parent's overview but label them so this
+        // card does not imply the child can still pick them.
+        name: level.enabled === false
+          ? base + " · " + t("levelPausedLabel")
+          : base,
+      };
+    });
     if (!entries.length) {
       host.classList.add("empty");
       host.textContent = t("levelEmptyTitle");
@@ -6014,6 +7115,7 @@ Material to organize:
       requirement || t("genRequirementMissing"),
     ].filter(Boolean).join(" · ");
     $("homeGenSub").textContent = [
+      generationQuestionTypeText(),
       generationDifficultyText(),
       t("targetN", { n: targetCount }),
       genAutoAddValue ? t("genAutoAddShort") : t("genManualAddShort"),
@@ -6022,13 +7124,13 @@ Material to organize:
     const config = currentConfig();
     const pull = Number(config.pullCount || 5);
     const scopeModeLabel = $("homeAnswerScopeMode");
-    const totalLevels = allLevelCount();
+    const totalLevels = levelPackages.length;
     if (scopeModeLabel) {
       scopeModeLabel.textContent = totalLevels
         ? t("levelCountLabel", { n: totalLevels })
         : t("levelNoneLabel");
     }
-    renderAnswerSummary(answerLevels.concat(customLevels, wrongLevel ? [wrongLevel] : []));
+    renderAnswerSummary(levelPackages);
     const scoring = scoringValues(config);
     $("homeAnswerSub").textContent = t("homeAnswerSub", {
       n: pull,
@@ -6115,6 +7217,20 @@ Material to organize:
     renderStock();
   }
 
+  function optionLetter(index) {
+    const value = Number(index);
+    return value >= 0 && value < 26 ? String.fromCharCode(65 + value) : String(value + 1);
+  }
+
+  function questionTypeBadge(item) {
+    const multiple = Array.isArray(item.answerIndices) && item.answerIndices.length > 1 ||
+      item.type === "multiple";
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = t(multiple ? "genTypeMultiple" : "genTypeSingle");
+    return badge;
+  }
+
   function renderQuestions() {
     if (!$("questionList")) return;
     const items = genState.batch;
@@ -6132,6 +7248,10 @@ Material to organize:
     $("stickySelected").textContent = t("selectedCount", { n: selectedBatch.size });
     $("addSelected").disabled = selectedBatch.size === 0;
     $("questionEmpty").classList.toggle("hidden", items.length > 0);
+    if ($("genMultiWarning")) {
+      const hasMultiple = items.some((item) => item.type === "multiple");
+      $("genMultiWarning").classList.toggle("hidden", !hasMultiple);
+    }
     $("questionList").replaceChildren();
     items.forEach((item) => {
       const selected = selectedBatch.has(item.index);
@@ -6158,8 +7278,17 @@ Material to organize:
       meta.className = "q-meta";
       const answer = document.createElement("span");
       answer.className = "answer";
-      answer.textContent = t("questionAnswer") + ": " + String(item.answerText || "");
+      const answerIndices = Array.isArray(item.answerIndices) && item.answerIndices.length
+        ? item.answerIndices.map(Number)
+        : [Number(item.answerIndex)];
+      const answerTexts = Array.isArray(item.answerTexts) && item.answerTexts.length
+        ? item.answerTexts.map(String)
+        : [String(item.answerText || "")];
+      answer.textContent = t("questionAnswer") + ": " + answerIndices
+        .map((index, position) => optionLetter(index) + " " + (answerTexts[position] || ""))
+        .join("；");
       meta.appendChild(answer);
+      meta.appendChild(questionTypeBadge(item));
       const difficulty = String(item.difficulty || "").toLowerCase();
       if (difficulty && DIFFICULTY_LABEL_KEYS[difficulty]) {
         const dot = document.createElement("span");
@@ -6209,7 +7338,6 @@ Material to organize:
     if (page === "questions") renderQuestions();
     if (page === "answer") renderAnswerPage();
     if (page === "level") renderLevelEditor();
-    if (page === "customLevel") renderCustomLevelEditor();
     window.scrollTo({ top: 0 });
   }
 
@@ -6233,14 +7361,29 @@ Material to organize:
     renderGenerate();
   }
 
-  // Levels save as soon as they are added, edited, reordered or deleted, so
-  // leaving the page only has to drop an unfinished editor draft. Rule changes
-  // still wait for the Save button.
+  function discardPackageDraft() {
+    packageEditingId = null;
+    packageDraftSources = [];
+    packageNameDraft = "";
+    packageEditorActive = false;
+    tagPickerOpen = false;
+    courseSourceEditingIndex = null;
+    courseSourceAnswerKind = "any";
+    courseSourceDifficultyPicked = false;
+    courseSourceCounts = null;
+    courseSourceCountsKey = "";
+    courseSourceCountsToken++;
+    customScope = null;
+    answerScopeMode = levelPackages.length ? "custom" : "bound";
+    resetScopeOptions();
+  }
+
+  // Package changes are local until the parent taps Save, so leaving the
+  // answer page drops an unfinished draft. Rule changes still wait for the
+  // Save button on the rules tab.
   function backFromAnswerPage() {
     $("settingsError").textContent = "";
-    levelEditingId = null;
-    customScope = null;
-    resetScopeOptions();
+    discardPackageDraft();
     if (answerDirty) {
       answerDirty = false;
       loadAdminSession().catch(() => {});
@@ -6249,31 +7392,36 @@ Material to organize:
   }
 
   function backFromLevelEditor() {
-    levelEditingId = null;
-    levelNameDraft = "";
-    customScope = null;
-    answerScopeMode = answerLevels.length ? "custom" : "bound";
-    resetScopeOptions();
+    $("levelEditorError").textContent = "";
+    if (packageEditorActive) {
+      // The draft panel is already the parent view; returning to it must keep
+      // the sources configured so far instead of opening another page.
+      courseSourceEditingIndex = null;
+      customScope = null;
+      courseSourceAnswerKind = "any";
+      courseSourceDifficultyPicked = false;
+      courseSourceCounts = null;
+      courseSourceCountsKey = "";
+      courseSourceCountsToken++;
+      resetScopeOptions();
+      showGenPage("answer");
+      renderAnswerPage();
+      return;
+    }
+    discardPackageDraft();
     showGenPage("answer");
   }
 
   function openGenConfigPage() {
     $("rangeError").textContent = "";
-    if (levelEditorOpen()) {
-      levelEditingId = null;
-      levelNameDraft = "";
-      customScope = null;
-      resetScopeOptions();
-    }
+    if (packageEditorActive) discardPackageDraft();
     syncGenerateComposer(true);
     showGenPage("gen");
   }
 
   function openAnswerConfigPage() {
     answerTab = "scope";
-    levelEditingId = null;
-    customScope = null;
-    resetScopeOptions();
+    discardPackageDraft();
     $("levelError").textContent = "";
     showGenPage("answer");
   }
@@ -6615,6 +7763,56 @@ Material to organize:
     renderHome();
   }
 
+  function normalizeSpeech(raw) {
+    const src = raw && typeof raw === "object" ? raw : {};
+    return {
+      initialized: src.initialized === true,
+      enabled: src.enabled !== false,
+      readPrompt: src.readPrompt !== false,
+      readOptions: src.readOptions !== false,
+      readAnswer: src.readAnswer !== false,
+    };
+  }
+
+  // The key may only go to DeepSeek's own TTS endpoint, so the voice module is
+  // available only for the official host. A compatible gateway is not enough:
+  // it does not implement the speech API and must never receive the key.
+  function isOfficialDeepSeek(value) {
+    let url;
+    try {
+      url = new URL(String(value || "").trim());
+    } catch {
+      return false;
+    }
+    if (url.protocol !== "https:") return false;
+    if (url.username || url.password || url.search || url.hash) return false;
+    if (url.host.toLowerCase() !== "api.deepseek.com") return false;
+    const path = url.pathname.replace(/\/+$/, "");
+    return path === "" || path === "/v1";
+  }
+
+  function renderSpeech() {
+    if (!$("speechSettings")) return;
+    const visible = providerState.aiSupported !== false && isOfficialDeepSeek($("baseUrl").value);
+    $("speechSettings").classList.toggle("hidden", !visible);
+    if (!visible) return;
+    $("speechEnabled").checked = speechState.enabled;
+    $("speechPrompt").checked = speechState.readPrompt;
+    $("speechOptions").checked = speechState.readOptions;
+    $("speechAnswer").checked = speechState.readAnswer;
+    for (const id of ["speechPrompt", "speechOptions", "speechAnswer"]) {
+      $(id).disabled = !speechState.enabled;
+    }
+    $("speechContent").classList.toggle("is-off", !speechState.enabled);
+    // The saved switch is default-on, but an upgraded TV must not start
+    // uploading quiz text until the parent saves this page once.
+    $("speechSaveHint").classList.toggle("hidden", speechState.initialized && !speechDirty);
+  }
+
+  function speechHasContent() {
+    return speechState.readPrompt || speechState.readOptions || speechState.readAnswer;
+  }
+
   function renderProvider() {
     if (!$("providerBadge")) return;
     const supported = providerState.aiSupported !== false;
@@ -6629,12 +7827,14 @@ Material to organize:
       $("providerBadge").textContent = t("aiUnavailableShort");
       $("providerBadge").className = "setting-value";
       $("keyHint").textContent = "";
+      renderSpeech();
       return;
     }
     $("providerBadge").textContent = t(providerState.configured ? "aiConfigured" : "aiNotConfigured");
     $("providerBadge").className = "setting-value" + (providerState.configured ? " good" : "");
     $("keyHint").textContent = t(providerState.configured ? "keyHintSaved" : "keyHintNew");
     updateProviderModelHint();
+    renderSpeech();
     // Keep the generate card honest when the model key is cleared elsewhere.
     renderGenerate();
   }
@@ -6737,12 +7937,14 @@ Material to organize:
       $("bankManageEntryState").textContent = t("bankManageEntryState", {
         course: bankSourceCounts.course,
         custom: bankSourceCounts.custom,
+        wrong: counts.wrong,
       });
     }
     if ($("bankSourceCounts")) {
       $("bankSourceCounts").textContent = t("bankSourceLine", {
         course: bankSourceCounts.course,
         custom: bankSourceCounts.custom,
+        wrong: counts.wrong,
         total: counts.total,
         capacity: bankCapacity,
       });
@@ -6792,20 +7994,28 @@ Material to organize:
       });
       badges.appendChild(source);
     }
+    badges.appendChild(questionTypeBadge(item));
     badges.appendChild(statusChip(item));
     head.append(prompt, badges);
     card.appendChild(head);
 
+    const answerIndices = Array.isArray(item.answerIndices) && item.answerIndices.length
+      ? item.answerIndices.map(Number)
+      : [Number(item.answerIndex)];
+    const correct = new Set(answerIndices);
+    const selectedIndices = Array.isArray(item.selectedIndices) && item.selectedIndices.length
+      ? item.selectedIndices.map(Number)
+      : (item.selectedIndex !== null && item.selectedIndex !== undefined
+        ? [Number(item.selectedIndex)]
+        : []);
+    const selected = new Set(selectedIndices);
     const options = document.createElement("ol");
     options.className = "bank-options";
     (item.options || []).forEach((option, index) => {
       const li = document.createElement("li");
       li.textContent = option;
-      if (index === item.answerIndex) li.className = "correct";
-      if (item.selectedIndex !== null && item.selectedIndex !== undefined &&
-          index === item.selectedIndex && index !== item.answerIndex) {
-        li.classList.add("picked");
-      }
+      if (correct.has(index)) li.className = "correct";
+      if (selected.has(index) && !correct.has(index)) li.classList.add("picked");
       options.appendChild(li);
     });
     card.appendChild(options);
@@ -6815,7 +8025,16 @@ Material to organize:
     meta.className = "meta";
     if (item.status === "correct" || item.status === "wrong" || item.status === "legacy") {
       let answered = "";
-      if (item.selectedIndex !== null && item.selectedIndex !== undefined && item.selectedText) {
+      const selectedTexts = Array.isArray(item.selectedTexts)
+        ? item.selectedTexts.map(String)
+        : [];
+      if (Array.isArray(item.selectedIndices) && item.selectedIndices.length) {
+        answered = item.selectedIndices
+          .map((index, position) =>
+            optionLetter(index) + " " + (selectedTexts[position] || ""))
+          .join("；");
+      } else if (item.selectedIndex !== null && item.selectedIndex !== undefined &&
+                 item.selectedText) {
         answered = item.selectedText;
       } else if (item.timedOut) {
         answered = t("noAnswer");
@@ -6883,7 +8102,13 @@ Material to organize:
       n: custom,
       tags: importCollections.length,
     });
-    $("bankManageAllMeta").textContent = t("bankManageAllMeta", { n: total });
+    const wrong = Math.max(0, Number(currentCounts().wrong || 0));
+    $("bankManageWrongMeta").textContent = t("bankManageWrongMeta", { n: wrong });
+    $("bankManageWrongClear").disabled = wrong <= 0;
+    $("bankManageAllMeta").textContent = t("bankManageAllMeta", {
+      n: total,
+      wrong,
+    });
     ["bankManageCourseUnused", "bankManageCourseAnswered",
       "bankManageCourseWrong", "bankManageCourseClear"].forEach((id) => {
       $(id).disabled = course <= 0;
@@ -6922,7 +8147,9 @@ Material to organize:
     });
     $("bankManageCustomEmpty").classList.toggle("hidden", importCollections.length > 0);
     const customClear = $("bankManageCustomClear");
-    customClear.classList.toggle("hidden", importCollections.length < 2);
+    // Each bank keeps one whole-bank clear even with a single tag, so the three
+    // source cards read the same: clear this bank, or drill into its rows.
+    customClear.classList.toggle("hidden", custom <= 0);
     customClear.disabled = custom <= 0;
     $("bankManageAllClear").disabled = total <= 0;
     renderBankCounts();
@@ -6963,6 +8190,14 @@ Material to organize:
   // tag again if the strict cache write fails.
   // The tag input is the only target source. Suggestions are a shortcut that
   // fills the input with an existing name; there is no hidden selected tag id.
+  function normalizeTagName(value) {
+    return String(value || "").trim();
+  }
+
+  function tagNameLength(value) {
+    return Array.from(String(value || "")).length;
+  }
+
   function importTagName() {
     return $("importTagName") ? normalizeTagName($("importTagName").value) : "";
   }
@@ -7227,12 +8462,28 @@ Material to organize:
     }
   }
 
+  // The prompt panel is shared by both copy buttons: only the prompt that was
+  // last copied is shown, so the page never grows two long blocks.
+  function renderImportPrompt() {
+    const kind = importPromptKind;
+    const visible = kind === "convert" || kind === "generate";
+    $("importPromptPanel").classList.toggle("hidden", !visible);
+    $("copyConvertPrompt").setAttribute("aria-pressed", String(kind === "convert"));
+    $("copyGeneratePrompt").setAttribute("aria-pressed", String(kind === "generate"));
+    $("importPromptTitle").textContent = visible
+      ? t(kind === "generate" ? "importPromptGenerateTitle" : "importPromptConvertTitle")
+      : "";
+    $("importPromptText").textContent = visible
+      ? t(kind === "generate" ? "importGeneratePrompt" : "importConvertPrompt")
+      : "";
+  }
+
   function renderBankImport() {
     if (!$("importTagName")) return;
     $("clearImportTag").classList.toggle("hidden", !importTagName());
     $("importCloudNotice").classList.toggle("hidden", localBankActive);
     $("importFileName").textContent = importFileName;
-    $("promptText").textContent = t("importAiPrompt");
+    renderImportPrompt();
     document.querySelectorAll("#importDifficultyChips [data-import-difficulty]").forEach((button) => {
       button.setAttribute(
         "aria-pressed",
@@ -7241,43 +8492,68 @@ Material to organize:
     });
     $("parseImport").disabled = importBusy;
     $("parseImport").textContent = t(importBusy ? "importParsing" : "importParse");
+    // Leaving the page mid-import would drop the remaining batches and hide
+    // the progress, so the whole form stays frozen until the run finishes.
+    ["importText", "importFile", "importTagName", "backFromImport"]
+      .forEach((id) => {
+        if ($(id)) $(id).disabled = importRunning;
+      });
+    document.querySelectorAll("#importDifficultyChips [data-import-difficulty]").forEach((button) => {
+      button.disabled = importRunning;
+    });
     updateImportTargetHint();
     if (!$("importTagSuggest").classList.contains("hidden")) {
       renderImportTagSuggest();
     }
     renderImportPreview();
+    renderImportProgress();
     renderImportResult();
   }
 
   function clearImportPayload() {
     importFileName = "";
+    importFileText = null;
+    importPromptKind = "";
+    importPreviewPage = 0;
+    importProgress = null;
+    importCancelRequested = false;
     closeImportTagSuggest();
     $("importText").value = "";
     $("importFile").value = "";
     $("importFileName").textContent = "";
     $("importCopyState").textContent = "";
-    $("importError").textContent = "";
-    renderImportErrors([]);
+    setImportError("", []);
+    renderImportPrompt();
   }
 
   function openBankImport() {
+    if (importRunning) return;
     // Every entry starts with a clean payload. Keep the target tag and default
     // difficulty so several batches can be imported to the same tag in a row.
     importPreview = null;
     importResult = null;
-    importRequest = null;
     clearImportPayload();
     showBankPage("import");
     renderBankImport();
   }
 
   function backFromImport() {
+    if (importRunning) return;
     closeImportTagSuggest();
-    $("importError").textContent = "";
-    renderImportErrors([]);
+    setImportError("", []);
     if (importResult) resetImportState();
     showBankPage("home");
     loadBank(true);
+  }
+
+  function importErrorLine(item) {
+    const field = importFieldLabel(item.field);
+    const code = importCodeText(item.code);
+    const wholeFile = item.field === "items" || item.field === "text";
+    const prefix = !wholeFile && Number(item.index) >= 0
+      ? t("importErrorAt", { n: Number(item.index) + 1 })
+      : "";
+    return [prefix, field, code].filter(Boolean).join(" · ");
   }
 
   function renderImportErrors(errors) {
@@ -7286,16 +8562,32 @@ Material to organize:
     list.replaceChildren();
     (errors || []).forEach((item) => {
       const li = document.createElement("li");
-      const field = importFieldLabel(item.field);
-      const code = importCodeText(item.code);
-      const wholeFile = item.field === "items" || item.field === "text";
-      const prefix = !wholeFile && Number(item.index) >= 0
-        ? t("importErrorAt", { n: Number(item.index) + 1 })
-        : "";
-      li.textContent = [prefix, field, code].filter(Boolean).join(" · ");
+      li.textContent = importErrorLine(item);
       list.appendChild(li);
     });
     list.classList.toggle("hidden", !errors || !errors.length);
+  }
+
+  function updateImportErrorCopy() {
+    const actions = $("importErrorActions");
+    if (!actions) return;
+    const show = importErrorInfo.copyable &&
+      Boolean(importErrorInfo.message || importErrorInfo.errors.length);
+    actions.classList.toggle("hidden", !show);
+    if (!show) $("importErrorCopyState").textContent = "";
+  }
+
+  function setImportError(message, errors, copyable) {
+    importErrorInfo = {
+      message: String(message || ""),
+      errors: Array.isArray(errors) ? errors : [],
+      // Any structured validation error is about the question data; parse
+      // failures that a model can repair pass copyable explicitly.
+      copyable: Boolean(copyable) || (Array.isArray(errors) && errors.length > 0),
+    };
+    $("importError").textContent = importErrorInfo.message;
+    renderImportErrors(importErrorInfo.errors);
+    updateImportErrorCopy();
   }
 
   function importFieldLabel(field) {
@@ -7319,8 +8611,43 @@ Material to organize:
         capacity: Number(data.capacity || bankCapacity),
       });
     }
-    $("importError").textContent = message;
-    renderImportErrors(data && Array.isArray(data.errors) ? data.errors : []);
+    setImportError(message, data && Array.isArray(data.errors) ? data.errors : []);
+  }
+
+  // A repaired answer must be complete. The error lines say what is wrong but not
+  // which data to fix, so the copy includes the original payload when it is small
+  // enough for a clipboard; a whole 16 MB file would be too large to paste.
+  const IMPORT_COPY_SOURCE_MAX = 200000;
+
+  function importErrorCopyText() {
+    if (!importErrorInfo.copyable) return "";
+    const lines = importErrorInfo.errors.map(importErrorLine);
+    const source = normalizeImportText(importSourceRaw());
+    const parts = [t("importErrorCopyIntro")];
+    if (importErrorInfo.message) parts.push(importErrorInfo.message);
+    if (lines.length) parts.push(lines.map((line) => "- " + line).join("\n"));
+    parts.push(t("importErrorCopyAsk"));
+    if (source) {
+      parts.push(source.length <= IMPORT_COPY_SOURCE_MAX
+        ? t("importErrorCopySource") + "\n" + source
+        : t("importErrorCopySourceOmitted"));
+    }
+    return parts.join("\n\n");
+  }
+
+  async function copyImportErrors() {
+    const text = importErrorCopyText();
+    if (!text) return;
+    const state = $("importErrorCopyState");
+    try {
+      await copyText(text);
+      state.textContent = t("importErrorCopied");
+      setTimeout(() => {
+        if (state.textContent === t("importErrorCopied")) state.textContent = "";
+      }, 3200);
+    } catch (_) {
+      state.textContent = t("importErrorCopyFailed");
+    }
   }
 
   function normalizeImportText(raw) {
@@ -7338,33 +8665,198 @@ Material to organize:
     }
   }
 
-  function readImportPayload() {
-    const raw = String($("importText").value || "");
-    if (!raw.trim()) return { error: t("importEmptyInput") };
-    if (utf8Bytes(raw) > IMPORT_MAX_BYTES) {
-      return { error: t("importTooLarge") };
+  function importSourceRaw() {
+    return importFileText !== null ? importFileText : String($("importText").value || "");
+  }
+
+  const TEXT_QUESTION_NUMBER = /^\s*(?:(\d+)[.、．)）]|【(\d+)】)\s*(.*)$/;
+  const TEXT_OPTION_LINE = /^\s*([A-Fa-f])[.、．:：)）]\s*(.*)$/;
+  const TEXT_ANSWER_LINE = /^\s*(?:参考答案|正确答案|答案)\s*[:：]\s*(.*)$/;
+
+  // Presentation-only splitter. The TV parser remains authoritative; this
+  // only decides batch boundaries so a batch never starts mid-question.
+  function parseTextBlocks(text) {
+    const normalized = String(text || "")
+      .replace(/\r\n/g, "\n").replace(/\r/g, "\n").replace(/^﻿/, "").trim();
+    if (!normalized) return null;
+    const blocks = [];
+    let current = null;
+    for (const rawLine of normalized.split("\n")) {
+      const line = rawLine.replace(/\s+$/, "");
+      const match = TEXT_QUESTION_NUMBER.exec(line);
+      if (match) {
+        if (current) blocks.push(current);
+        current = { lines: [line], promptLine: String(match[3] || "").trim() };
+      } else if (!current) {
+        if (line.trim()) return null;
+      } else {
+        current.lines.push(line);
+      }
     }
+    if (current) blocks.push(current);
+    return blocks.length ? blocks : null;
+  }
+
+  // Mirrors the server's text-answer rule closely enough for a preview. The
+  // server parser stays authoritative; this never rewrites the answer.
+  const PREVIEW_MULTI_ANSWER = /^[A-F](?:\s*(?:[、,，/&+;；和与及]|and|or)?\s*[A-F])+$/i;
+
+  function parsePreviewAnswer(raw, letters, options) {
+    const value = String(raw || "").trim();
+    const exact = options.indexOf(value);
+    if (exact >= 0) {
+      return { answerIndex: exact, answerIndices: [], type: "single" };
+    }
+    if (/^[A-Fa-f]$/.test(value)) {
+      const index = letters.indexOf(value.toUpperCase());
+      if (index >= 0) {
+        return { answerIndex: index, answerIndices: [], type: "single" };
+      }
+    }
+    if (PREVIEW_MULTI_ANSWER.test(value)) {
+      const selected = value.toUpperCase().match(/[A-F]/g) || [];
+      const indices = selected.map((letter) => letters.indexOf(letter));
+      if (indices.length >= 2 &&
+          indices.every((index) => index >= 0) &&
+          new Set(indices).size === indices.length) {
+        const sorted = indices.sort((a, b) => a - b);
+        return { answerIndex: sorted[0], answerIndices: sorted, type: "multiple" };
+      }
+    }
+    return { answerIndex: 0, answerIndices: [], type: "single" };
+  }
+
+  function previewTextBlock(block) {
+    const lines = (block.lines || []).slice();
+    const first = lines.shift() || "";
+    const match = TEXT_QUESTION_NUMBER.exec(first);
+    const promptLines = match && match[3].trim() ? [match[3].trim()] : [];
+    const options = [];
+    const letters = [];
+    let answerRaw = "";
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) continue;
+      const answer = TEXT_ANSWER_LINE.exec(line);
+      if (answer) {
+        answerRaw = answer[1].trim();
+        break;
+      }
+      const option = TEXT_OPTION_LINE.exec(line);
+      if (option) {
+        letters.push(option[1].toUpperCase());
+        options.push(option[2].trim());
+      } else if (!options.length) {
+        promptLines.push(line);
+      }
+    }
+    const answer = parsePreviewAnswer(answerRaw, letters, options);
+    return {
+      prompt: promptLines.join("\n"),
+      options,
+      type: answer.type,
+      answerIndex: answer.answerIndex,
+      answerIndices: answer.answerIndices,
+      explanation: "",
+      difficulty: importDefaultDifficulty,
+    };
+  }
+
+  function buildImportBatches(format, items, blocks) {
+    const batches = [];
+    if (format === "json") {
+      let current = [];
+      let bytes = 0;
+      let startIndex = 0;
+      const flush = () => {
+        if (!current.length) return;
+        batches.push({ format: "json", items: current, count: current.length, startIndex, bytes });
+        startIndex += current.length;
+        current = [];
+        bytes = 0;
+      };
+      for (const item of items) {
+        const itemBytes = utf8Bytes(JSON.stringify(item));
+        if (current.length && (
+          current.length >= IMPORT_MAX_BATCH_ITEMS ||
+          bytes + itemBytes > IMPORT_MAX_BATCH_BYTES
+        )) {
+          flush();
+        }
+        current.push(item);
+        bytes += itemBytes;
+      }
+      flush();
+      return batches;
+    }
+    let current = [];
+    let bytes = 0;
+    let startIndex = 0;
+    const flush = () => {
+      if (!current.length) return;
+      const text = current.map((block) => block.lines.join("\n")).join("\n\n");
+      batches.push({ format: "text", text, count: current.length, startIndex, bytes });
+      startIndex += current.length;
+      current = [];
+      bytes = 0;
+    };
+    for (const block of blocks) {
+      const blockBytes = utf8Bytes(block.lines.join("\n")) + 2;
+      if (current.length && (
+        current.length >= IMPORT_MAX_BATCH_ITEMS ||
+        bytes + blockBytes > IMPORT_MAX_BATCH_BYTES
+      )) {
+        flush();
+      }
+      current.push(block);
+      bytes += blockBytes;
+    }
+    flush();
+    return batches;
+  }
+
+  function formatImportSize(bytes) {
+    const value = Number(bytes || 0);
+    if (value >= 1024 * 1024) return (value / (1024 * 1024)).toFixed(1) + " MB";
+    if (value >= 1024) return Math.round(value / 1024) + " KB";
+    return value + " B";
+  }
+
+  function readImportPayload() {
+    const raw = importSourceRaw();
+    if (!raw.trim()) return { error: t("importEmptyInput") };
+    const bytes = utf8Bytes(raw);
+    if (bytes > IMPORT_MAX_BYTES) return { error: t("importTooLarge") };
     const text = normalizeImportText(raw);
     let format = "text";
     let items = null;
+    let blocks = null;
     if (text.startsWith("{") || text.startsWith("[")) {
       format = "json";
       let parsed;
       try {
         parsed = JSON.parse(text);
       } catch (_) {
-        return { error: t("importJsonInvalid") };
+        return { error: t("importJsonInvalid"), copyable: true };
       }
       items = Array.isArray(parsed)
         ? parsed
         : (parsed && Array.isArray(parsed.items) ? parsed.items : null);
-      if (!items) return { error: t("importJsonInvalid") };
-      if (items.length === 0) return { error: t("importNoQuestions") };
+      if (!items) return { error: t("importJsonInvalid"), copyable: true };
+      if (items.length === 0) return { error: t("importNoQuestions"), copyable: true };
       if (items.length > IMPORT_MAX_ITEMS) {
-        return { error: t("importTooMany", { max: IMPORT_MAX_ITEMS }) };
+        return { error: t("importTooMany", { max: IMPORT_MAX_ITEMS }), copyable: true };
+      }
+    } else {
+      blocks = parseTextBlocks(text);
+      if (!blocks) return { error: t("importNoQuestions"), copyable: true };
+      if (blocks.length > IMPORT_MAX_ITEMS) {
+        return { error: t("importTooMany", { max: IMPORT_MAX_ITEMS }), copyable: true };
       }
     }
-    return { format, items, text, raw };
+    const total = format === "json" ? items.length : blocks.length;
+    const batches = buildImportBatches(format, items, blocks);
+    return { format, items, blocks, total, bytes, batches };
   }
 
   async function loadImportFile(file) {
@@ -7372,142 +8864,224 @@ Material to organize:
     if (file.size > IMPORT_MAX_BYTES) {
       $("importFile").value = "";
       importFileName = "";
+      importFileText = null;
       $("importFileName").textContent = "";
-      $("importError").textContent = t("importTooLarge");
+      setImportError(t("importTooLarge"), []);
       return;
     }
     try {
       const text = await file.text();
-      $("importText").value = text;
+      importFileText = text;
+      // Keep the textarea empty for a file-backed import. Putting a multi-MB
+      // string into an editable field makes the phone freeze before parsing.
+      $("importText").value = "";
       importFileName = file.name || "";
       $("importFileName").textContent = importFileName;
-      $("importError").textContent = "";
+      setImportError("", []);
       invalidateImportPreview();
       updateImportTargetHint();
     } catch (_) {
-      $("importError").textContent = t("importFileReadFailed");
+      importFileText = null;
+      setImportError(t("importFileReadFailed"), []);
     }
   }
 
-  function importRequestBody(target, payload, dryRun) {
+  function importBatchBody(target, batch) {
     const body = {
       defaultDifficulty: importDefaultDifficulty,
-      dryRun,
+      dryRun: false,
+      batchMode: true,
     };
     if (target.isNew) body.newCollectionName = target.name;
     else body.collectionId = target.collection.id;
-    if (payload.format === "json") {
+    if (batch.format === "json") {
       body.format = "json";
-      body.items = payload.items;
+      body.items = batch.items;
     } else {
       body.format = "text";
-      body.text = payload.text;
+      body.text = batch.text;
     }
     return body;
   }
 
   function invalidateImportPreview() {
-    if (!importPreview && !importResult && !$("importError").textContent) return;
+    if (importRunning) return;
+    if (!importPreview && !importResult && !importProgress && !importErrorInfo.message) return;
     importPreview = null;
     importResult = null;
-    importRequest = null;
-    $("importError").textContent = "";
-    renderImportErrors([]);
+    importProgress = null;
+    importPreviewPage = 0;
+    setImportError("", []);
     renderImportPreview();
+    renderImportProgress();
     renderImportResult();
     updateImportTargetHint();
   }
 
   async function parseImport() {
-    if (importBusy) return;
-    $("importError").textContent = "";
-    renderImportErrors([]);
+    if (importBusy || importRunning) return;
+    setImportError("", []);
     const targetState = importTagState();
     if (targetState.empty || targetState.error) {
-      $("importError").textContent = targetState.error || t("importSelectTagFirst");
+      setImportError(targetState.error || t("importSelectTagFirst"), []);
       $("importTagName").focus();
       openImportTagSuggest();
       return;
     }
     const target = importTarget();
     if (!target) {
-      $("importError").textContent = t("importSelectTagFirst");
+      setImportError(t("importSelectTagFirst"), []);
       return;
     }
     if (target.isNew) {
       const nameError = validateNewTagName(target.name);
       if (nameError) {
-        $("importError").textContent = nameError;
+        setImportError(nameError, []);
         return;
       }
     }
     const payload = readImportPayload();
     if (payload.error) {
-      $("importError").textContent = payload.error;
+      setImportError(payload.error, [], payload.copyable);
       return;
     }
-    importBusy = true;
-    importPreview = null;
+    importPreview = {
+      target,
+      format: payload.format,
+      items: payload.items,
+      blocks: payload.blocks,
+      total: payload.total,
+      bytes: payload.bytes,
+      batches: payload.batches,
+    };
+    // Re-parsing after a partial run starts a new preview; the old result and
+    // its error list must not linger next to the new confirm button.
     importResult = null;
+    importProgress = null;
+    importPreviewPage = 0;
+    setImportError("", []);
     renderBankImport();
-    try {
-      const body = importRequestBody(target, payload, true);
-      const data = await api("/api/quiz/admin/bank/import", {
-        method: "POST",
-        admin: true,
-        body,
-      });
-      importPreview = data;
-      importRequest = importRequestBody(target, payload, false);
-      renderImportPreview();
-    } catch (error) {
-      showImportError(error);
-    } finally {
-      importBusy = false;
-      renderBankImport();
-    }
   }
 
   async function confirmImport() {
-    if (importBusy || !importPreview || !importRequest) return;
-    if (!importPreview.canImport) return;
+    if (importBusy || importRunning || !importPreview) return;
+    const preview = importPreview;
+    if (!preview.batches || !preview.batches.length) return;
+    importRunning = true;
     importBusy = true;
-    $("importError").textContent = "";
-    renderImportErrors([]);
-    renderImportPreview();
+    importCancelRequested = false;
+    setImportError("", []);
+    let target = preview.target;
+    const aggregate = {
+      collection: target.isNew ? null : target.collection,
+      targetName: target.name,
+      appended: 0,
+      fileDuplicates: 0,
+      collectionDuplicates: 0,
+      crossSourceDuplicates: 0,
+      rejected: 0,
+      remaining: Math.max(0, bankCapacity - currentCounts().total),
+      capacity: bankCapacity,
+    };
+    const progress = {
+      processed: 0,
+      total: preview.total,
+      batch: 0,
+      batches: preview.batches.length,
+      appended: 0,
+      fileDuplicates: 0,
+      collectionDuplicates: 0,
+      crossSourceDuplicates: 0,
+      rejected: 0,
+    };
+    importProgress = progress;
+    let failure = null;
+    let cancelled = false;
+    renderBankImport();
     try {
-      const data = await api("/api/quiz/admin/bank/import", {
-        method: "POST",
-        admin: true,
-        body: importRequest,
-      });
-      importResult = data;
-      importPreview = null;
-      importRequest = null;
-      // The payload and target tag are one-shot. Keep the default difficulty,
-      // and make the next batch choose an existing tag or enter a new one.
-      clearImportPayload();
-      if ($("importTagName")) $("importTagName").value = "";
-      if (data.counts) applyBankCounts(data.counts);
-      if (data.sourceCounts) {
-        bankSourceCounts = {
-          course: Math.max(0, Number(data.sourceCounts.course || 0)),
-          custom: Math.max(0, Number(data.sourceCounts.custom || 0)),
-        };
+      for (let index = 0; index < preview.batches.length; index += 1) {
+        if (importCancelRequested) {
+          cancelled = true;
+          break;
+        }
+        const batch = preview.batches[index];
+        progress.batch = index + 1;
+        renderImportProgress();
+        try {
+          const data = await api("/api/quiz/admin/bank/import", {
+            method: "POST",
+            admin: true,
+            body: importBatchBody(target, batch),
+          });
+          if (index === 0 && target.isNew && data.collection) {
+            target = {
+              isNew: false,
+              collection: data.collection,
+              name: data.collection.name,
+            };
+            preview.target = target;
+          }
+          if (data.collection) {
+            aggregate.collection = data.collection;
+            aggregate.targetName = data.collection.name;
+          }
+          const added = Number(data.appended || 0);
+          const fileDup = Number(data.fileDuplicates || 0);
+          const collectionDup = Number(data.collectionDuplicates || 0);
+          const crossDup = Number(data.crossSourceDuplicates || 0);
+          const rejected = Number(data.rejected || 0);
+          aggregate.appended += added;
+          aggregate.fileDuplicates += fileDup;
+          aggregate.collectionDuplicates += collectionDup;
+          aggregate.crossSourceDuplicates += crossDup;
+          aggregate.rejected += rejected;
+          aggregate.remaining = Number(data.remaining ?? aggregate.remaining);
+          aggregate.capacity = Number(data.capacity || aggregate.capacity);
+          progress.appended += added;
+          progress.fileDuplicates += fileDup;
+          progress.collectionDuplicates += collectionDup;
+          progress.crossSourceDuplicates += crossDup;
+          progress.rejected += rejected;
+          progress.processed += batch.count;
+        } catch (error) {
+          if (error && error.data && Array.isArray(error.data.errors)) {
+            const offset = Number(batch.startIndex || 0);
+            error.data.errors = error.data.errors.map((item) => Object.assign({}, item, {
+              index: Number(item.index) >= 0 ? Number(item.index) + offset : Number(item.index),
+            }));
+          }
+          failure = { error, batch: index + 1 };
+          break;
+        }
+        renderImportProgress();
       }
-      if (data.capacity) bankCapacity = Number(data.capacity);
-      renderBankCounts();
-      renderImportResult();
+    } finally {
+      const completed = !failure && !cancelled;
+      importResult = Object.assign({}, aggregate, {
+        totalQuestions: preview.total,
+        processed: progress.processed,
+        cancelled,
+        partial: Boolean(failure || cancelled),
+        failedBatch: failure ? failure.batch : 0,
+      });
+      importPreview = null;
+      importProgress = null;
+      importRunning = false;
+      importBusy = false;
+      if (completed) {
+        // Full success is one-shot. Partial runs keep the source and target so
+        // the next attempt can retry; duplicate fingerprints make it safe.
+        clearImportPayload();
+        if ($("importTagName")) $("importTagName").value = "";
+      }
+      renderBankImport();
+      if (failure) showImportError(failure.error);
       try {
         await loadAdminSession();
       } catch (_) {
-        // The questions are already stored; a stale session only delays the
-        // tag list until the next refresh.
+        // Questions are already stored; a stale session only delays the tag
+        // list and counts until the next refresh.
       }
-    } catch (error) {
-      showImportError(error);
-    } finally {
-      importBusy = false;
       renderBankImport();
     }
   }
@@ -7516,9 +9090,12 @@ Material to organize:
     const bar = $("importActions");
     if (!bar) return;
     const hasPreview = Boolean(importPreview);
-    bar.classList.toggle("hidden", Boolean(importResult));
-    $("parseImport").classList.toggle("hidden", hasPreview);
-    $("confirmImport").classList.toggle("hidden", !hasPreview);
+    const complete = Boolean(importResult) && !importResult.partial;
+    // A partial run keeps the source text and target, so leave "Parse and
+    // preview" available to retry. A complete run hides the bar entirely.
+    bar.classList.toggle("hidden", complete || importRunning);
+    $("parseImport").classList.toggle("hidden", hasPreview || importRunning);
+    $("confirmImport").classList.toggle("hidden", !hasPreview || importRunning);
   }
 
   function renderImportPreview() {
@@ -7528,71 +9105,92 @@ Material to organize:
     card.classList.toggle("hidden", !preview);
     renderImportActions();
     if (!preview) return;
-    const targetName = preview.collection ? preview.collection.name : "";
-    const targetIsNew = Boolean(importRequest && importRequest.newCollectionName);
+    const target = preview.target || {};
+    const targetName = target.name || (target.collection && target.collection.name) || "";
     $("previewTarget").textContent = targetName;
     if ($("previewTargetBadge")) {
-      $("previewTargetBadge").textContent = targetIsNew
+      $("previewTargetBadge").textContent = target.isNew
         ? t("importTargetBadgeNew")
         : t("importTargetBadgeExisting");
-      $("previewTargetBadge").classList.toggle("new", targetIsNew);
+      $("previewTargetBadge").classList.toggle("new", Boolean(target.isNew));
       $("previewTargetBadge").classList.toggle("hidden", !targetName);
     }
     $("previewTotal").textContent = String(Number(preview.total || 0));
-    $("previewFileDup").textContent = String(Number(preview.fileDuplicates || 0));
-    $("previewCollectionDup").textContent = String(Number(preview.collectionDuplicates || 0));
-    $("previewCrossDup").textContent = String(Number(preview.crossSourceDuplicates || 0));
-    $("previewAppend").textContent = String(Number(preview.wouldAppend || 0));
-    $("previewRemaining").textContent = t("importPreviewRemainingValue", {
-      remaining: Number(preview.remaining || 0),
-      capacity: Number(preview.capacity || bankCapacity),
-    });
-    const wouldAppend = Number(preview.wouldAppend || 0);
-    const remaining = Number(preview.remaining || 0);
-    const rejected = Number(preview.rejected || 0);
-    let note = "";
-    if (rejected > 0) {
-      note = t("importPreviewRejected", { n: rejected });
-    } else if (wouldAppend === 0) {
-      note = t("importPreviewNoNew");
-    } else if (wouldAppend > remaining) {
-      note = t("importPreviewNotEnough", { n: wouldAppend - remaining });
-    } else if (Number(preview.crossSourceDuplicates || 0) > 0) {
-      note = t("importPreviewCrossNote", {
-        n: Number(preview.crossSourceDuplicates || 0),
-      });
-    }
-    $("importPreviewNote").textContent = note;
-    renderImportPreviewItems(preview.preview || []);
-    $("confirmImport").textContent = t(
-      importBusy ? "importImporting" : "importConfirm",
-      { n: wouldAppend },
+    $("previewFormat").textContent = t(
+      preview.format === "json" ? "importFormatJson" : "importFormatText",
     );
-    $("confirmImport").disabled = importBusy || !preview.canImport;
+    $("previewFileSize").textContent = formatImportSize(preview.bytes || 0);
+    $("previewBatches").textContent = String(
+      Array.isArray(preview.batches) ? preview.batches.length : 0,
+    );
+    const remaining = Math.max(0, bankCapacity - currentCounts().total);
+    $("previewRemaining").textContent = t("importPreviewRemainingValue", {
+      remaining,
+      capacity: bankCapacity,
+    });
+    $("importPreviewNote").textContent = t("importPreviewLocalNote", {
+      max: IMPORT_MAX_ITEMS,
+      size: formatImportSize(IMPORT_MAX_BYTES),
+    });
+    const pageCount = Math.max(1, Math.ceil(Number(preview.total || 0) / IMPORT_PREVIEW_LIMIT));
+    importPreviewPage = Math.min(Math.max(0, importPreviewPage), pageCount - 1);
+    const start = importPreviewPage * IMPORT_PREVIEW_LIMIT;
+    const items = preview.format === "json"
+      ? (preview.items || []).slice(start, start + IMPORT_PREVIEW_LIMIT)
+      : (preview.blocks || []).slice(start, start + IMPORT_PREVIEW_LIMIT).map(previewTextBlock);
+    renderImportPreviewItems(items);
+    if ($("importPreviewPager")) {
+      $("importPreviewPager").classList.toggle("hidden", pageCount <= 1);
+      $("importPreviewPageLabel").textContent = t("importPreviewPage", {
+        page: importPreviewPage + 1,
+        pages: pageCount,
+      });
+      $("importPreviewPrev").disabled = importBusy || importPreviewPage <= 0;
+      $("importPreviewNext").disabled = importBusy || importPreviewPage >= pageCount - 1;
+      const input = $("importPreviewPageInput");
+      if (input) {
+        input.max = String(pageCount);
+        if (document.activeElement !== input) input.value = String(importPreviewPage + 1);
+      }
+    }
+    $("confirmImport").textContent = t("importConfirm", {
+      n: Number(preview.total || 0),
+    });
+    $("confirmImport").disabled = importBusy || !preview.batches || !preview.batches.length;
   }
 
   function renderImportPreviewItems(items) {
     const host = $("importPreviewList");
     if (!host) return;
     host.replaceChildren();
-    (items || []).slice(0, IMPORT_PREVIEW_LIMIT).forEach((item) => {
+    (items || []).forEach((item) => {
+      // Preview is non-authoritative; a malformed entry is shown as empty and
+      // rejected by the server parser rather than crashing the page.
+      if (!item || typeof item !== "object") item = {};
       const card = document.createElement("article");
       card.className = "import-preview-item";
       const prompt = document.createElement("p");
       prompt.className = "prompt";
       prompt.textContent = String(item.prompt || "");
       card.appendChild(prompt);
+      const answerIndices = Array.isArray(item.answerIndices) && item.answerIndices.length
+        ? item.answerIndices.map(Number)
+        : (item.answerIndex !== null && item.answerIndex !== undefined
+          ? [Number(item.answerIndex)]
+          : []);
+      const correct = new Set(answerIndices);
       const options = document.createElement("ol");
       options.className = "bank-options";
-      (item.options || []).forEach((option, index) => {
+      (Array.isArray(item.options) ? item.options : []).forEach((option, index) => {
         const li = document.createElement("li");
         li.textContent = String(option || "");
-        if (index === Number(item.answerIndex)) li.className = "correct";
+        if (correct.has(index)) li.className = "correct";
         options.appendChild(li);
       });
       card.appendChild(options);
       const meta = document.createElement("div");
       meta.className = "meta";
+      meta.appendChild(questionTypeBadge(item));
       const difficulty = document.createElement("span");
       difficulty.textContent = t(
         DIFFICULTY_LABEL_KEYS[item.difficulty] || "difficultyMedium",
@@ -7614,6 +9212,37 @@ Material to organize:
     });
   }
 
+  function renderImportProgress() {
+    const card = $("importProgress");
+    if (!card) return;
+    const progress = importProgress;
+    card.classList.toggle("hidden", !progress || !importRunning);
+    if (!progress || !importRunning) return;
+    const percent = progress.total > 0
+      ? Math.min(100, Math.round((progress.processed / progress.total) * 100))
+      : 0;
+    $("importProgressFill").style.width = percent + "%";
+    $("importProgressCount").textContent = t("importProgressCount", {
+      processed: progress.processed,
+      total: progress.total,
+    });
+    $("importProgressBatch").textContent = t("importProgressBatch", {
+      batch: progress.batch,
+      batches: progress.batches,
+    });
+    $("importProgressStats").textContent = t("importProgressStats", {
+      appended: progress.appended,
+      file: progress.fileDuplicates,
+      collection: progress.collectionDuplicates,
+      cross: progress.crossSourceDuplicates,
+      rejected: progress.rejected,
+    });
+    $("cancelImport").textContent = t(
+      importCancelRequested ? "importCancelRequested" : "importCancel",
+    );
+    $("cancelImport").disabled = importCancelRequested;
+  }
+
   function renderImportResult() {
     const card = $("importResult");
     if (!card) return;
@@ -7621,11 +9250,13 @@ Material to organize:
     card.classList.toggle("hidden", !result);
     renderImportActions();
     if (!result) return;
-    const name = result.collection ? result.collection.name : "";
-    $("importResultTitle").textContent = t("importResultTitle", {
-      n: Number(result.appended || 0),
-      name,
-    });
+    const name = result.collection
+      ? result.collection.name
+      : (result.targetName || "");
+    $("importResultTitle").textContent = t(
+      result.partial ? "importResultPartialTitle" : "importResultTitle",
+      { n: Number(result.appended || 0), name },
+    );
     $("importResultFileDup").textContent = t("importResultDetail", {
       file: Number(result.fileDuplicates || 0),
       collection: Number(result.collectionDuplicates || 0),
@@ -7638,6 +9269,50 @@ Material to organize:
       remaining: Number(result.remaining || 0),
       capacity: Number(result.capacity || bankCapacity),
     });
+    $("importResultProcessed").textContent = t("importResultProcessed", {
+      processed: Number(result.processed || 0),
+      total: Number(result.totalQuestions || 0),
+    });
+    let note = "";
+    if (result.cancelled) {
+      note = t("importResultCancelled");
+    } else if (result.failedBatch) {
+      note = t("importResultFailed", { batch: Number(result.failedBatch) });
+    }
+    $("importResultNote").textContent = note;
+    $("importResultNote").classList.toggle("hidden", !note);
+  }
+
+  function changeImportPreviewPage(delta) {
+    if (!importPreview || importBusy || importRunning) return;
+    const pageCount = Math.max(
+      1,
+      Math.ceil(Number(importPreview.total || 0) / IMPORT_PREVIEW_LIMIT),
+    );
+    importPreviewPage = Math.min(
+      Math.max(0, importPreviewPage + Number(delta || 0)),
+      pageCount - 1,
+    );
+    renderImportPreview();
+    $("importPreview").scrollIntoView({ block: "nearest" });
+  }
+
+  function jumpImportPreviewPage() {
+    if (!importPreview || importBusy || importRunning) return;
+    const pageCount = Math.max(
+      1,
+      Math.ceil(Number(importPreview.total || 0) / IMPORT_PREVIEW_LIMIT),
+    );
+    const requested = Number($("importPreviewPageInput").value);
+    if (!Number.isInteger(requested)) return;
+    importPreviewPage = Math.min(Math.max(0, requested - 1), pageCount - 1);
+    renderImportPreview();
+  }
+
+  function requestImportCancel() {
+    if (!importRunning) return;
+    importCancelRequested = true;
+    renderImportProgress();
   }
 
   function validateNewTagName(raw) {
@@ -7656,74 +9331,49 @@ Material to organize:
   function resetImportState() {
     importPreview = null;
     importResult = null;
-    importRequest = null;
     importBusy = false;
+    importRunning = false;
     importTagComposing = false;
     importDefaultDifficulty = "medium";
     clearImportPayload();
   }
 
-  function downloadTextFile(filename, text, type) {
-    const blob = new Blob([text], { type });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-
-  function downloadImportTemplate() {
-    const template = {
-      version: 1,
-      items: [
-        {
-          prompt: "12 + 8 = ?",
-          options: ["18", "20", "22", "24"],
-          answer: "B",
-          explanation: "12 + 8 = 20",
-          difficulty: "easy",
-        },
-      ],
-    };
-    downloadTextFile(
-      "planyourtv-quiz-template.json",
-      JSON.stringify(template, null, 2),
-      "application/json",
-    );
-  }
-
-  function copyText(text) {
+  async function copyText(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text);
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (_) {
+        // Plain http on the LAN can expose the API but reject the write.
+      }
     }
-    return new Promise((resolve, reject) => {
-      const area = document.createElement("textarea");
-      area.value = text;
-      area.setAttribute("readonly", "");
-      area.style.position = "fixed";
-      area.style.opacity = "0";
-      document.body.appendChild(area);
-      area.select();
-      const ok = document.execCommand("copy");
-      area.remove();
-      ok ? resolve() : reject(new Error("COPY_FAILED"));
-    });
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    const ok = document.execCommand("copy");
+    area.remove();
+    if (!ok) throw new Error("COPY_FAILED");
   }
 
-  async function copyImportPrompt() {
+  async function copyImportPrompt(kind) {
+    const generate = kind === "generate";
+    // Copying is also the reveal: the same two buttons show their prompt in
+    // the panel below, so there is no separate "view" action.
+    importPromptKind = kind;
+    renderImportPrompt();
     try {
-      await copyText(t("importAiPrompt"));
+      await copyText(t(generate ? "importGeneratePrompt" : "importConvertPrompt"));
       $("importCopyState").textContent = t("importPromptCopied");
       setTimeout(() => {
         if ($("importCopyState")) $("importCopyState").textContent = "";
       }, 2600);
     } catch (_) {
-      $("promptFold").open = true;
       $("importCopyState").textContent = "";
-      $("importError").textContent = t("importCopyFailed");
+      setImportError(t("importCopyFailed"), []);
     }
   }
 
@@ -7733,6 +9383,9 @@ Material to organize:
   }
 
   function bankClearScopeText(item) {
+    if (item.mode === "wrong" && item.source === "all") {
+      return t("bankClearScopeAllWrong");
+    }
     if (item.source === "all") return t("bankClearScopeAll");
     if (item.source === "custom") {
       return item.collectionId
@@ -7746,9 +9399,11 @@ Material to organize:
     if (!bankClearPending) return;
     const item = bankClearPending;
     const scope = bankClearScopeText(item);
-    const detailKey = item.mode === "unused" ? "bankClearUnusedDetail"
-      : item.mode === "answered" ? "bankClearAnsweredDetail"
-        : item.mode === "wrong" ? "bankClearWrongDetail" : "bankClearAllDetail";
+    const detailKey = item.mode === "wrong" && item.source === "all"
+      ? "bankClearWrongAllDetail"
+      : item.mode === "unused" ? "bankClearUnusedDetail"
+        : item.mode === "answered" ? "bankClearAnsweredDetail"
+          : item.mode === "wrong" ? "bankClearWrongDetail" : "bankClearAllDetail";
     $("bankClearTitle").textContent = t(
       item.step === 1 ? "bankClearTitleFirst" : "bankClearTitleFinal",
       { scope },
@@ -7955,9 +9610,9 @@ Material to organize:
       xhr.open("POST", requestPath, true);
       for (const name of Object.keys(headers)) xhr.setRequestHeader(name, headers[name]);
       xhr.responseType = "text";
-      // A 4 MB film can be slow on a phone backing away from the TV; this is a stall
-      // guard, not a throughput target.
-      xhr.timeout = 180000;
+      // A 128 MB wallpaper can take minutes on a phone backing away from the TV; this is
+      // a stall guard, not a throughput target.
+      xhr.timeout = 900000;
       if (typeof onProgress === "function") {
         xhr.upload.onprogress = (event) => {
           if (event && event.lengthComputable) onProgress(event.loaded, event.total);
@@ -8155,6 +9810,7 @@ Material to organize:
 
   function closeModal() {
     if (!activeModal) return;
+    if (activeModal === "levelDeleteDialog") pendingLevelDeleteId = null;
     if (activeModal === "unlockDialog") settleParentUnlock(false);
     document.querySelectorAll("#modalRoot .modal").forEach((el) => el.classList.add("hidden"));
     $("modalRoot").classList.add("hidden");
@@ -8214,7 +9870,7 @@ Material to organize:
     syncState = null;
     cloudManaged = false;
     bankCounts = null;
-    bankCapacity = 6000;
+    bankCapacity = 100000;
     bankItems = [];
     bankFilter = "all";
     bankOffset = 0;
@@ -8226,38 +9882,33 @@ Material to organize:
     resetImportState();
     if ($("importTagName")) $("importTagName").value = "";
     if ($("clearImportTag")) $("clearImportTag").classList.add("hidden");
-    customLevels = [];
-    customLevelEditingId = null;
-    customLevelDraftTag = "";
-    customLevelSaving = false;
-    if (customLevelMessageTimer) {
-      clearTimeout(customLevelMessageTimer);
-      customLevelMessageTimer = 0;
-    }
-    wrongLevel = null;
-    wrongLevelEditing = false;
-    wrongLevelSaving = false;
-    if (wrongLevelMessageTimer) {
-      clearTimeout(wrongLevelMessageTimer);
-      wrongLevelMessageTimer = 0;
-    }
+    levelPackages = [];
+    levelLimits = { maxLevels: MAX_LEVELS, maxSources: MAX_LEVEL_SOURCES, maxNameCodePoints: LEVEL_NAME_MAX };
+    levelPackagesUnreadable = false;
+    packageEditingId = null;
+    packageDraftSources = [];
+    packageNameDraft = "";
+    packageSaving = false;
+    packageEditorActive = false;
+    tagPickerOpen = false;
+    courseSourceEditingIndex = null;
+    courseSourceAnswerKind = "any";
+    courseSourceDifficultyPicked = false;
+    courseSourceCounts = null;
+    courseSourceCountsKey = "";
+    courseSourceCountsToken++;
     bankSourceCounts = { course: 0, custom: 0 };
     localBankActive = true;
-    providerState = { aiSupported: true, consentAccepted: false, configured: false, baseUrl: "", model: "" };
+    providerState = { aiSupported: true, consentAccepted: false, configured: false, baseUrl: "", model: "", speech: null };
+    speechState = Object.assign({}, DEFAULT_SPEECH);
+    speechDirty = false;
     providerMsg = null;
     pendingGenerate = false;
     pendingEnter = false;
     genState = idleGeneration();
     targetCount = 20;
-    answerLevels = [];
-    levelEditingId = null;
-    levelNameDraft = "";
     levelSaving = false;
-    levelUndo = null;
-    if (levelUndoTimer) {
-      clearTimeout(levelUndoTimer);
-      levelUndoTimer = 0;
-    }
+    pendingLevelDeleteId = null;
     if (levelMessageTimer) {
       clearTimeout(levelMessageTimer);
       levelMessageTimer = 0;
@@ -8272,6 +9923,7 @@ Material to organize:
     selectedBatch = new Set();
     answerTab = "scope";
     genRequirementValue = DEFAULT_GEN_REQUIREMENT;
+    genQuestionTypeValue = "single";
     genOptionsValue = 4;
     genAutoAddValue = true;
     genScopeValue = "unit";
@@ -8562,22 +10214,33 @@ Material to organize:
     applyRequirementScope(genRequirementValue, false);
     applyConfig(data.challengeConfig || DEFAULT_CONFIG);
     const scopeBusy = settingsSaving || answerDirty || levelSaving ||
-      Boolean(levelEditingId);
-    if (!Array.isArray(data.answerScopes) &&
-        !Object.prototype.hasOwnProperty.call(data, "answerScope")) {
-      // 契约破损时保留本地范围并显式报错，不把「缺字段」当成「没有关卡」。
-      console.error("[quiz] admin session is missing answerScopes/answerScope");
-      $("settingsError").textContent = t("err_INVALID_SCOPE");
-    } else if (!scopeLoaded || !scopeBusy) {
-      if (Array.isArray(data.answerScopes)) {
-        applyAnswerLevels(data.answerScopes);
-      } else {
-        answerScopeAvailable = Number(data.answerScopeAvailable || 0);
-        applyAnswerScope(data.answerScope, data.answerScopeMode);
+      packageSaving || Boolean(packageEditingId) ||
+      courseSourceEditingIndex !== null;
+    if (Number(data.levelModel) !== LEVEL_MODEL) {
+      // A TV older than this page would answer with the legacy fields. The page
+      // is served by the TV, so this only happens mid-update; never write the
+      // legacy model back from a new page.
+      console.error("[quiz] admin session is missing levelPackages");
+      levelPackages = [];
+      levelPackagesUnreadable = true;
+      applyLevelPackageProjection(data);
+    } else {
+      if (data.levelLimits && typeof data.levelLimits === "object") {
+        levelLimits = {
+          maxLevels: Math.max(1, Number(data.levelLimits.maxLevels || MAX_LEVELS)),
+          maxSources: Math.max(1, Number(data.levelLimits.maxSources || MAX_LEVEL_SOURCES)),
+          maxNameCodePoints: Math.max(1, Number(
+            data.levelLimits.maxNameCodePoints || LEVEL_NAME_MAX)),
+        };
       }
+      levelPackagesUnreadable = Boolean(data.levelPackagesUnreadable);
+      if (!scopeLoaded || !scopeBusy) {
+        applyLevelPackages(data.levelPackages);
+      }
+      applyLevelPackageProjection(data);
     }
-    // The tag list and custom levels live outside the cloud scope protocol;
-    // an older TV that omits them simply leaves the local lists empty.
+    // The tag list lives outside the package protocol; an older TV that omits
+    // it leaves the local list empty.
     importCollections = Array.isArray(data.collections)
       ? data.collections.map((item) => ({
         id: String(item && item.id || ""),
@@ -8586,8 +10249,6 @@ Material to organize:
         unused: Math.max(0, Number(item && item.unused || 0)),
       })).filter((item) => item.id && item.name)
       : [];
-    applyCustomLevels(data.customLevels);
-    applyWrongLevel(data.wrongLevel);
     bankSourceCounts = {
       course: Math.max(0, Number(data.bankSourceCounts && data.bankSourceCounts.course || 0)),
       custom: Math.max(0, Number(data.bankSourceCounts && data.bankSourceCounts.custom || 0)),
@@ -8595,7 +10256,7 @@ Material to organize:
     localBankActive = data.localBankActive !== false;
     syncState = data.syncState || null;
     cloudManaged = Boolean(data.cloudManaged);
-    bankCapacity = Number(data.bankCapacity || 6000);
+    bankCapacity = Number(data.bankCapacity || 100000);
     applyBankCounts(data.bank);
     renderSync();
     renderStock();
@@ -8606,6 +10267,7 @@ Material to organize:
     renderHome();
     renderBankImport();
     if (genPage === "answer") renderAnswerPage();
+    syncDraftCollectionCounts();
   }
 
   async function loadProvider() {
@@ -8616,7 +10278,10 @@ Material to organize:
       configured: Boolean(data.configured),
       baseUrl: data.baseUrl || "",
       model: data.model || "",
+      speech: normalizeSpeech(data.speech),
     };
+    speechState = Object.assign({}, providerState.speech);
+    speechDirty = false;
     $("baseUrl").value = providerState.baseUrl;
     $("model").value = providerState.model;
     $("apiKey").value = "";
@@ -8632,6 +10297,17 @@ Material to organize:
     };
     const key = $("apiKey").value.trim();
     if (includeKey && key) payload.apiKey = key;
+    // Sending speech only for the official host preserves a previous DeepSeek
+    // choice when the parent switches to another provider, and keeps a foreign
+    // gateway from being mistaken for a voice-capable endpoint.
+    if (isOfficialDeepSeek(payload.baseUrl)) {
+      payload.speech = {
+        enabled: speechState.enabled,
+        readPrompt: speechState.readPrompt,
+        readOptions: speechState.readOptions,
+        readAnswer: speechState.readAnswer,
+      };
+    }
     return payload;
   }
 
@@ -8720,6 +10396,7 @@ Material to organize:
     providerMsg = null;
     renderProviderMessages();
     updateProviderModelHint();
+    renderSpeech();
   }
 
   function openProviderDialog(pending) {
@@ -8781,6 +10458,12 @@ Material to organize:
       renderProviderMessages();
       return;
     }
+    if (isOfficialDeepSeek($("baseUrl").value) &&
+        speechState.enabled && !speechHasContent()) {
+      providerMsg = { kind: "error", key: "speechSelectAtLeastOne" };
+      renderProviderMessages();
+      return;
+    }
     $("saveProvider").disabled = true;
     try {
       const data = await api("/api/quiz/admin/provider", {
@@ -8794,7 +10477,10 @@ Material to organize:
         configured: Boolean(data.configured),
         baseUrl: data.baseUrl || "",
         model: data.model || "",
+        speech: normalizeSpeech(data.speech),
       };
+      speechState = Object.assign({}, providerState.speech);
+      speechDirty = false;
       $("apiKey").value = "";
       providerMsg = { kind: "ok", key: "providerSaved" };
       renderProvider();
@@ -9147,6 +10833,11 @@ Material to organize:
     if (GEN_DIFFICULTY_VALUES.includes(prefs.difficulty)) {
       genDifficultyValue = prefs.difficulty;
     }
+    if (GEN_QUESTION_TYPE_VALUES.includes(prefs.questionType)) {
+      genQuestionTypeValue = prefs.questionType;
+    } else {
+      genQuestionTypeValue = "single";
+    }
     if (version >= 3 || customTopic) {
       genRequirementValue = customTopic;
     } else if (legacyDefault) {
@@ -9176,6 +10867,7 @@ Material to organize:
       targetCount,
       options: genOptionsValue,
       difficulty: genDifficultyValue,
+      questionType: genQuestionTypeValue,
       // 版本 3 起这个字段就是完整的题目要求文本，空字符串表示未填写。
       customTopic: normalizeRequirement(genRequirementValue),
       autoAdd: genAutoAddValue,
@@ -9192,6 +10884,7 @@ Material to organize:
       TARGET_COUNTS.includes(prefs.targetCount) &&
       GEN_OPTIONS_VALUES.includes(prefs.options) &&
       GEN_DIFFICULTY_VALUES.includes(prefs.difficulty) &&
+      GEN_QUESTION_TYPE_VALUES.includes(prefs.questionType) &&
       typeof prefs.customTopic === "string" &&
       prefs.customTopic.length <= REQUIREMENT_MAX_CHARS &&
       outOfRangeRequirementUnit(prefs.customTopic) === null &&
@@ -9403,6 +11096,9 @@ Material to organize:
         : "difficultyUnlimited"));
 
     updateTargetChips();
+    renderChipRow($("genQuestionTypeChips"), GEN_QUESTION_TYPE_VALUES, genQuestionTypeValue,
+      "data-question-type",
+      (value) => t(GEN_QUESTION_TYPE_LABEL_KEYS[value] || "genTypeSingle"));
     renderChipRow($("genOptionsChips"), GEN_OPTIONS_VALUES, genOptionsValue, "data-options",
       (value) => String(value));
     if (recompose && !genPromptDirty) {
@@ -9462,30 +11158,6 @@ Material to organize:
     };
   }
 
-  // 保留上一份已知配置并显式报错，不静默换成默认范围。
-  // Only used when the TV omits answerScopes (cached page or contract break).
-  // One legacy scope becomes level 1 so the rest of the page keeps working.
-  function applyAnswerScope(raw, mode) {
-    const custom = mode ? mode === "custom" : raw !== null && raw !== undefined;
-    if (!custom) {
-      applyAnswerLevels([]);
-      return true;
-    }
-    const scope = normalizeAnswerScope(raw);
-    if (!scope) {
-      console.error("[quiz] invalid answer scope from TV", raw);
-      $("settingsError").textContent = t("err_INVALID_SCOPE");
-      return false;
-    }
-    applyAnswerLevels([{
-      id: "legacy-1",
-      name: "",
-      scope,
-      available: answerScopeAvailable,
-    }]);
-    return true;
-  }
-
   function scopeTopicLabel(topic) {
     return t(SCOPE_LABEL_KEYS[topic === "all" ? "review" : topic] || "scopeMidterm");
   }
@@ -9523,9 +11195,26 @@ Material to organize:
     return true;
   }
 
+  // A course source also filters by answer kind, so generating only single
+  // choice questions cannot fill a multiple-choice source.
+  function generationFitsSource(source) {
+    if (!source || source.type !== "course") return true;
+    if (!generationFitsAnswerScope(source.scope)) return false;
+    if (source.answerKind === "single" && genQuestionTypeValue === "multiple") return false;
+    if (source.answerKind === "multiple" && genQuestionTypeValue === "single") return false;
+    return true;
+  }
+
+  function generationTargetCourseSource(level) {
+    const courses = (level && Array.isArray(level.sources) ? level.sources : [])
+      .filter((source) => source.type === "course");
+    return courses.find((source) => !generationFitsSource(source)) || courses[0] || null;
+  }
+
   function generationScopeMismatch() {
     const target = generationTargetLevel();
-    return Boolean(target) && !generationFitsAnswerScope(target.scope);
+    const source = target ? generationTargetCourseSource(target) : null;
+    return Boolean(source) && !generationFitsSource(source);
   }
 
   function answerScopeNeedsQuestions() {
@@ -9547,7 +11236,8 @@ Material to organize:
 
   function generationScopeSignature() {
     const target = generationTargetLevel();
-    const ans = target ? target.scope : null;
+    const source = target ? generationTargetCourseSource(target) : null;
+    const ans = source ? source.scope : null;
     const answerPart = ans ? levelScopeSignature(ans) : "";
     const genPart = [
       genGradeValue, genSemesterValue, genSubjectValue, genTextbookId,
@@ -9576,13 +11266,14 @@ Material to organize:
       return;
     }
     const target = generationTargetLevel();
-    const mismatch = Boolean(target) && !generationFitsAnswerScope(target.scope);
+    const source = target ? generationTargetCourseSource(target) : null;
+    const mismatch = Boolean(source) && !generationFitsSource(source);
     box.classList.remove("hidden");
     // 不足和范围不一致都属于需要处理的异常，统一用警示色；
     // 蓝色只留给两张卡的数据流标签。
     box.classList.add("warn");
-    if (mismatch && target) {
-      const index = answerLevels.indexOf(target);
+    if (mismatch && target && source) {
+      const index = levelPackages.indexOf(target);
       $("genScopeStatusText").textContent = t("genScopeStatusLevelMismatch", {
         level: levelLabel(target, index),
       });
@@ -9590,8 +11281,8 @@ Material to organize:
       $("genScopeStatusText").textContent =
         t("genScopeStatusLevelsInsufficient", { n: short.length, pull });
     }
-    const canAlign = mismatch && Boolean(target) &&
-      canAlignGenerationToAnswerScope(target.scope);
+    const canAlign = mismatch && Boolean(source) &&
+      canAlignGenerationToAnswerScope(source.scope);
     $("genScopeStatusActions").classList.toggle("hidden", !mismatch);
     $("alignGenToAnswer").classList.toggle("hidden", !canAlign);
     $("genScopeStatusNote").classList.toggle("hidden", !canAlign);
@@ -9599,7 +11290,8 @@ Material to organize:
 
   function alignGenerationToAnswerScope() {
     const target = generationTargetLevel();
-    const ans = target ? target.scope : null;
+    const source = target ? generationTargetCourseSource(target) : null;
+    const ans = source ? source.scope : null;
     if (!ans || !canAlignGenerationToAnswerScope(ans)) return false;
     genGradeValue = ans.grade;
     genSemesterValue = ans.semester;
@@ -9627,10 +11319,11 @@ Material to organize:
 
   function openScopeMismatchDialog() {
     const target = generationTargetLevel();
-    const ans = target ? target.scope : null;
+    const source = target ? generationTargetCourseSource(target) : null;
+    const ans = source ? source.scope : null;
     if (!ans) return false;
     const pull = Number(currentConfig().pullCount || 5);
-    const index = answerLevels.indexOf(target);
+    const index = levelPackages.indexOf(target);
     $("scopeMismatchAnswer").textContent = t("scopeMismatchAnswerLine", {
       scope: levelLabel(target, index) + " · " + scopeSummaryText(ans),
     });
@@ -9886,7 +11579,12 @@ Material to organize:
       button.className = "choice-chip";
       button.dataset.scopeStep = step;
       button.dataset.scopeValue = String(entry.value);
-      button.setAttribute("aria-pressed", String(String(entry.value) === String(current)));
+      // "Any difficulty" is selected in the model from the start, but a new
+      // source has not answered that step yet. Leave every chip unpressed so
+      // the parent makes the final choice and then sees the type filter.
+      const pressed = String(entry.value) === String(current) &&
+        (step !== "difficulty" || courseSourceDifficultyPicked);
+      button.setAttribute("aria-pressed", String(pressed));
       button.appendChild(document.createTextNode(entry.label));
       if (entry.count !== null) {
         const count = document.createElement("span");
@@ -9933,6 +11631,10 @@ Material to organize:
       else if (draft.topic) add("topic", SCOPE_TOPIC_TO_CANONICAL[draft.topic]);
       add("difficulty", draft.difficulty);
     }
+    // The chosen answer type narrows the hierarchy exactly like the other
+    // filters. The response still reports every backed type in
+    // facets.answerKind so the chips never hide an option that has data.
+    if (courseSourceAnswerKind !== "any") add("answerKind", courseSourceAnswerKind);
     return params.toString();
   }
 
@@ -9968,6 +11670,8 @@ Material to organize:
         counts: raw && typeof raw === "object" ? raw : {},
         unrestricted: Number(data && data.unrestricted || 0),
         matched: Number(data && data.matched || 0),
+        kindCounts: normalizeAnswerKindCounts(
+          data && data.facets && data.facets.answerKind),
       };
       if (step === "difficulty") scopeMatched = Number(data && data.matched || 0);
       if (levelEditorOpen()) $("levelEditorError").textContent = "";
@@ -10051,7 +11755,20 @@ Material to organize:
       value = value.toUpperCase();
       if (!SCOPE_DIFFICULTY_VALUES.includes(value)) return;
     }
-    if (String(value) === String(scopeDraftValue(step, draft))) return;
+    if (String(value) === String(scopeDraftValue(step, draft))) {
+      // Tapping the already-selected "any difficulty" confirms the last
+      // hierarchy step; that tap is what reveals the type filter. Without
+      // this a new source would show difficulty and type at the same time.
+      if (step === "difficulty" && !courseSourceDifficultyPicked) {
+        courseSourceDifficultyPicked = true;
+        renderLevelEditor();
+      }
+      return;
+    }
+
+    // Changing any upstream step clears difficulty, so the type filter must
+    // wait until the parent answers the difficulty step again.
+    if (step !== "difficulty") courseSourceDifficultyPicked = false;
 
     if (step === "grade") {
       draft.grade = value;
@@ -10092,6 +11809,7 @@ Material to organize:
       delete draft.difficulty;
     } else if (step === "difficulty") {
       draft.difficulty = value;
+      courseSourceDifficultyPicked = true;
     }
 
     customScope = draft;
@@ -10102,7 +11820,7 @@ Material to organize:
 
   function levelLabel(level, index) {
     const name = String(level && level.name || "").trim();
-    return name || t("levelFallbackName", { n: Number(index) + 1 });
+    return name || packageSummaryText(level) || t("levelFallbackName", { n: Number(index) + 1 });
   }
 
   function levelScopeSignature(scope) {
@@ -10119,28 +11837,115 @@ Material to organize:
     ].join("/");
   }
 
-  function shortLevels(pull) {
-    return answerLevels.filter((level) => level.available < pull);
+  function answerKindLabel(kind) {
+    if (kind === "single") return t("levelTypeSingle");
+    if (kind === "multiple") return t("levelTypeMultiple");
+    return t("levelTypeAny");
   }
 
-  // Levels drive the generation hint: prefer the first short level whose scope
-  // the current generation settings do not fit, so the offered action is useful.
+  function answerKindCount(counts, kind) {
+    if (!counts) return null;
+    const value = kind === "single" ? counts.single
+      : kind === "multiple" ? counts.multiple : counts.total;
+    return Math.max(0, Number(value || 0));
+  }
+
+  // The facets endpoint reports every backed type under the upstream scope
+  // filters. It is the same shape as /level-counts after normalization, so the
+  // chips and the saved typeCounts share one representation.
+  function normalizeAnswerKindCounts(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const single = Math.max(0, Number(raw.single || 0));
+    const multiple = Math.max(0, Number(raw.multiple || 0));
+    return { total: single + multiple, single, multiple };
+  }
+
+  function sourceShortLabel(source) {
+    if (!source) return "";
+    if (source.type === "wrong") return t("wrongLevelFallbackName");
+    if (source.type === "collection") {
+      return String(source.collectionName || "").trim() || t("customLevelFallbackName");
+    }
+    const scope = scopeSummaryText(source.scope);
+    return source.answerKind && source.answerKind !== "any"
+      ? scope + " · " + answerKindLabel(source.answerKind)
+      : scope;
+  }
+
+  function packageSummaryText(level) {
+    return (level && Array.isArray(level.sources) ? level.sources : [])
+      .map(sourceShortLabel)
+      .filter(Boolean)
+      .join(" + ");
+  }
+
+  function sourceAvailable(source) {
+    const value = Number(source && source.available);
+    return Number.isFinite(value) ? Math.max(0, value) : null;
+  }
+
+  // "Total" is what the source holds, while "available" is what the level can
+  // still draw now. A custom tag's total stays visible after a round consumes
+  // some rows, so a successful import can be checked at a glance.
+  function sourceTotal(source) {
+    if (!source) return null;
+    if (source.type === "collection") {
+      if (source.total !== undefined && source.total !== null) {
+        const stored = Number(source.total);
+        if (Number.isFinite(stored)) return Math.max(0, stored);
+      }
+      const collection = importCollections.find((item) => item.id === source.collectionId);
+      const value = Number(collection && collection.total);
+      return Number.isFinite(value) ? Math.max(0, value) : null;
+    }
+    if (source.type === "course" && source.typeCounts) {
+      const value = Number(source.typeCounts.total);
+      return Number.isFinite(value) ? Math.max(0, value) : null;
+    }
+    if (source.type === "wrong") return sourceAvailable(source);
+    return null;
+  }
+
+  function sourceTotalSum(sources) {
+    return (sources || []).reduce((sum, source) => {
+      const total = sourceTotal(source);
+      if (total !== null) return sum + total;
+      const available = sourceAvailable(source);
+      return sum + (available === null ? 0 : available);
+    }, 0);
+  }
+
+  function sourceAvailableSum(sources) {
+    return (sources || []).reduce((sum, source) => {
+      const available = sourceAvailable(source);
+      return sum + (available === null ? 0 : available);
+    }, 0);
+  }
+
+  function packageAvailable(level) {
+    const value = Number(level && level.available);
+    return Number.isFinite(value) ? Math.max(0, value) : 0;
+  }
+
+  function shortLevels(pull) {
+    // Paused levels are deliberately out of the child's rotation, so they must
+    // not raise the "not enough questions" warning or become a generation target.
+    return levelPackages.filter((level) =>
+      level.enabled !== false && packageAvailable(level) < pull);
+  }
+
+  // The generation hint targets the first short package with a course source
+  // that the current generator cannot fill, falling back to the first short
+  // package. Tag and wrong-review sources are generated directly by the
+  // import flow, so only course sources can be aligned.
   function generationTargetLevel() {
     const pull = Number(currentConfig().pullCount || 5);
     const short = shortLevels(pull);
     if (!short.length) return null;
-    return short.find((level) => !generationFitsAnswerScope(level.scope)) || short[0];
-  }
-
-  function renderLevelUndo() {
-    const bar = $("levelUndo");
-    if (!bar) return;
-    if (!levelUndo) {
-      bar.classList.add("hidden");
-      return;
-    }
-    $("levelUndoText").textContent = t("levelDeleted", { name: levelUndo.name });
-    bar.classList.remove("hidden");
+    return short.find((level) => {
+      const source = generationTargetCourseSource(level);
+      return source && !generationFitsSource(source);
+    }) || short[0];
   }
 
   function scheduleLevelMessage(text) {
@@ -10156,18 +11961,20 @@ Material to organize:
     const list = $("levelList");
     if (!list) return;
     list.replaceChildren();
-    answerLevels.forEach((level, index) => {
+    const pull = Number(currentConfig().pullCount || 5);
+    levelPackages.forEach((level, index) => {
+      const availableCount = packageAvailable(level);
+      const enabled = level.enabled !== false;
       const row = document.createElement("div");
       row.className = "level-row";
       row.dataset.levelId = level.id;
-      if (level.available < Number(currentConfig().pullCount || 5)) {
-        row.classList.add("short");
-      }
+      if (enabled && availableCount < pull) row.classList.add("short");
+      if (!enabled) row.classList.add("paused");
 
       const main = document.createElement("button");
       main.type = "button";
       main.className = "level-main";
-      main.dataset.levelEdit = level.id;
+      main.dataset.packageEdit = level.id;
 
       const badge = document.createElement("span");
       badge.className = "level-index";
@@ -10180,28 +11987,73 @@ Material to organize:
       title.className = "level-title";
       const summary = document.createElement("span");
       summary.className = "level-meta";
-      if (String(level.name || "").trim()) {
-        title.textContent = level.name.trim();
-        summary.textContent = scopeSummaryText(level.scope);
+      const name = String(level.name || "").trim();
+      if (name) {
+        title.textContent = name;
+        summary.textContent = t("levelSourcesCount", {
+          n: level.sources.length,
+          max: levelLimits.maxSources,
+        });
       } else {
-        title.textContent = scopeSummaryText(level.scope);
+        title.textContent = packageSummaryText(level) || t("levelFallbackName", { n: index + 1 });
       }
+      const label = levelLabel(level, index);
+      // Show the package contents under the level, not just a joined summary:
+      // one level can hold several independently configured question sources.
+      const sourceList = document.createElement("span");
+      sourceList.className = "level-source-list";
+      level.sources.forEach((source, sourceIndex) => {
+        const line = document.createElement("span");
+        line.className = "level-source-line";
+        const count = sourceAvailable(source);
+        const total = sourceTotal(source);
+        const countText = count === null
+          ? ""
+          : " · " + (source.type === "collection" && total !== null
+            ? t("levelSourceTotalAvailable", { total, available: count })
+            : t("levelSourceAvailable", { n: count }));
+        line.textContent = t("levelSourceIndex", { n: sourceIndex + 1 }) +
+          " · " + sourceShortLabel(source) + countText;
+        sourceList.appendChild(line);
+      });
       const available = document.createElement("span");
       available.className = "level-available";
-      const pull = Number(currentConfig().pullCount || 5);
-      available.textContent = level.available < pull
-        ? t("levelShort", { available: level.available, pull })
-        : t("levelAvailable", { n: level.available });
-      if (level.available < pull) available.classList.add("warn");
+      const totalCount = sourceTotalSum(level.sources);
+      available.textContent = enabled && availableCount < pull
+        ? t("levelShort", { total: totalCount, available: availableCount, pull })
+        : t("levelAvailable", { total: totalCount, available: availableCount });
+      if (enabled && availableCount < pull) available.classList.add("warn");
       copy.appendChild(title);
+      if (!enabled) {
+        const pausedNote = document.createElement("span");
+        pausedNote.className = "level-paused-note";
+        pausedNote.textContent = t("levelPausedHint");
+        copy.appendChild(pausedNote);
+      }
       if (summary.textContent) copy.appendChild(summary);
+      copy.appendChild(sourceList);
       copy.appendChild(available);
       main.appendChild(copy);
       row.appendChild(main);
 
       const actions = document.createElement("div");
       actions.className = "level-actions";
-      const label = levelLabel(level, index);
+      // A paused level stays in the list so the parent can edit or re-enable
+      // it, but the TV's answer-challenge wheel only receives enabled levels.
+      const toggle = document.createElement("label");
+      toggle.className = "level-switch";
+      toggle.title = t(enabled ? "levelToggleOnAria" : "levelToggleOffAria", { name: label });
+      const toggleInput = document.createElement("input");
+      toggleInput.type = "checkbox";
+      toggleInput.checked = enabled;
+      toggleInput.dataset.levelToggle = level.id;
+      toggleInput.setAttribute("aria-label", toggle.title);
+      toggleInput.disabled = levelSaving || packageSaving;
+      const toggleTrack = document.createElement("span");
+      toggleTrack.className = "level-switch-track";
+      toggleTrack.setAttribute("aria-hidden", "true");
+      toggle.append(toggleInput, toggleTrack);
+      actions.appendChild(toggle);
       const addAction = (attr, text, aria) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -10209,26 +12061,44 @@ Material to organize:
         button.setAttribute(attr, level.id);
         button.setAttribute("aria-label", t(aria, { name: label }));
         button.textContent = text;
-        button.disabled = levelSaving;
+        button.disabled = levelSaving || packageSaving;
         actions.appendChild(button);
         return button;
       };
       const up = addAction("data-level-up", "↑", "levelMoveUpAria");
-      up.disabled = levelSaving || index === 0;
+      up.disabled = levelSaving || packageSaving || index === 0;
       const down = addAction("data-level-down", "↓", "levelMoveDownAria");
-      down.disabled = levelSaving || index === answerLevels.length - 1;
+      down.disabled = levelSaving || packageSaving || index === levelPackages.length - 1;
       addAction("data-level-delete", "×", "levelDeleteAria");
       row.appendChild(actions);
       list.appendChild(row);
     });
 
-    $("levelEmpty").classList.toggle("hidden", answerLevels.length > 0);
+    $("levelEmpty").classList.toggle(
+      "hidden", levelPackages.length > 0 || packageEditorActive);
     $("levelListCount").textContent = t("levelListCount", {
-      n: answerLevels.length,
-      max: MAX_LEVELS,
+      n: levelPackages.length,
+      max: levelLimits.maxLevels,
     });
-    renderCustomLevels();
-    renderLevelUndo();
+    if ($("levelsTotalHint")) {
+      $("levelsTotalHint").textContent = t("levelsTotalHint", {
+        used: levelPackages.length,
+        max: levelLimits.maxLevels,
+      });
+      $("levelsTotalHint").classList.toggle(
+        "warn",
+        levelPackages.length > levelLimits.maxLevels,
+      );
+    }
+    const atMax = levelPackages.length >= levelLimits.maxLevels;
+    if ($("addLevel")) $("addLevel").disabled = levelSaving || packageSaving || atMax;
+    if ($("levelMaxHint")) {
+      $("levelMaxHint").classList.toggle("hidden", !atMax);
+      $("levelMaxHint").textContent = t("levelMaxHint", { n: levelLimits.maxLevels });
+    }
+    if ($("levelError") && levelPackagesUnreadable) {
+      $("levelError").textContent = t("levelPackagesUnreadable");
+    }
   }
 
   function renderAnswerPage() {
@@ -10239,247 +12109,468 @@ Material to organize:
     $("answerPaneScope").classList.toggle("hidden", answerTab !== "scope");
     $("answerPaneRules").classList.toggle("hidden", answerTab !== "rules");
     $("answerSaveBar").classList.toggle("hidden", answerTab !== "rules");
-    if (answerTab === "scope") renderAnswerLevels();
+    if (answerTab === "scope") {
+      renderAnswerLevels();
+      renderPackageEditor();
+    }
     renderSettingsChrome();
   }
 
-  function applyAnswerLevels(rawLevels) {
-    answerLevels = (Array.isArray(rawLevels) ? rawLevels : [])
+  function normalizeLevelSource(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    const available = Math.max(0, Number(raw.available || 0));
+    if (raw.type === "course") {
+      const scope = normalizeAnswerScope(raw.scope);
+      if (!scope) return null;
+      const answerKind = ANSWER_KIND_VALUES.includes(raw.answerKind)
+        ? raw.answerKind : "any";
+      const rawCounts = raw.typeCounts && typeof raw.typeCounts === "object"
+        ? raw.typeCounts : null;
+      const typeCounts = rawCounts
+        ? {
+          total: Math.max(0, Number(rawCounts.total || 0)),
+          single: Math.max(0, Number(rawCounts.single || 0)),
+          multiple: Math.max(0, Number(rawCounts.multiple || 0)),
+        }
+        : null;
+      return { type: "course", scope, answerKind, available, typeCounts };
+    }
+    if (raw.type === "collection") {
+      const collectionId = String(raw.collectionId || "");
+      if (!collectionId) return null;
+      return {
+        type: "collection",
+        collectionId,
+        collectionName: String(raw.collectionName || ""),
+        available,
+      };
+    }
+    if (raw.type === "wrong") return { type: "wrong", available };
+    return null;
+  }
+
+  function firstCourseScope() {
+    for (const level of levelPackages) {
+      for (const source of level.sources) {
+        if (source.type === "course") return source.scope;
+      }
+    }
+    return null;
+  }
+
+  function applyLevelPackages(rawPackages, options) {
+    const quiet = Boolean(options && options.quiet);
+    levelPackages = (Array.isArray(rawPackages) ? rawPackages : [])
       .map((item) => {
-        const scope = normalizeAnswerScope(item && item.scope);
-        if (!scope) return null;
+        const id = String(item && item.id || "");
+        if (!id) return null;
+        const sources = (Array.isArray(item.sources) ? item.sources : [])
+          .map(normalizeLevelSource)
+          .filter(Boolean);
+        if (!sources.length) return null;
         return {
-          id: String(item.id || ""),
+          id,
           name: String(item.name || "").trim(),
-          scope,
+          // Missing on records written before the pause switch; those levels
+          // stay enabled so an upgrade never hides a parent's work.
+          enabled: item.enabled !== false,
           available: Math.max(0, Number(item.available || 0)),
+          sources,
         };
       })
       .filter(Boolean)
-      .slice(0, MAX_LEVELS);
-    answerScope = answerLevels.length ? Object.assign({}, answerLevels[0].scope) : null;
-    answerScopeMode = answerLevels.length ? "custom" : "bound";
-    answerScopeAvailable = answerLevels.reduce(
+      .slice(0, levelLimits.maxLevels);
+    const scope = firstCourseScope();
+    answerScope = scope ? Object.assign({}, scope) : null;
+    answerScopeMode = levelPackages.length ? "custom" : "bound";
+    answerScopeAvailable = levelPackages.reduce(
       (max, level) => Math.max(max, level.available),
       0,
     );
     scopeLoaded = true;
-    if ($("answerTabs")) renderAnswerPage();
-    renderHome();
+    if (!quiet) {
+      if ($("answerTabs")) renderAnswerPage();
+      renderHome();
+    }
   }
 
-  function applyCustomLevels(rawLevels) {
-    customLevels = (Array.isArray(rawLevels) ? rawLevels : [])
-      .map((item) => ({
-        id: String(item && item.id || ""),
-        name: String(item && item.name || "").trim(),
-        collectionId: String(item && item.collectionId || ""),
-        collectionName: String(item && item.collectionName || ""),
-        available: Math.max(0, Number(item && item.available || 0)),
-      }))
-      .filter((item) => item.id && item.collectionId)
-      .slice(0, MAX_LEVELS);
-    if (genPage === "answer") renderCustomLevels();
-    if (genPage === "customLevel") renderCustomLevelEditor();
-  }
-
-  function applyWrongLevel(raw) {
-    wrongLevel = raw && typeof raw === "object" && String(raw.id || "")
-      ? {
-        id: String(raw.id || ""),
-        name: String(raw.name || "").trim(),
-        available: Math.max(0, Number(raw.available || 0)),
-        wrongReview: true,
-      }
-      : null;
-    if (genPage === "answer") renderWrongLevels();
-    if (genPage === "customLevel") renderCustomLevelEditor();
+  // Legacy projection from the TV, used only by an old page or a TV mid-update.
+  // It never becomes editable input.
+  function applyLevelPackageProjection(data) {
+    if (levelPackages.length) return;
+    const scope = normalizeAnswerScope(data && data.answerScope);
+    answerScope = scope ? Object.assign({}, scope) : null;
+    answerScopeMode = data && data.answerScopeMode === "custom" ? "custom" : "bound";
+    answerScopeAvailable = Math.max(0, Number(data && data.answerScopeAvailable || 0));
   }
 
   function allLevelCount() {
-    return answerLevels.length + customLevels.length + (wrongLevel ? 1 : 0);
+    return levelPackages.length;
   }
 
-  function wrongLevelName() {
-    return String(wrongLevel && wrongLevel.name || "").trim() ||
-      t("wrongLevelFallbackName");
+  // ---- Course source editor ----
+
+  // The deepest loaded step has the most upstream filters applied, so its
+  // answerKind facet is the best current count for the draft. Partial data is
+  // only a fallback until /level-counts returns the exact complete-scope split.
+  function scopeKindSupportCounts() {
+    const visible = scopeVisibleSteps(customScope || {});
+    for (let index = visible.length - 1; index >= 0; index--) {
+      const data = scopeFacets[visible[index]];
+      if (data && !data.failed && data.kindCounts) return data.kindCounts;
+    }
+    return null;
   }
 
-  function scheduleWrongLevelMessage(text) {
-    if ($("wrongLevelState")) $("wrongLevelState").textContent = text;
-    if (wrongLevelMessageTimer) clearTimeout(wrongLevelMessageTimer);
-    wrongLevelMessageTimer = setTimeout(() => {
-      wrongLevelMessageTimer = 0;
-      if ($("wrongLevelState")) $("wrongLevelState").textContent = "";
-    }, 2600);
+  function courseSourceKindSupport() {
+    return courseSourceCounts || scopeKindSupportCounts();
   }
 
-  function customLevelTagName(level) {
-    return String(level && level.collectionName || "").trim() ||
-      String(level && level.collectionId || "");
+  function courseSourceCountsText() {
+    const support = courseSourceKindSupport();
+    if (!support) return "";
+    if (courseSourceAnswerKind === "any") {
+      return t("levelTypeCountsAll", {
+        total: support.total,
+        single: support.single,
+        multiple: support.multiple,
+      });
+    }
+    const count = answerKindCount(support, courseSourceAnswerKind);
+    if (count !== null && count <= 0) {
+      return t("levelTypeEmpty", { kind: answerKindLabel(courseSourceAnswerKind) });
+    }
+    return t("levelTypeCountsWith", {
+      kind: answerKindLabel(courseSourceAnswerKind),
+      n: count,
+      total: support.total,
+    });
   }
 
-  function scheduleCustomLevelMessage(text) {
-    if ($("customLevelState")) $("customLevelState").textContent = text;
-    if (customLevelMessageTimer) clearTimeout(customLevelMessageTimer);
-    customLevelMessageTimer = setTimeout(() => {
-      customLevelMessageTimer = 0;
-      if ($("customLevelState")) $("customLevelState").textContent = "";
-    }, 2600);
+  function renderCourseSourceKindControls() {
+    const host = $("courseSourceKindChips");
+    if (!host) return;
+    const support = courseSourceKindSupport();
+    const kinds = ANSWER_KIND_VALUES.filter((kind) => {
+      // Keep an existing selection visible even at 0 so a parent editing a
+      // now-empty type sees why saving is blocked instead of a disappearing
+      // chip. Everything else is shown only when the bank proves it has data.
+      if (kind === courseSourceAnswerKind) return true;
+      if (!support) return kind === "any";
+      return answerKindCount(support, kind) > 0;
+    });
+    host.replaceChildren();
+    kinds.forEach((kind) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "choice-chip";
+      chip.dataset.courseKind = kind;
+      chip.setAttribute("aria-pressed", String(kind === courseSourceAnswerKind));
+      chip.appendChild(document.createTextNode(answerKindLabel(kind)));
+      const count = answerKindCount(support, kind);
+      if (count !== null) {
+        const badge = document.createElement("span");
+        badge.className = "chip-count";
+        badge.textContent = String(count);
+        chip.appendChild(badge);
+      }
+      host.appendChild(chip);
+    });
+    if ($("courseSourceKindCounts")) {
+      $("courseSourceKindCounts").textContent = courseSourceCountsText();
+      const selected = answerKindCount(support, courseSourceAnswerKind);
+      $("courseSourceKindCounts").classList.toggle(
+        "warn", support !== null && selected !== null && selected <= 0);
+    }
+    const count = answerKindCount(support, courseSourceAnswerKind);
+    if ($("saveLevel")) {
+      $("saveLevel").disabled = levelSaving || packageSaving ||
+        Boolean(scopeOptionsLoading.courseCounts) ||
+        (count !== null && count <= 0);
+    }
   }
 
-  function renderCustomLevels() {
-    const list = $("customLevelList");
+  function ensureCourseSourceCounts() {
+    const scope = normalizeAnswerScope(customScope);
+    if (!scope) {
+      // Do not leave a previous scope's split next to an incomplete draft.
+      courseSourceCounts = null;
+      courseSourceCountsKey = "";
+      courseSourceCountsToken++;
+      delete scopeOptionsLoading.courseCounts;
+      return;
+    }
+    const key = levelScopeSignature(scope);
+    if (key === courseSourceCountsKey &&
+        (courseSourceCounts !== null || scopeOptionsLoading.courseCounts)) {
+      return;
+    }
+    courseSourceCountsKey = key;
+    courseSourceCounts = null;
+    scopeOptionsLoading.courseCounts = true;
+    const token = ++courseSourceCountsToken;
+    api("/api/quiz/admin/level-counts", {
+      method: "POST",
+      admin: true,
+      body: { scopes: [scopeToCanonical(scope)] },
+    })
+      .then((data) => {
+        if (token !== courseSourceCountsToken || courseSourceCountsKey !== key) return;
+        const first = Array.isArray(data && data.counts) ? data.counts[0] : null;
+        courseSourceCounts = {
+          total: Math.max(0, Number(first && first.total || 0)),
+          single: Math.max(0, Number(first && first.single || 0)),
+          multiple: Math.max(0, Number(first && first.multiple || 0)),
+        };
+        if (levelEditorOpen()) renderCourseSourceKindControls();
+      })
+      .catch((error) => {
+        if (token !== courseSourceCountsToken || courseSourceCountsKey !== key) return;
+        courseSourceCounts = null;
+        if (levelEditorOpen() && error && error.code !== "NOT_FOUND") {
+          $("levelEditorError").textContent = errorText(error);
+        }
+      })
+      .finally(() => {
+        if (token === courseSourceCountsToken) {
+          delete scopeOptionsLoading.courseCounts;
+          if (levelEditorOpen()) renderCourseSourceKindControls();
+        }
+      });
+  }
+
+  function renderLevelEditor() {
+    if (!$("levelEditorPage")) return;
+    if (!customScope || typeof customScope !== "object") customScope = {};
+    $("levelEditorTitle").textContent = t("levelSourceCourse");
+    renderCustomScopeControls();
+    ensureScopeOptions();
+    ensureCourseSourceCounts();
+    // The type filter is the last step: the difficulty step must be answered
+    // first, even when that answer is "any difficulty". Otherwise selecting a
+    // topic would reveal the difficulty and type filters in the same frame.
+    if ($("courseSourceKindField")) {
+      $("courseSourceKindField").classList.toggle(
+        "hidden",
+        !scopeRequiredComplete(customScope) || !courseSourceDifficultyPicked,
+      );
+    }
+    renderCourseSourceKindControls();
+    $("levelEditorAvailable").textContent = scopeAvailableText(customScope);
+    $("levelEditorEmpty").classList.toggle("hidden", !scopeIsEmpty(customScope));
+  }
+
+  function selectCourseSourceAnswerKind(kind) {
+    if (!ANSWER_KIND_VALUES.includes(kind) || kind === courseSourceAnswerKind) return;
+    courseSourceAnswerKind = kind;
+    $("levelEditorError").textContent = "";
+    // The type applies to every step, unlike a grade change that only
+    // invalidates downstream facets. Reload the whole hierarchy so only
+    // scopes with data of the chosen type remain selectable.
+    resetScopeOptions();
+    ensureScopeOptions();
+    renderLevelEditor();
+  }
+
+  function openCourseSourceEditor(index, presetScope) {
+    let source = null;
+    if (index !== null && index !== undefined) {
+      source = packageDraftSources[index];
+      if (!source || source.type !== "course") return false;
+      courseSourceEditingIndex = index;
+    } else {
+      courseSourceEditingIndex = null;
+    }
+    // A new source starts on the first hierarchy step only; every later step
+    // appears after the parent picks an option that the bank proves has data.
+    // Editing keeps the full stored scope so any step stays changeable.
+    customScope = source
+      ? Object.assign({}, source.scope)
+      : Object.assign({}, presetScope || {});
+    courseSourceAnswerKind = source ? source.answerKind : "any";
+    // Editing an existing source already has every step answered; a new
+    // source waits for an explicit difficulty choice before showing the type.
+    courseSourceDifficultyPicked = Boolean(source);
+    courseSourceCounts = null;
+    courseSourceCountsKey = "";
+    courseSourceCountsToken++;
+    answerScopeMode = "custom";
+    $("levelEditorError").textContent = "";
+    resetScopeOptions();
+    showGenPage("level");
+    ensureScopeOptions();
+    ensureCourseSourceCounts();
+    renderLevelEditor();
+    return true;
+  }
+
+  function courseSourceDuplicate(scope, kind) {
+    const signature = levelScopeSignature(scope);
+    return packageDraftSources.some((source, index) =>
+      source.type === "course" &&
+      index !== courseSourceEditingIndex &&
+      levelScopeSignature(source.scope) === signature &&
+      (source.answerKind || "any") === kind);
+  }
+
+  function saveLevelDraft() {
+    if (levelSaving || packageSaving) return;
+    $("levelEditorError").textContent = "";
+    const scopeError = answerScopeErrorMessage();
+    if (scopeError) {
+      $("levelEditorError").textContent = scopeError;
+      focusActiveScopeStep();
+      return;
+    }
+    const scope = normalizeAnswerScope(customScope);
+    if (!scope) {
+      $("levelEditorError").textContent = t("err_SCOPE_INCOMPLETE");
+      return;
+    }
+    const kind = courseSourceAnswerKind;
+    if (courseSourceCounts === null && scopeOptionsLoading.courseCounts) {
+      $("levelEditorError").textContent = t("scopeLoading");
+      return;
+    }
+    const support = courseSourceKindSupport();
+    const count = answerKindCount(support, kind);
+    if (support && count !== null && count <= 0) {
+      $("levelEditorError").textContent = t("levelTypeEmpty", {
+        kind: answerKindLabel(kind),
+      });
+      return;
+    }
+    if (courseSourceDuplicate(scope, kind)) {
+      $("levelEditorError").textContent = t("levelSourceDuplicateCourse");
+      return;
+    }
+    const source = {
+      type: "course",
+      scope,
+      answerKind: kind,
+      available: count === null ? 0 : count,
+      typeCounts: courseSourceCounts
+        ? Object.assign({}, courseSourceCounts)
+        : (support ? Object.assign({}, support) : null),
+    };
+    if (courseSourceEditingIndex === null) {
+      packageDraftSources = packageDraftSources.concat([source]);
+    } else {
+      packageDraftSources = packageDraftSources.map((item, index) =>
+        index === courseSourceEditingIndex ? source : item);
+    }
+    const added = courseSourceEditingIndex === null;
+    courseSourceEditingIndex = null;
+    customScope = null;
+    courseSourceAnswerKind = "any";
+    courseSourceDifficultyPicked = false;
+    courseSourceCounts = null;
+    courseSourceCountsKey = "";
+    courseSourceCountsToken++;
+    resetScopeOptions();
+    // Return to the level draft that owns this source. Saving a source is one
+    // step inside the draft, never the creation of the level itself.
+    showGenPage("answer");
+    // Bring the newly added source into view so the parent sees the result
+    // of the save immediately, without hunting for the draft panel.
+    const sourceList = $("packageSourceList");
+    if (sourceList && sourceList.lastElementChild) {
+      sourceList.lastElementChild.scrollIntoView({ block: "center" });
+    }
+    if ($("packageEditorError")) {
+      $("packageEditorError").textContent = t(added ? "levelSourceAdded" : "levelSourceUpdated");
+      $("packageEditorError").classList.remove("error");
+      $("packageEditorError").classList.add("ok");
+      setTimeout(() => {
+        if ($("packageEditorError")) {
+          $("packageEditorError").textContent = "";
+          $("packageEditorError").classList.remove("ok");
+          $("packageEditorError").classList.add("error");
+        }
+      }, 2400);
+    }
+    return true;
+  }
+
+  // ---- Package editor ----
+
+  function packageDraftPayload(level) {
+    const payload = {
+      name: String(level.name || ""),
+      // Saves triggered by reorder, delete, edit or the pause switch must all
+      // keep the field; a missing value would resume a paused level.
+      enabled: level.enabled !== false,
+      sources: (level.sources || []).map((source) => {
+        if (source.type === "course") {
+          return {
+            type: "course",
+            scope: scopeToCanonical(source.scope),
+            answerKind: source.answerKind || "any",
+          };
+        }
+        if (source.type === "collection") {
+          return { type: "collection", collectionId: source.collectionId };
+        }
+        return { type: "wrong" };
+      }),
+    };
+    if (level.id) payload.id = level.id;
+    return payload;
+  }
+
+  function packageSourceMeta(source) {
+    if (source.type === "course") {
+      const counts = source.typeCounts;
+      if (counts) {
+        return t("levelTypeCountsWith", {
+          kind: answerKindLabel(source.answerKind),
+          n: answerKindCount(counts, source.answerKind),
+          total: counts.total,
+        });
+      }
+      return answerKindLabel(source.answerKind);
+    }
+    if (source.type === "collection") return t("customLevelBadge");
+    return t("wrongLevelMeta");
+  }
+
+  function renderPackageSources() {
+    const list = $("packageSourceList");
     if (!list) return;
     list.replaceChildren();
-    const pull = Number(currentConfig().pullCount || 5);
-    customLevels.forEach((level, index) => {
+    packageDraftSources.forEach((source, index) => {
       const row = document.createElement("div");
-      row.className = "level-row custom";
-      row.dataset.customLevelId = level.id;
-      if (level.available < pull) row.classList.add("short");
+      row.className = "level-row package-source-row"
+        + (source.type === "collection" ? " custom" : "")
+        + (source.type === "wrong" ? " wrong" : "");
 
       const main = document.createElement("button");
       main.type = "button";
       main.className = "level-main";
-      main.dataset.customLevelEdit = level.id;
-
-      const badge = document.createElement("span");
-      badge.className = "level-index level-index-custom";
-      badge.textContent = String(index + 1);
-      main.appendChild(badge);
+      if (source.type === "course") main.dataset.packageSourceEdit = String(index);
 
       const copy = document.createElement("span");
       copy.className = "level-copy";
-      const titleRow = document.createElement("span");
-      titleRow.className = "level-title-row";
+      const eyebrow = document.createElement("span");
+      eyebrow.className = "level-source-eyebrow";
+      eyebrow.textContent = t("levelSourceIndex", { n: index + 1 });
       const title = document.createElement("span");
       title.className = "level-title";
-      title.textContent = level.name || customLevelTagName(level) ||
-        t("customLevelFallbackName");
-      const customBadge = document.createElement("span");
-      customBadge.className = "level-custom-badge";
-      customBadge.textContent = t("customLevelBadge");
-      titleRow.append(title, customBadge);
-      const tagLine = document.createElement("span");
-      tagLine.className = "level-meta";
-      tagLine.textContent = t("customLevelTagLine", {
-        name: customLevelTagName(level),
-      });
-      const available = document.createElement("span");
-      available.className = "level-available";
-      if (level.available < pull) {
-        available.textContent = t("levelShort", { available: level.available, pull });
-        available.classList.add("warn");
-      } else {
-        available.textContent = t("levelAvailable", { n: level.available });
-      }
-      copy.append(titleRow, tagLine, available);
-      main.appendChild(copy);
-      row.appendChild(main);
-
-      const actions = document.createElement("div");
-      actions.className = "level-actions";
-      const editable = localBankActive && !customLevelSaving;
-      const label = level.name || customLevelTagName(level) || t("customLevelFallbackName");
-      const addAction = (attr, text, aria) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "level-action";
-        button.setAttribute(attr, level.id);
-        button.setAttribute("aria-label", t(aria, { name: label }));
-        button.textContent = text;
-        button.disabled = !editable;
-        actions.appendChild(button);
-        return button;
-      };
-      const up = addAction("data-custom-level-up", "↑", "levelMoveUpAria");
-      up.disabled = !editable || index === 0;
-      const down = addAction("data-custom-level-down", "↓", "levelMoveDownAria");
-      down.disabled = !editable || index === customLevels.length - 1;
-      addAction("data-custom-level-delete", "×", "levelDeleteAria");
-      row.appendChild(actions);
-      list.appendChild(row);
-    });
-
-    const noTags = importCollections.length === 0;
-    $("customLevelEmpty").classList.toggle("hidden", !noTags);
-    $("customLevelListCount").textContent = String(customLevels.length);
-    // The right card explains why it is unavailable instead of leaving a
-    // disabled control without context.
-    if ($("addCustomLevelMeta")) {
-      $("addCustomLevelMeta").textContent = !localBankActive
-        ? t("levelAddCustomMetaCloud")
-        : noTags
-          ? t("levelAddCustomMetaNoTags")
-          : t("levelAddCustomMeta");
-    }
-    const used = allLevelCount();
-    $("levelsTotalHint").textContent = t("levelsTotalHint", { used, max: MAX_LEVELS });
-    $("levelsTotalHint").classList.toggle("warn", used > MAX_LEVELS);
-    $("customLevelCombined").textContent = t("customLevelCombined", {
-      used,
-      max: MAX_LEVELS,
-    });
-    const atMax = used >= MAX_LEVELS;
-    $("addLevel").disabled = levelSaving || atMax;
-    $("addCustomLevel").disabled = !localBankActive || customLevelSaving || atMax;
-    $("levelMaxHint").classList.toggle("hidden", !atMax);
-    $("levelMaxHint").textContent = t("levelMaxHint", { n: MAX_LEVELS });
-    renderWrongLevels();
-  }
-
-  function renderWrongLevels() {
-    const list = $("wrongLevelList");
-    const section = $("wrongLevelSection");
-    const add = $("addWrongLevel");
-    if (!list || !section || !add) return;
-    list.replaceChildren();
-    section.classList.toggle("hidden", !wrongLevel);
-    const pull = Number(currentConfig().pullCount || 5);
-
-    if (wrongLevel) {
-      const row = document.createElement("div");
-      row.className = "level-row wrong";
-      row.dataset.wrongLevelId = wrongLevel.id;
-
-      const main = document.createElement("button");
-      main.type = "button";
-      main.className = "level-main";
-      main.dataset.wrongLevelEdit = wrongLevel.id;
-
-      const badge = document.createElement("span");
-      badge.className = "level-index level-index-wrong";
-      badge.textContent = "!";
-      badge.setAttribute("aria-hidden", "true");
-      main.appendChild(badge);
-
-      const copy = document.createElement("span");
-      copy.className = "level-copy";
-      const titleRow = document.createElement("span");
-      titleRow.className = "level-title-row";
-      const title = document.createElement("span");
-      title.className = "level-title";
-      title.textContent = wrongLevelName();
-      const wrongBadge = document.createElement("span");
-      wrongBadge.className = "level-custom-badge level-wrong-badge";
-      wrongBadge.textContent = t("wrongLevelBadge");
-      titleRow.append(title, wrongBadge);
+      title.textContent = sourceShortLabel(source);
       const meta = document.createElement("span");
       meta.className = "level-meta";
-      meta.textContent = t("wrongLevelMeta");
+      meta.textContent = packageSourceMeta(source);
       const available = document.createElement("span");
       available.className = "level-available";
-      if (wrongLevel.available > 0) {
-        available.textContent = t("wrongLevelAvailable", {
-          n: wrongLevel.available,
-          pull,
-        });
-      } else {
-        available.textContent = t("wrongLevelEmptyPool");
-        available.classList.add("warn");
+      const count = sourceAvailable(source);
+      const total = sourceTotal(source);
+      if (count !== null) {
+        available.textContent = source.type === "collection" && total !== null
+          ? t("levelSourceTotalAvailable", { total, available: count })
+          : t("levelSourceAvailable", { n: count });
+        if (count <= 0) available.classList.add("warn");
       }
-      copy.append(titleRow, meta, available);
+      copy.append(eyebrow, title, meta, available);
       main.appendChild(copy);
       row.appendChild(main);
 
@@ -10488,92 +12579,197 @@ Material to organize:
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "level-action";
-      remove.dataset.wrongLevelDelete = wrongLevel.id;
-      remove.setAttribute("aria-label", t("wrongLevelDeleteAria", {
-        name: wrongLevelName(),
+      remove.dataset.packageSourceRemove = String(index);
+      remove.setAttribute("aria-label", t("levelDeleteAria", {
+        name: sourceShortLabel(source),
       }));
       remove.textContent = "×";
-      remove.disabled = !localBankActive || wrongLevelSaving;
+      remove.disabled = packageSaving;
       actions.appendChild(remove);
       row.appendChild(actions);
       list.appendChild(row);
-    }
-
-    const atMax = allLevelCount() >= MAX_LEVELS;
-    add.classList.toggle("hidden", Boolean(wrongLevel));
-    add.disabled = !localBankActive || wrongLevelSaving || atMax;
-    if ($("addWrongLevelMeta")) {
-      $("addWrongLevelMeta").textContent = !localBankActive
-        ? t("levelAddWrongMetaCloud")
-        : atMax
-          ? t("levelMaxHint", { n: MAX_LEVELS })
-          : (Math.max(0, Number(bankCounts && bankCounts.wrong || 0)) > 0
-            ? t("levelAddWrongMeta")
-            : t("levelAddWrongMetaEmpty"));
-    }
-    $("wrongLevelListCount").textContent = t("wrongLevelListCount", {
-      n: wrongLevel ? 1 : 0,
     });
+    $("packageSourcesEmpty").classList.toggle("hidden", packageDraftSources.length > 0);
+    renderPackageTotals();
   }
 
-  function renderWrongLevelEditor() {
-    if (!$("customLevelEditorPage")) return;
-    $("customLevelEditorTitle").textContent = t(
-      wrongLevel ? "wrongLevelEditTitle" : "wrongLevelAddTitle",
+  // The summary sits above the draft rows so three imported sources can be
+  // checked without opening each one. Total counts source contents; available
+  // counts what the next round can still draw after cross-source de-duplication.
+  function renderPackageTotals() {
+    const el = $("packageTotals");
+    if (!el) return;
+    if (!packageDraftSources.length) {
+      el.textContent = "";
+      el.classList.remove("warn");
+      return;
+    }
+    const total = sourceTotalSum(packageDraftSources);
+    const available = sourceAvailableSum(packageDraftSources);
+    const wrong = sourceAvailableSum(
+      packageDraftSources.filter((source) => source.type === "wrong"),
     );
-    $("wrongLevelEditorLead").classList.remove("hidden");
-    $("customLevelNameHint").textContent = t("wrongLevelNameHint");
-    $("customLevelEditorEmpty").classList.add("hidden");
-    $("customLevelTagField").classList.add("hidden");
-    $("customLevelEditorCloudHint").classList.toggle("hidden", localBankActive);
-    $("saveCustomLevel").disabled = !localBankActive || wrongLevelSaving;
-    const pull = Number(currentConfig().pullCount || 5);
-    $("customLevelEditorAvailable").textContent = wrongLevel && wrongLevel.available > 0
-      ? t("wrongLevelEditorAvailable", { n: wrongLevel.available, pull })
-      : t("wrongLevelEditorEmpty");
-    if (wrongLevel && document.activeElement !== $("customLevelName")) {
-      $("customLevelName").value = wrongLevel.name;
+    const parts = [
+      t("levelSourcesCount", {
+        n: packageDraftSources.length,
+        max: levelLimits.maxSources,
+      }),
+      t("levelSourcesTotal", { n: total }),
+      t("levelSourceAvailable", { n: available }),
+    ];
+    if (wrong > 0) parts.push(t("levelWrongIncluded", { n: wrong }));
+    el.textContent = parts.join(" · ");
+    el.classList.toggle(
+      "warn",
+      packageDraftSources.some((source) => {
+        const count = sourceAvailable(source);
+        return count !== null && count <= 0;
+      }),
+    );
+  }
+
+  // Importing questions refreshes importCollections, not an open level draft.
+  // Pull the new tag total/unused counts in without touching unsaved sources.
+  function syncDraftCollectionCounts() {
+    let changed = false;
+    packageDraftSources = packageDraftSources.map((source) => {
+      if (source.type !== "collection") return source;
+      const collection = importCollections.find(
+        (item) => item.id === source.collectionId,
+      );
+      if (!collection) return source;
+      const next = Object.assign({}, source, {
+        collectionName: collection.name || source.collectionName,
+        total: collection.total,
+        available: collection.unused,
+      });
+      if (next.collectionName === source.collectionName &&
+          next.total === source.total &&
+          next.available === source.available) {
+        return source;
+      }
+      changed = true;
+      return next;
+    });
+    if (changed) renderPackageSources();
+  }
+
+  function renderPackageEditor() {
+    const panel = $("packageDraftPanel");
+    if (!panel) return;
+    panel.classList.toggle("hidden", !packageEditorActive);
+    if ($("addLevelRow")) {
+      $("addLevelRow").classList.toggle("hidden", packageEditorActive);
+    }
+    if (!packageEditorActive) {
+      tagPickerOpen = false;
+      if ($("sourcePickerError")) $("sourcePickerError").textContent = "";
+      return;
+    }
+    $("packageEditorTitle").textContent = t(
+      packageEditingId ? "levelEditTitle" : "levelAddTitle",
+    );
+    if ($("packageName")) {
+      $("packageName").maxLength = levelLimits.maxNameCodePoints;
+      if (document.activeElement !== $("packageName")) {
+        $("packageName").value = packageNameDraft;
+      }
+    }
+    if ($("packageEditorError") && $("packageEditorError").classList.contains("ok")) {
+      // Keep a short "source added" notice across the render.
+    } else if ($("packageEditorError")) {
+      $("packageEditorError").textContent = "";
+    }
+    renderPackageSources();
+    renderSourcePicker();
+    if ($("savePackage")) {
+      // "Create" makes it explicit that adding sources only builds a draft;
+      // editing an existing level keeps the normal save wording.
+      $("savePackage").textContent = t(packageEditingId ? "levelSave" : "levelCreate");
+      $("savePackage").disabled = packageSaving || packageDraftSources.length === 0;
     }
   }
 
-  function renderCustomLevelEditor() {
-    if (!$("customLevelEditorPage")) return;
-    if (wrongLevelEditing) {
-      renderWrongLevelEditor();
-      return;
-    }
-    $("wrongLevelEditorLead").classList.add("hidden");
-    $("customLevelNameHint").textContent = t("customLevelNameHint");
-    const level = customLevelEditingId
-      ? customLevels.find((item) => item.id === customLevelEditingId)
-      : null;
-    if (customLevelEditingId && !level) {
-      customLevelEditingId = null;
-      customLevelDraftTag = "";
-    }
-    $("customLevelEditorTitle").textContent = t(
-      customLevelEditingId ? "levelEditTitle" : "customLevelAddTitle",
-    );
-    const noTags = importCollections.length === 0;
-    $("customLevelEditorEmpty").classList.toggle("hidden", !noTags);
-    $("customLevelTagField").classList.toggle("hidden", noTags);
-    $("customLevelEditorCloudHint").classList.toggle("hidden", localBankActive);
-    $("saveCustomLevel").disabled = noTags || !localBankActive || customLevelSaving;
-    if (noTags) {
-      $("customLevelEditorAvailable").textContent = "";
-      return;
-    }
-    const host = $("customLevelTags");
+  function openPackageEditor(id) {
+    const level = id ? levelPackages.find((item) => item.id === id) : null;
+    if (id && !level) return false;
+    if (!id && levelPackages.length >= levelLimits.maxLevels) return false;
+    packageEditingId = level ? level.id : null;
+    packageNameDraft = level ? level.name : "";
+    packageDraftSources = level
+      ? level.sources.map((source) => Object.assign({}, source, {
+        scope: source.scope ? Object.assign({}, source.scope) : undefined,
+      }))
+      : [];
+    packageEditorActive = true;
+    tagPickerOpen = false;
+    answerTab = "scope";
+    $("packageEditorError").textContent = "";
+    $("packageEditorError").classList.remove("ok");
+    $("packageEditorError").classList.add("error");
+    $("packageName").value = packageNameDraft;
+    showGenPage("answer");
+    const panel = $("packageDraftPanel");
+    if (panel) panel.scrollIntoView({ block: "start" });
+    return true;
+  }
+
+  function closePackageEditor() {
+    packageEditingId = null;
+    packageDraftSources = [];
+    packageNameDraft = "";
+    packageEditorActive = false;
+    tagPickerOpen = false;
+    courseSourceEditingIndex = null;
+    courseSourceAnswerKind = "any";
+    courseSourceDifficultyPicked = false;
+    customScope = null;
+    resetScopeOptions();
+    answerTab = "scope";
+    showGenPage("answer");
+  }
+
+  function renderSourcePicker() {
+    const hasTag = packageDraftSources.some((source) => source.type === "collection");
+    const hasWrong = packageDraftSources.some((source) => source.type === "wrong");
+    const atLimit = packageDraftSources.length >= levelLimits.maxSources;
+    if (atLimit) tagPickerOpen = false;
+    $("pickCourseSource").disabled = packageSaving || atLimit;
+    $("pickTagSource").disabled = packageSaving || atLimit;
+    $("pickTagSource").setAttribute("aria-pressed", String(tagPickerOpen));
+    $("pickWrongSource").disabled = packageSaving || atLimit || hasWrong;
+    // All three source cards carry a count so the picker is readable at a glance.
+    // Course and custom show their whole bank; the exact scope/tag count appears
+    // after one is picked. Wrong review shows the rows currently available.
+    [
+      ["courseSourceBankCount", bankSourceCounts.course, "levelSourceBankCount"],
+      ["customSourceBankCount", bankSourceCounts.custom, "levelSourceBankCount"],
+      [
+        "wrongSourceAvailable",
+        Math.max(0, Number(bankCounts && bankCounts.wrong || 0)),
+        "levelSourceWrongCount",
+      ],
+    ].forEach(([id, raw, key]) => {
+      const el = $(id);
+      if (!el) return;
+      const count = Math.max(0, Number(raw || 0));
+      el.textContent = t(key, { n: count });
+      el.classList.toggle("warn", count <= 0);
+    });
+    $("tagSourceField").classList.toggle("hidden", !tagPickerOpen);
+    if (!tagPickerOpen) return;
+    const host = $("tagSourceList");
     host.replaceChildren();
-    if (!importCollections.some((item) => item.id === customLevelDraftTag)) {
-      customLevelDraftTag = importCollections[0].id;
-    }
+    $("tagSourceEmpty").classList.toggle("hidden", importCollections.length > 0);
     importCollections.forEach((collection) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "tag-choice";
-      button.dataset.customTagId = collection.id;
-      button.setAttribute("aria-pressed", String(collection.id === customLevelDraftTag));
+      button.dataset.packageTagId = collection.id;
+      const used = hasTag && packageDraftSources.some((source) =>
+        source.type === "collection" && source.collectionId === collection.id);
+      button.setAttribute("aria-pressed", String(used));
+      button.disabled = used;
       const name = document.createElement("span");
       name.className = "tag-choice-name";
       name.textContent = collection.name;
@@ -10588,95 +12784,49 @@ Material to organize:
       button.append(name, meta);
       host.appendChild(button);
     });
-    const selected = importCollections.find((item) => item.id === customLevelDraftTag);
-    $("customLevelEditorAvailable").textContent = selected
-      ? (selected.unused > 0
-        ? t("customLevelEditorAvailable", {
-          name: selected.name,
-          n: selected.unused,
-        })
-        : t("customLevelEditorNoAvailable", { name: selected.name }))
-      : "";
-    if (level && document.activeElement !== $("customLevelName")) {
-      $("customLevelName").value = level.name;
-    }
   }
 
-  function openCustomLevelEditor(id, presetTagId) {
-    const level = id ? customLevels.find((item) => item.id === id) : null;
-    if (id && !level) return false;
-    wrongLevelEditing = false;
-    customLevelEditingId = level ? level.id : null;
-    customLevelDraftTag = level
-      ? level.collectionId
-      : (presetTagId ||
-        (importCollections[0] ? importCollections[0].id : ""));
-    $("customLevelName").value = level ? level.name : "";
-    $("customLevelEditorError").textContent = "";
-    $("customLevelState").textContent = "";
-    showGenPage("customLevel");
-    renderCustomLevelEditor();
-    return true;
-  }
-
-  function openWrongLevelEditor() {
-    if (!localBankActive) {
-      $("wrongLevelError").textContent = t("levelAddWrongMetaCloud");
+  function addCollectionSource(collectionId) {
+    if (packageDraftSources.some((source) =>
+      source.type === "collection" && source.collectionId === collectionId)) {
+      $("sourcePickerError").textContent = t("levelSourceDuplicateTag");
       return false;
     }
-    wrongLevelEditing = true;
-    customLevelEditingId = null;
-    customLevelDraftTag = "";
-    $("customLevelName").value = wrongLevel ? wrongLevel.name : "";
-    $("customLevelEditorError").textContent = "";
-    $("wrongLevelError").textContent = "";
-    $("wrongLevelState").textContent = "";
-    showGenPage("customLevel");
-    renderCustomLevelEditor();
+    const collection = importCollections.find((item) => item.id === collectionId);
+    if (!collection) {
+      $("sourcePickerError").textContent = t("levelSourceMissingTag");
+      return false;
+    }
+    packageDraftSources = packageDraftSources.concat([{
+      type: "collection",
+      collectionId: collection.id,
+      collectionName: collection.name,
+      total: collection.total,
+      available: collection.unused,
+    }]);
+    tagPickerOpen = false;
+    renderPackageEditor();
     return true;
   }
 
-  function renderLevelEditor() {
-    if (!$("levelEditorPage")) return;
-    if (!customScope || typeof customScope !== "object") customScope = {};
-    $("levelEditorTitle").textContent = t(
-      levelEditingId ? "levelEditTitle" : "levelAddTitle",
-    );
-    if (document.activeElement !== $("levelName")) {
-      $("levelName").value = levelNameDraft;
+  function addWrongSource() {
+    if (packageDraftSources.some((source) => source.type === "wrong")) {
+      $("sourcePickerError").textContent = t("levelSourceDuplicateWrong");
+      return false;
     }
-    if ($("levelEditorLead")) {
-      $("levelEditorLead").classList.toggle("hidden", Boolean(levelEditingId));
-    }
-    renderCustomScopeControls();
-    ensureScopeOptions();
-    $("levelEditorAvailable").textContent = scopeAvailableText(customScope);
-    $("levelEditorEmpty").classList.toggle("hidden", !scopeIsEmpty(customScope));
-    $("saveLevel").disabled = levelSaving;
-  }
-
-  function openLevelEditor(id) {
-    const level = id ? answerLevels.find((item) => item.id === id) : null;
-    if (id && !level) return false;
-    levelEditingId = level ? level.id : null;
-    levelNameDraft = level ? level.name : "";
-    customScope = level
-      ? Object.assign({}, level.scope)
-      : Object.assign({}, DEFAULT_LEVEL_SCOPE);
-    answerScopeMode = "custom";
-    $("levelName").value = levelNameDraft;
-    $("levelEditorError").textContent = "";
-    resetScopeOptions();
-    showGenPage("level");
-    ensureScopeOptions();
-    renderLevelEditor();
+    const wrongCount = Math.max(0, Number(bankCounts && bankCounts.wrong || 0));
+    packageDraftSources = packageDraftSources.concat([{
+      type: "wrong",
+      available: wrongCount,
+    }]);
+    tagPickerOpen = false;
+    renderPackageEditor();
     return true;
   }
 
-  async function postLevels(levels, successKey) {
-    if (levelSaving) return false;
+  async function postPackages(packages, successKey) {
+    if (levelSaving || packageSaving) return false;
     if (!challengeConfig) {
-      $("levelError").textContent = t("settingsLoading");
       try {
         await loadAdminSession();
       } catch (error) {
@@ -10686,40 +12836,40 @@ Material to organize:
       if (!challengeConfig) return false;
     }
     levelSaving = true;
-    // Any new list operation supersedes a pending undo snapshot; restoring it
-    // later would also undo the newer change.
-    if (levelUndo) {
-      levelUndo = null;
-      if (levelUndoTimer) {
-        clearTimeout(levelUndoTimer);
-        levelUndoTimer = 0;
-      }
-      renderLevelUndo();
-    }
+    packageSaving = true;
     $("levelError").textContent = "";
-    if ($("saveLevel")) $("saveLevel").disabled = true;
+    if ($("packageEditorError") && !$("packageEditorError").classList.contains("ok")) {
+      $("packageEditorError").textContent = "";
+    }
+    if ($("savePackage")) $("savePackage").disabled = true;
     renderAnswerLevels();
-    const config = readSettingsConfig();
+    renderPackageSources();
     try {
       const data = await api("/api/quiz/admin/challenge-config", {
         method: "POST",
         admin: true,
         body: {
-          config,
-          answerScopes: levels.map((level) => {
-            const payload = {
-              name: String(level.name || ""),
-              scope: scopeToCanonical(level.scope),
-            };
-            if (level.id) payload.id = level.id;
-            return payload;
-          }),
+          config: readSettingsConfig(),
+          levelPackages: packages.map(packageDraftPayload),
         },
       });
-      challengeConfig = normalizeConfig(data.config || config);
-      applyAnswerLevels(data.answerScopes || []);
+      challengeConfig = normalizeConfig(data.config || currentConfig());
       syncState = data.syncState || syncState;
       answerDirty = false;
+      if (Number(data.levelModel) === LEVEL_MODEL) {
+        if (data.levelLimits && typeof data.levelLimits === "object") {
+          levelLimits = {
+            maxLevels: Math.max(1, Number(data.levelLimits.maxLevels || levelLimits.maxLevels)),
+            maxSources: Math.max(1, Number(data.levelLimits.maxSources || levelLimits.maxSources)),
+            maxNameCodePoints: Math.max(1, Number(
+              data.levelLimits.maxNameCodePoints || levelLimits.maxNameCodePoints)),
+          };
+        }
+        levelPackagesUnreadable = Boolean(data.levelPackagesUnreadable);
+        applyLevelPackages(data.levelPackages, { quiet: true });
+      } else {
+        await loadAdminSession();
+      }
       renderSync();
       renderSettings();
       renderHome();
@@ -10727,326 +12877,128 @@ Material to organize:
       if (successKey) scheduleLevelMessage(t(successKey));
       return true;
     } catch (error) {
-      $("levelError").textContent = errorText(error);
+      const message = errorText(error);
+      $("levelError").textContent = message;
+      if ($("packageEditorError")) {
+        $("packageEditorError").classList.remove("ok");
+        $("packageEditorError").classList.add("error");
+        $("packageEditorError").textContent = message;
+      }
+      if ($("sourcePickerError")) $("sourcePickerError").textContent = message;
       return false;
     } finally {
       levelSaving = false;
-      if ($("saveLevel")) $("saveLevel").disabled = false;
-      // The success path re-renders while levelSaving is still true, so render
-      // once more to re-enable every row action.
+      packageSaving = false;
       renderAnswerLevels();
+      if (packageEditorActive) renderPackageEditor();
     }
   }
 
-  async function saveLevelDraft() {
-    if (levelSaving) return;
-    const name = String($("levelName").value || "").trim();
-    if (Array.from(name).length > LEVEL_NAME_MAX) {
-      $("levelEditorError").textContent = t("levelNameTooLong");
+  async function savePackageDraft() {
+    if (levelSaving || packageSaving) return;
+    $("packageEditorError").classList.remove("ok");
+    $("packageEditorError").classList.add("error");
+    $("packageEditorError").textContent = "";
+    const name = String($("packageName").value || "").trim();
+    if (Array.from(name).length > levelLimits.maxNameCodePoints) {
+      $("packageEditorError").textContent = t("levelNameTooLong");
       return;
     }
-    const scopeError = answerScopeErrorMessage();
-    if (scopeError) {
-      $("levelEditorError").textContent = scopeError;
-      focusActiveScopeStep();
+    if (!packageDraftSources.length) {
+      $("packageEditorError").textContent = t("levelAtLeastOneSource");
       return;
     }
-    const scope = normalizeAnswerScope(customScope);
-    if (!scope) {
-      $("levelEditorError").textContent = t("err_SCOPE_INCOMPLETE");
-      return;
-    }
-    const signature = levelScopeSignature(scope);
-    const duplicate = answerLevels.some((level) =>
-      level.id !== levelEditingId && levelScopeSignature(level.scope) === signature);
-    if (duplicate) {
-      $("levelEditorError").textContent = t("levelDuplicate");
-      return;
-    }
-    $("levelEditorError").textContent = "";
-    let next;
-    if (levelEditingId) {
-      next = answerLevels.map((level) => level.id === levelEditingId
-        ? Object.assign({}, level, { name, scope })
-        : level);
-    } else {
-      next = answerLevels.concat([{ id: "", name, scope, available: 0 }]);
-    }
-    const saved = await postLevels(next, "levelSaved");
-    if (!saved) {
-      $("levelEditorError").textContent = $("levelError").textContent;
-      $("levelError").textContent = "";
-      return;
-    }
-    levelEditingId = null;
-    levelNameDraft = "";
-    customScope = null;
-    resetScopeOptions();
-    showGenPage("answer");
-  }
-
-  async function deleteLevel(id) {
-    const index = answerLevels.findIndex((level) => level.id === id);
-    if (index < 0) return;
-    const previous = answerLevels.slice();
-    const name = levelLabel(answerLevels[index], index);
-    const next = answerLevels.filter((level) => level.id !== id);
-    const saved = await postLevels(next, "");
-    if (!saved) return;
-    levelUndo = { levels: previous, name };
-    if (levelUndoTimer) clearTimeout(levelUndoTimer);
-    levelUndoTimer = setTimeout(() => {
-      levelUndoTimer = 0;
-      levelUndo = null;
-      renderLevelUndo();
-    }, 8000);
-    renderLevelUndo();
-  }
-
-  async function undoDeleteLevel() {
-    if (!levelUndo || levelSaving) return;
-    const restore = levelUndo.levels;
-    levelUndo = null;
-    if (levelUndoTimer) {
-      clearTimeout(levelUndoTimer);
-      levelUndoTimer = 0;
-    }
-    renderLevelUndo();
-    await postLevels(restore, "levelSaved");
-  }
-
-  async function moveLevel(id, delta) {
-    const index = answerLevels.findIndex((level) => level.id === id);
-    const target = index + delta;
-    if (index < 0 || target < 0 || target >= answerLevels.length) return;
-    const next = answerLevels.slice();
-    const moved = next.splice(index, 1)[0];
-    next.splice(target, 0, moved);
-    await postLevels(next, "levelOrderSaved");
-  }
-
-  function customLevelPayload(level) {
-    const payload = {
-      name: String(level.name || ""),
-      collectionId: String(level.collectionId || ""),
-    };
-    if (level.id) payload.id = level.id;
-    return payload;
-  }
-
-  async function postCustomLevels(levels, successKey) {
-    if (customLevelSaving) return false;
-    if (!challengeConfig) {
-      $("customLevelError").textContent = t("settingsLoading");
-      try {
-        await loadAdminSession();
-      } catch (error) {
-        $("customLevelError").textContent = errorText(error);
-        return false;
-      }
-      if (!challengeConfig) return false;
-    }
-    customLevelSaving = true;
-    $("customLevelError").textContent = "";
-    $("saveCustomLevel").disabled = true;
-    renderCustomLevels();
-    try {
-      const data = await api("/api/quiz/admin/challenge-config", {
-        method: "POST",
-        admin: true,
-        body: {
-          config: readSettingsConfig(),
-          customLevels: levels.map(customLevelPayload),
-        },
+    if (packageDraftSources.length > levelLimits.maxSources) {
+      $("packageEditorError").textContent = t("levelSourceLimit", {
+        n: levelLimits.maxSources,
       });
-      challengeConfig = normalizeConfig(data.config || currentConfig());
-      if (Array.isArray(data.answerScopes)) applyAnswerLevels(data.answerScopes);
-      answerDirty = false;
-      syncState = data.syncState || syncState;
-      renderSync();
-      renderSettings();
-      // The save response omits custom levels; fetch the assigned ids and
-      // refreshed availability before leaving the editor.
-      await loadAdminSession();
-      renderHome();
-      renderAnswerPage();
-      if (successKey) scheduleCustomLevelMessage(t(successKey));
-      return true;
-    } catch (error) {
-      $("customLevelError").textContent = errorText(error);
-      $("customLevelEditorError").textContent = errorText(error);
-      return false;
-    } finally {
-      customLevelSaving = false;
-      renderCustomLevels();
-      if (genPage === "customLevel") renderCustomLevelEditor();
-    }
-  }
-
-  function normalizeTagName(value) {
-    return String(value || "").trim();
-  }
-
-  function tagNameLength(value) {
-    return Array.from(String(value || "")).length;
-  }
-
-  async function postWrongLevel(rawLevel, successKey) {
-    if (wrongLevelSaving) return false;
-    if (!challengeConfig) {
-      $("wrongLevelError").textContent = t("settingsLoading");
-      try {
-        await loadAdminSession();
-      } catch (error) {
-        $("wrongLevelError").textContent = errorText(error);
-        return false;
-      }
-      if (!challengeConfig) return false;
-    }
-    wrongLevelSaving = true;
-    $("wrongLevelError").textContent = "";
-    $("customLevelEditorError").textContent = "";
-    $("saveCustomLevel").disabled = true;
-    renderWrongLevels();
-    try {
-      await api("/api/quiz/admin/challenge-config", {
-        method: "POST",
-        admin: true,
-        body: {
-          config: readSettingsConfig(),
-          wrongLevel: rawLevel,
-        },
-      });
-      answerDirty = false;
-      // The save response has no level payload; reload to store the assigned
-      // id and refresh the live wrong count.
-      await loadAdminSession();
-      renderHome();
-      renderAnswerPage();
-      if (successKey) scheduleWrongLevelMessage(t(successKey));
-      return true;
-    } catch (error) {
-      const message = errorText(error);
-      $("wrongLevelError").textContent = message;
-      $("customLevelEditorError").textContent = message;
-      return false;
-    } finally {
-      wrongLevelSaving = false;
-      renderWrongLevels();
-      if (genPage === "customLevel") renderCustomLevelEditor();
-    }
-  }
-
-  async function saveWrongLevelDraft() {
-    if (wrongLevelSaving) return;
-    $("customLevelEditorError").textContent = "";
-    if (!localBankActive) {
-      $("customLevelEditorError").textContent = t("levelAddWrongMetaCloud");
       return;
     }
-    const name = normalizeTagName($("customLevelName").value);
-    if (tagNameLength(name) > LEVEL_NAME_MAX) {
-      $("customLevelEditorError").textContent = t("levelNameTooLong");
-      return;
-    }
-    if (!wrongLevel && allLevelCount() >= MAX_LEVELS) {
-      $("customLevelEditorError").textContent = t("levelMaxHint", { n: MAX_LEVELS });
-      return;
-    }
-    const payload = { name };
-    if (wrongLevel) payload.id = wrongLevel.id;
-    const saved = await postWrongLevel(payload, "wrongLevelSaved");
-    if (!saved) return;
-    wrongLevelEditing = false;
-    showGenPage("answer");
-  }
-
-  async function deleteWrongLevel(id) {
-    if (wrongLevelSaving) return;
-    if (!wrongLevel || wrongLevel.id !== id) return;
-    if (!confirm(t("wrongLevelDeleteConfirm", { name: wrongLevelName() }))) return;
-    await postWrongLevel(null, "wrongLevelDeleted");
-  }
-
-  async function saveCustomLevelDraft() {
-    if (wrongLevelEditing) {
-      await saveWrongLevelDraft();
-      return;
-    }
-    if (customLevelSaving) return;
-    $("customLevelEditorError").textContent = "";
-    if (!localBankActive) {
-      $("customLevelEditorError").textContent = t("customLevelCloudHint");
-      return;
-    }
-    const name = normalizeTagName($("customLevelName").value);
-    if (tagNameLength(name) > LEVEL_NAME_MAX) {
-      $("customLevelEditorError").textContent = t("levelNameTooLong");
-      return;
-    }
-    if (!customLevelDraftTag) {
-      $("customLevelEditorError").textContent = t("customLevelTagRequired");
-      return;
-    }
-    const collection = importCollections.find(
-      (item) => item.id === customLevelDraftTag,
-    );
-    if (!collection) {
-      $("customLevelEditorError").textContent = t("customLevelTagRequired");
-      return;
-    }
-    const duplicate = customLevels.some((level) =>
-      level.id !== customLevelEditingId && level.collectionId === customLevelDraftTag);
-    if (duplicate) {
-      $("customLevelEditorError").textContent = t("customLevelTagDuplicate");
-      return;
-    }
-    if (!customLevelEditingId && allLevelCount() >= MAX_LEVELS) {
-      $("customLevelEditorError").textContent = t("levelMaxHint", { n: MAX_LEVELS });
+    if (!packageEditingId && levelPackages.length >= levelLimits.maxLevels) {
+      $("packageEditorError").textContent = t("levelMaxHint", { n: levelLimits.maxLevels });
       return;
     }
     let next;
-    if (customLevelEditingId) {
-      next = customLevels.map((level) => level.id === customLevelEditingId
-        ? Object.assign({}, level, { name, collectionId: collection.id })
+    if (packageEditingId) {
+      next = levelPackages.map((level) => level.id === packageEditingId
+        ? {
+          id: level.id,
+          name,
+          enabled: level.enabled !== false,
+          sources: packageDraftSources,
+        }
         : level);
     } else {
-      next = customLevels.concat([{
+      // A new level starts enabled; pausing is a later, deliberate action.
+      next = levelPackages.concat([{
         id: "",
         name,
-        collectionId: collection.id,
-        collectionName: collection.name,
-        available: collection.unused,
+        enabled: true,
+        sources: packageDraftSources,
       }]);
     }
-    const saved = await postCustomLevels(next, "customLevelSaved");
+    const saved = await postPackages(next, "levelSaved");
     if (!saved) return;
-    customLevelEditingId = null;
-    customLevelDraftTag = "";
-    showGenPage("answer");
+    closePackageEditor();
   }
 
-  async function deleteCustomLevel(id) {
-    if (customLevelSaving) return;
-    const level = customLevels.find((item) => item.id === id);
-    if (!level) return;
-    const name = level.name || customLevelTagName(level) || t("customLevelFallbackName");
-    if (!confirm(t("customLevelDeleteConfirm", { name }))) return;
-    await postCustomLevels(
-      customLevels.filter((item) => item.id !== id),
-      "customLevelDeleted",
+  function requestDeletePackage(id) {
+    if (levelSaving || packageSaving) return;
+    const index = levelPackages.findIndex((level) => level.id === id);
+    if (index < 0) return;
+    pendingLevelDeleteId = id;
+    $("levelDeleteLead").textContent = t("levelDeleteConfirmText", {
+      name: levelLabel(levelPackages[index], index),
+    });
+    openModal("levelDeleteDialog");
+  }
+
+  async function confirmDeletePackage() {
+    const id = pendingLevelDeleteId;
+    if (!id) return;
+    pendingLevelDeleteId = null;
+    closeModal();
+    const index = levelPackages.findIndex((level) => level.id === id);
+    if (index < 0) return;
+    const name = levelLabel(levelPackages[index], index);
+    const saved = await postPackages(
+      levelPackages.filter((level) => level.id !== id),
+      "",
     );
+    if (!saved) return;
+    scheduleLevelMessage(t("levelDeleted", { name }));
   }
 
-  async function moveCustomLevel(id, delta) {
-    if (customLevelSaving) return;
-    const index = customLevels.findIndex((level) => level.id === id);
+  async function movePackage(id, delta) {
+    if (levelSaving || packageSaving) return;
+    const index = levelPackages.findIndex((level) => level.id === id);
     const target = index + delta;
-    if (index < 0 || target < 0 || target >= customLevels.length) return;
-    const next = customLevels.slice();
+    if (index < 0 || target < 0 || target >= levelPackages.length) return;
+    const next = levelPackages.slice();
     const moved = next.splice(index, 1)[0];
     next.splice(target, 0, moved);
-    await postCustomLevels(next, "levelOrderSaved");
+    await postPackages(next, "levelOrderSaved");
+  }
+
+  async function togglePackageEnabled(id, enabled) {
+    if (levelSaving || packageSaving) return;
+    const index = levelPackages.findIndex((level) => level.id === id);
+    if (index < 0) return;
+    if ((levelPackages[index].enabled !== false) === enabled) return;
+    const name = levelLabel(levelPackages[index], index);
+    const previous = levelPackages;
+    // Flip locally first so the switch and the paused note respond at once;
+    // postPackages rebuilds the row from this state while the request runs.
+    levelPackages = levelPackages.map((level) => level.id === id
+      ? Object.assign({}, level, { enabled })
+      : level);
+    const saved = await postPackages(levelPackages, "");
+    if (!saved) {
+      levelPackages = previous;
+      renderAnswerLevels();
+      return;
+    }
+    scheduleLevelMessage(t(enabled ? "levelEnabledToast" : "levelPausedToast", { name }));
   }
 
   function setAnswerTab(tab) {
@@ -11229,7 +13181,8 @@ Material to organize:
       [4, 6].includes(payload.options) &&
       LANGS.includes(payload.language) &&
       payload.prompt.length > 0 && payload.prompt.length <= 400 &&
-      ["", "easy", "medium", "hard"].includes(payload.difficulty);
+      ["", "easy", "medium", "hard"].includes(payload.difficulty) &&
+      GEN_QUESTION_TYPE_VALUES.includes(payload.questionType);
   }
 
   async function startGeneration(options) {
@@ -11292,6 +13245,7 @@ Material to organize:
       grade: gradeText(genGradeValue, genSemesterValue),
       prompt,
       difficulty: genDifficultyValue,
+      questionType: genQuestionTypeValue,
     };
     // 六字段范围始终写进请求：全科用 subject=ALL / textbook=ALL 通配，
     // 具体题目由电视按模型返回的学科补全，答题范围才能按题库数据做 facets。
@@ -11552,6 +13506,10 @@ Material to organize:
   }
 
   async function refreshStatus() {
+    // A batch import is already writing the database and reports its own
+    // progress. The status endpoint recounts the whole bank, so polling it
+    // every 3 seconds here only slows the import down.
+    if (importRunning) return;
     try {
       const previous = publicState;
       publicState = await api("/api/quiz/status");
@@ -11776,7 +13734,11 @@ Material to organize:
         },
       });
       challengeConfig = normalizeConfig(data.config || config);
-      if (Array.isArray(data.answerScopes)) applyAnswerLevels(data.answerScopes);
+      if (Number(data.levelModel) === LEVEL_MODEL && Array.isArray(data.levelPackages)) {
+        applyLevelPackages(data.levelPackages, { quiet: true });
+      } else {
+        await loadAdminSession();
+      }
       answerDirty = false;
       syncState = data.syncState || syncState;
       renderSync();
@@ -11839,7 +13801,26 @@ Material to organize:
     $("declineConsent").addEventListener("click", logout);
     $("saveProvider").addEventListener("click", saveProvider);
     $("testProvider").addEventListener("click", testProviderConnection);
-    $("baseUrl").addEventListener("input", updateProviderModelHint);
+    $("baseUrl").addEventListener("input", () => {
+      updateProviderModelHint();
+      renderSpeech();
+    });
+    $("speechEnabled").addEventListener("change", () => {
+      speechState.enabled = $("speechEnabled").checked;
+      speechDirty = true;
+      renderSpeech();
+    });
+    for (const [id, field] of [
+      ["speechPrompt", "readPrompt"],
+      ["speechOptions", "readOptions"],
+      ["speechAnswer", "readAnswer"],
+    ]) {
+      $(id).addEventListener("change", () => {
+        speechState[field] = $(id).checked;
+        speechDirty = true;
+        renderSpeech();
+      });
+    }
     document.querySelectorAll("[data-provider-preset]").forEach((button) => {
       button.addEventListener("click", () => applyProviderPreset(button.dataset.providerPreset));
     });
@@ -11950,6 +13931,15 @@ Material to organize:
       genPromptDirty = $("genPrompt").value.trim() !== composeGenerationPrompt();
       updatePromptBadge();
     });
+    $("genQuestionTypeChips").addEventListener("click", (event) => {
+      const chip = event.target.closest("[data-question-type]");
+      if (!chip) return;
+      if (!GEN_QUESTION_TYPE_VALUES.includes(chip.dataset.questionType)) return;
+      genQuestionTypeValue = chip.dataset.questionType;
+      genPromptDirty = false;
+      renderGenConfig(true);
+      saveGeneratePrefs();
+    });
     $("genOptionsChips").addEventListener("click", (event) => {
       const chip = event.target.closest("[data-options]");
       if (!chip) return;
@@ -11963,109 +13953,91 @@ Material to organize:
       if (!button) return;
       setAnswerTab(button.dataset.answerTab);
     });
-    $("addLevel").addEventListener("click", () => openLevelEditor(null));
+    $("addLevel").addEventListener("click", () => openPackageEditor(null));
     $("backFromLevel").addEventListener("click", backFromLevelEditor);
     $("levelList").addEventListener("click", (event) => {
-      const edit = event.target.closest("[data-level-edit]");
+      const edit = event.target.closest("[data-package-edit]");
       if (edit) {
-        openLevelEditor(edit.dataset.levelEdit);
+        openPackageEditor(edit.dataset.packageEdit);
         return;
       }
       const up = event.target.closest("[data-level-up]");
       if (up && !up.disabled) {
-        moveLevel(up.dataset.levelUp, -1);
+        movePackage(up.dataset.levelUp, -1);
         return;
       }
       const down = event.target.closest("[data-level-down]");
       if (down && !down.disabled) {
-        moveLevel(down.dataset.levelDown, 1);
+        movePackage(down.dataset.levelDown, 1);
         return;
       }
       const remove = event.target.closest("[data-level-delete]");
-      if (remove && !remove.disabled) deleteLevel(remove.dataset.levelDelete);
+      if (remove && !remove.disabled) requestDeletePackage(remove.dataset.levelDelete);
     });
-    $("levelUndoButton").addEventListener("click", undoDeleteLevel);
-    $("levelName").addEventListener("input", () => {
-      levelNameDraft = $("levelName").value;
+    $("levelList").addEventListener("change", (event) => {
+      const toggle = event.target.closest("[data-level-toggle]");
+      if (!toggle) return;
+      togglePackageEnabled(toggle.dataset.levelToggle, toggle.checked);
     });
+    $("levelDeleteConfirm").addEventListener("click", confirmDeletePackage);
     bindReliableTap($("saveLevel"), saveLevelDraft);
     $("levelEditorPage").addEventListener("click", (event) => {
+      const kind = event.target.closest("[data-course-kind]");
+      if (kind) {
+        selectCourseSourceAnswerKind(kind.dataset.courseKind);
+        return;
+      }
       const chip = event.target.closest("[data-scope-step]");
       if (!chip) return;
       selectScopeValue(chip.dataset.scopeStep, chip.dataset.scopeValue);
     });
     $("levelEmptyGen").addEventListener("click", () => {
-      levelEditingId = null;
-      customScope = null;
-      resetScopeOptions();
+      discardPackageDraft();
       backToGenerateHome();
     });
     $("levelEmptyConfig").addEventListener("click", openGenConfigPage);
 
-    $("addCustomLevel").addEventListener("click", () => {
-      // Without a tag there is nothing to draw questions from, so send the
-      // parent to the import page instead of an editor with an empty tag list.
-      if (!importCollections.length) {
-        startImportFromCustomLevel();
-        return;
-      }
-      openCustomLevelEditor(null);
+    $("cancelPackage").addEventListener("click", closePackageEditor);
+    $("packageName").addEventListener("input", () => {
+      packageNameDraft = $("packageName").value;
+      $("packageEditorError").classList.remove("ok");
+      $("packageEditorError").classList.add("error");
+      $("packageEditorError").textContent = "";
     });
-    $("addWrongLevel").addEventListener("click", () => {
-      if ($("addWrongLevel").disabled) return;
-      openWrongLevelEditor();
-    });
-    $("wrongLevelList").addEventListener("click", (event) => {
-      const edit = event.target.closest("[data-wrong-level-edit]");
+    $("packageSourceList").addEventListener("click", (event) => {
+      const edit = event.target.closest("[data-package-source-edit]");
       if (edit && !edit.disabled) {
-        openWrongLevelEditor();
+        openCourseSourceEditor(Number(edit.dataset.packageSourceEdit), null);
         return;
       }
-      const remove = event.target.closest("[data-wrong-level-delete]");
-      if (remove && !remove.disabled) {
-        deleteWrongLevel(remove.dataset.wrongLevelDelete);
-      }
+      const remove = event.target.closest("[data-package-source-remove]");
+      if (!remove || remove.disabled) return;
+      const index = Number(remove.dataset.packageSourceRemove);
+      packageDraftSources = packageDraftSources.filter((_, position) => position !== index);
+      renderPackageEditor();
     });
-    $("customLevelList").addEventListener("click", (event) => {
-      const edit = event.target.closest("[data-custom-level-edit]");
-      if (edit && !edit.disabled) {
-        openCustomLevelEditor(edit.dataset.customLevelEdit);
-        return;
-      }
-      const up = event.target.closest("[data-custom-level-up]");
-      if (up && !up.disabled) {
-        moveCustomLevel(up.dataset.customLevelUp, -1);
-        return;
-      }
-      const down = event.target.closest("[data-custom-level-down]");
-      if (down && !down.disabled) {
-        moveCustomLevel(down.dataset.customLevelDown, 1);
-        return;
-      }
-      const remove = event.target.closest("[data-custom-level-delete]");
-      if (remove && !remove.disabled) {
-        deleteCustomLevel(remove.dataset.customLevelDelete);
-      }
+    bindReliableTap($("savePackage"), savePackageDraft);
+
+    $("pickCourseSource").addEventListener("click", () => {
+      openCourseSourceEditor(null, null);
     });
-    $("backFromCustomLevel").addEventListener("click", () => {
-      customLevelEditingId = null;
-      customLevelDraftTag = "";
-      wrongLevelEditing = false;
-      showGenPage("answer");
-      renderAnswerPage();
+    $("pickTagSource").addEventListener("click", () => {
+      if ($("pickTagSource").disabled) return;
+      tagPickerOpen = !tagPickerOpen;
+      $("sourcePickerError").textContent = "";
+      renderSourcePicker();
     });
-    $("customLevelName").addEventListener("input", () => {
-      $("customLevelError").textContent = "";
-      $("wrongLevelError").textContent = "";
+    $("pickWrongSource").addEventListener("click", () => {
+      $("sourcePickerError").textContent = "";
+      addWrongSource();
     });
-    $("customLevelTags").addEventListener("click", (event) => {
-      const choice = event.target.closest("[data-custom-tag-id]");
+    $("tagSourceList").addEventListener("click", (event) => {
+      const choice = event.target.closest("[data-package-tag-id]");
       if (!choice || choice.disabled) return;
-      customLevelDraftTag = choice.dataset.customTagId;
-      renderCustomLevelEditor();
+      $("sourcePickerError").textContent = "";
+      addCollectionSource(choice.dataset.packageTagId);
     });
-    bindReliableTap($("saveCustomLevel"), saveCustomLevelDraft);
-    $("customLevelEditorGoImport").addEventListener("click", startImportFromCustomLevel);
+    $("tagSourceGoImport").addEventListener("click", startImportFromCustomLevel);
 
     bindStepper(
       "round", ROUND_MIN, ROUND_MAX, ROUND_STEP,
@@ -12149,6 +14121,7 @@ Material to organize:
     }
     $("importText").addEventListener("input", () => {
       importFileName = "";
+      importFileText = null;
       $("importFileName").textContent = "";
       if ($("importFile").value) $("importFile").value = "";
       invalidateImportPreview();
@@ -12156,8 +14129,18 @@ Material to organize:
     $("importFile").addEventListener("change", () => {
       loadImportFile($("importFile").files && $("importFile").files[0]);
     });
-    $("downloadTemplate").addEventListener("click", downloadImportTemplate);
-    $("copyPrompt").addEventListener("click", copyImportPrompt);
+    $("importPreviewPrev").addEventListener("click", () => changeImportPreviewPage(-1));
+    $("importPreviewNext").addEventListener("click", () => changeImportPreviewPage(1));
+    $("importPreviewGo").addEventListener("click", jumpImportPreviewPage);
+    $("importPreviewPageInput").addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      jumpImportPreviewPage();
+    });
+    $("cancelImport").addEventListener("click", requestImportCancel);
+    $("copyConvertPrompt").addEventListener("click", () => copyImportPrompt("convert"));
+    $("copyGeneratePrompt").addEventListener("click", () => copyImportPrompt("generate"));
+    $("copyImportErrors").addEventListener("click", copyImportErrors);
     $("importDifficultyChips").addEventListener("click", (event) => {
       const chip = event.target.closest("[data-import-difficulty]");
       if (!chip) return;
@@ -12184,6 +14167,9 @@ Material to organize:
     }));
     $("bankManageCustomClear").addEventListener("click", () => requestBankClear({
       mode: "all", source: "custom", count: bankSourceCounts.custom,
+    }));
+    $("bankManageWrongClear").addEventListener("click", () => requestBankClear({
+      mode: "wrong", source: "all", count: currentCounts().wrong,
     }));
     $("bankManageAllClear").addEventListener("click", () => requestBankClear({
       mode: "all",

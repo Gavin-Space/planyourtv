@@ -14,9 +14,9 @@ class MimeChooserTest {
     }
 
     @Test
-    fun `extension in the accept list opens the picker to all files`() {
+    fun `extensions are ignored when mime types are present`() {
         assertArrayEquals(
-            arrayOf("*/*"),
+            arrayOf("application/json", "text/plain"),
             MimeChooser.types(listOf(".json", ".txt", "application/json", "text/plain")),
         )
     }

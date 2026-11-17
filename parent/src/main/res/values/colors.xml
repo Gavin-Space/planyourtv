@@ -5,6 +5,11 @@
     <!-- Cream plate behind the parent app launcher artwork. -->
     <color name="launcher_background">#FEFFEF</color>
     <color name="brand_dark">#164D3F</color>
+    <!-- Soft brand plate for the selected device row and subtle accents. -->
+    <color name="brand_soft">#E9F1ED</color>
+    <!-- Ripple over light surfaces; 15% brand. -->
+    <color name="brand_ripple">#261F6B57</color>
+    <color name="ripple_on_brand">#33FFFFFF</color>
     <color name="surface">#F7F6F2</color>
     <color name="surface_raised">#FFFEFA</color>
     <color name="line">#E3E0D7</color>

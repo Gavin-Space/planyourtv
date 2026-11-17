@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="color-scheme" content="light dark">
   <title>家长网页</title>
-  <link rel="stylesheet" href="quiz.css?v=38">
+  <link rel="stylesheet" href="quiz.css?v=42">
   <link rel="stylesheet" href="parent.css?v=39">
 </head>
 <body>
@@ -63,7 +63,6 @@
       </form>
       <p id="gateError" class="error" role="alert"></p>
       <p id="gateOk" class="ok" role="status"></p>
-      <p class="fineprint" data-i18n="securityNote"></p>
     </section>
 
     <section id="editor" class="hidden">
@@ -211,6 +210,13 @@
           </div>
 
           <div class="field">
+            <span class="field-label" id="genQuestionTypeLabel" data-i18n="genQuestionType"></span>
+            <div id="genQuestionTypeChips" class="chip-row" role="group"
+              aria-labelledby="genQuestionTypeLabel"></div>
+            <p class="hint" data-i18n="genTypeHint"></p>
+          </div>
+
+          <div class="field">
             <span class="field-label" id="genOptionsLabel" data-i18n="genOptions"></span>
             <div id="genOptionsChips" class="chip-row" role="group" aria-labelledby="genOptionsLabel"></div>
           </div>
@@ -257,26 +263,87 @@
           <div id="answerPaneScope">
             <p id="levelsTotalHint" class="hint levels-total" aria-live="polite"></p>
 
-            <div class="level-add-row">
+            <!-- The level draft lives on the answer-range page: adding sources
+                 accumulates here instead of pushing a second "add level" page. -->
+            <div id="packageDraftPanel" class="package-draft-panel hidden">
+              <div class="package-draft-head">
+                <div class="package-draft-heading">
+                  <h2 id="packageEditorTitle"></h2>
+                  <span id="packageDraftBadge" class="level-draft-badge" data-i18n="levelDraftBadge"></span>
+                </div>
+                <button id="cancelPackage" class="btn text small" type="button" data-i18n="cancel"></button>
+              </div>
+
+              <div class="field package-draft-name">
+                <label id="packageNameLabel" for="packageName" data-i18n="levelNameLabel"></label>
+                <input id="packageName" type="text" maxlength="10" autocomplete="off"
+                  aria-labelledby="packageNameLabel" data-i18n-placeholder="levelNamePlaceholder">
+                <p class="hint" data-i18n="levelNameHint"></p>
+              </div>
+
+              <div class="field">
+                <span class="field-label" data-i18n="levelSourcesTitle"></span>
+                <p class="hint" data-i18n="levelSourcesLead"></p>
+                <div class="package-sources-card">
+                  <p id="packageTotals" class="available package-totals" aria-live="polite"></p>
+                  <div id="packageSourceList" class="package-source-list"></div>
+                  <p id="packageSourcesEmpty" class="hint" data-i18n="levelAtLeastOneSource"></p>
+
+                  <div class="level-add-row package-source-choices">
+                    <button id="pickCourseSource" class="level-add-card course" type="button">
+                      <span class="level-add-plus" aria-hidden="true">+</span>
+                      <span class="level-add-copy">
+                        <span class="level-add-title" data-i18n="levelSourceCourse"></span>
+                        <span class="level-add-meta" data-i18n="levelSourceCourseMeta"></span>
+                      </span>
+                      <span id="courseSourceBankCount" class="level-add-count"
+                        aria-live="polite"></span>
+                    </button>
+                    <button id="pickTagSource" class="level-add-card custom" type="button">
+                      <span class="level-add-plus" aria-hidden="true">+</span>
+                      <span class="level-add-copy">
+                        <span class="level-add-title" data-i18n="levelSourceCustom"></span>
+                        <span class="level-add-meta" data-i18n="levelSourceCustomMeta"></span>
+                      </span>
+                      <span id="customSourceBankCount" class="level-add-count"
+                        aria-live="polite"></span>
+                    </button>
+                    <button id="pickWrongSource" class="level-add-card wrong" type="button">
+                      <span class="level-add-plus" aria-hidden="true">+</span>
+                      <span class="level-add-copy">
+                        <span class="level-add-title" data-i18n="levelSourceWrong"></span>
+                        <span class="level-add-meta" data-i18n="levelSourceWrongMeta"></span>
+                      </span>
+                      <span id="wrongSourceAvailable" class="level-add-count"
+                        aria-live="polite"></span>
+                    </button>
+                  </div>
+
+                  <div id="tagSourceField" class="field package-tag-field hidden">
+                    <div id="tagSourceList" class="tag-choice-list" role="radiogroup"
+                      data-i18n-aria="levelSourceCustom"></div>
+                    <p id="tagSourceEmpty" class="hint hidden" data-i18n="customLevelEmptyText"></p>
+                    <div class="inline-actions">
+                      <button id="tagSourceGoImport" class="btn secondary small" type="button"
+                        data-i18n="goImportBank"></button>
+                    </div>
+                  </div>
+                  <p id="sourcePickerError" class="error" role="alert"></p>
+                </div>
+              </div>
+
+              <p id="packageEditorError" class="error" role="alert"></p>
+              <div class="package-draft-actions">
+                <button id="savePackage" class="btn primary" type="button"></button>
+              </div>
+            </div>
+
+            <div id="addLevelRow" class="level-add-row single">
               <button id="addLevel" class="level-add-card course" type="button">
                 <span class="level-add-plus" aria-hidden="true">+</span>
                 <span class="level-add-copy">
-                  <span class="level-add-title" data-i18n="levelAddCourseTitle"></span>
-                  <span class="level-add-meta" data-i18n="levelAddCourseMeta"></span>
-                </span>
-              </button>
-              <button id="addCustomLevel" class="level-add-card custom" type="button">
-                <span class="level-add-plus" aria-hidden="true">+</span>
-                <span class="level-add-copy">
-                  <span class="level-add-title" data-i18n="levelAddCustomTitle"></span>
-                  <span id="addCustomLevelMeta" class="level-add-meta" data-i18n="levelAddCustomMeta"></span>
-                </span>
-              </button>
-              <button id="addWrongLevel" class="level-add-card wrong" type="button">
-                <span class="level-add-plus" aria-hidden="true">+</span>
-                <span class="level-add-copy">
-                  <span class="level-add-title" data-i18n="levelAddWrongTitle"></span>
-                  <span id="addWrongLevelMeta" class="level-add-meta" data-i18n="levelAddWrongMeta"></span>
+                  <span class="level-add-title" data-i18n="levelAddPackageTitle"></span>
+                  <span class="level-add-meta" data-i18n="levelAddPackageMeta"></span>
                 </span>
               </button>
             </div>
@@ -295,43 +362,8 @@
               <p class="muted" data-i18n="levelEmptyText"></p>
             </div>
 
-            <div id="levelUndo" class="level-undo hidden" role="status" aria-live="polite">
-              <span id="levelUndoText"></span>
-              <button id="levelUndoButton" class="btn text small" type="button" data-i18n="levelUndo"></button>
-            </div>
-
             <p id="levelState" class="ok" role="status"></p>
             <p id="levelError" class="error" role="alert"></p>
-
-            <div class="level-divider"></div>
-
-            <div class="level-head">
-              <span class="field-label" data-i18n="customLevelListTitle"></span>
-              <span id="customLevelListCount" class="level-count" aria-live="polite"></span>
-            </div>
-            <p id="customLevelCombined" class="hint levels-combined"></p>
-
-            <div id="customLevelList" class="level-list"></div>
-            <div id="customLevelEmpty" class="empty-state hidden">
-              <p data-i18n="customLevelEmptyTitle"></p>
-              <p class="muted" data-i18n="customLevelEmptyText"></p>
-            </div>
-            <p id="customLevelState" class="ok" role="status"></p>
-            <p id="customLevelError" class="error" role="alert"></p>
-
-            <div id="wrongLevelSection" class="hidden">
-              <div class="level-divider"></div>
-
-              <div class="level-head">
-                <span class="field-label" data-i18n="wrongLevelListTitle"></span>
-                <span id="wrongLevelListCount" class="level-count" aria-live="polite"></span>
-              </div>
-              <p class="hint level-lead" data-i18n="wrongLevelListLead"></p>
-
-              <div id="wrongLevelList" class="level-list"></div>
-              <p id="wrongLevelState" class="ok" role="status"></p>
-              <p id="wrongLevelError" class="error" role="alert"></p>
-            </div>
           </div>
 
           <div id="answerPaneRules" class="hidden">
@@ -472,15 +504,6 @@
             <h1 id="levelEditorTitle"></h1>
           </header>
 
-          <p id="levelEditorLead" class="hint" data-i18n="levelEditorLead"></p>
-
-          <div class="field">
-            <label id="levelNameLabel" for="levelName" data-i18n="levelNameLabel"></label>
-            <input id="levelName" type="text" maxlength="10" autocomplete="off"
-              aria-labelledby="levelNameLabel" data-i18n-placeholder="levelNamePlaceholder">
-            <p class="hint" data-i18n="levelNameHint"></p>
-          </div>
-
           <div id="scopeStepGrade" class="field scope-step">
             <span class="field-label" data-i18n="scopeGrade"></span>
             <div id="scopeGradeChips" class="chip-row" role="group" data-i18n-aria="scopeGrade"></div>
@@ -511,6 +534,14 @@
             <div id="scopeDifficultyChips" class="chip-row" role="group" data-i18n-aria="scopeDifficulty"></div>
           </div>
 
+          <!-- The type filter is the last step: keep it hidden until the
+               parent has walked the whole scope hierarchy. -->
+          <div id="courseSourceKindField" class="field hidden">
+            <span class="field-label" data-i18n="levelTypeFilterTitle"></span>
+            <div id="courseSourceKindChips" class="chip-row" role="group" data-i18n-aria="levelTypeFilterTitle"></div>
+            <p id="courseSourceKindCounts" class="hint" aria-live="polite"></p>
+          </div>
+
           <span id="levelEditorAvailable" class="available"></span>
 
           <div id="levelEditorEmpty" class="empty-state hidden">
@@ -524,46 +555,7 @@
 
           <p id="levelEditorError" class="error" role="alert"></p>
           <div class="sticky-bar">
-            <button id="saveLevel" class="btn primary" type="button" data-i18n="levelSave"></button>
-          </div>
-        </section>
-
-        <section id="customLevelEditorPage" class="subpage hidden">
-          <header class="page-head">
-            <button id="backFromCustomLevel" class="back-btn" type="button" data-i18n-aria="back">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-            </button>
-            <h1 id="customLevelEditorTitle"></h1>
-          </header>
-
-          <p id="customLevelEditorCloudHint" class="hint custom-level-cloud hidden" data-i18n="customLevelCloudHint"></p>
-          <p id="wrongLevelEditorLead" class="hint hidden" data-i18n="wrongLevelEditorLead"></p>
-
-          <div class="field">
-            <label id="customLevelNameLabel" for="customLevelName" data-i18n="levelNameLabel"></label>
-            <input id="customLevelName" type="text" maxlength="10" autocomplete="off"
-              aria-labelledby="customLevelNameLabel" data-i18n-placeholder="levelNamePlaceholder">
-            <p id="customLevelNameHint" class="hint" data-i18n="customLevelNameHint"></p>
-          </div>
-
-          <div id="customLevelEditorEmpty" class="empty-state hidden">
-            <p data-i18n="customLevelEmptyTitle"></p>
-            <p class="muted" data-i18n="customLevelEmptyText"></p>
-            <div class="inline-actions">
-              <button id="customLevelEditorGoImport" class="btn secondary small" type="button" data-i18n="goImportBank"></button>
-            </div>
-          </div>
-
-          <div id="customLevelTagField" class="field">
-            <span class="field-label" data-i18n="customLevelTagLabel"></span>
-            <div id="customLevelTags" class="tag-choice-list" role="radiogroup" data-i18n-aria="customLevelTagLabel"></div>
-            <p class="hint" data-i18n="customLevelTagHint"></p>
-          </div>
-
-          <p id="customLevelEditorAvailable" class="available"></p>
-          <p id="customLevelEditorError" class="error" role="alert"></p>
-          <div class="sticky-bar">
-            <button id="saveCustomLevel" class="btn primary" type="button" data-i18n="levelSave"></button>
+            <button id="saveLevel" class="btn primary" type="button" data-i18n="levelSourceSave"></button>
           </div>
         </section>
 
@@ -577,6 +569,7 @@
           </header>
 
           <p id="questionMeta" class="list-meta"></p>
+          <p id="genMultiWarning" class="hint hidden" data-i18n="genMultiReviewWarning"></p>
           <div id="questionList"></div>
           <p id="questionEmpty" class="empty hidden" data-i18n="generateNoQuestions"></p>
           <p id="questionError" class="error" role="alert"></p>
@@ -634,20 +627,28 @@
           <section class="card">
             <h2 data-i18n="bankManageCourseTitle"></h2>
             <p id="bankManageCourseMeta" class="muted"></p>
+            <button id="bankManageCourseClear" class="btn danger block" type="button" data-i18n="bankManageClearCourse"></button>
+            <p class="hint" data-i18n="bankManageCourseStateLead"></p>
             <div class="maintenance-grid">
               <button id="bankManageCourseUnused" class="btn secondary" type="button" data-i18n="clearUnused"></button>
               <button id="bankManageCourseAnswered" class="btn secondary" type="button" data-i18n="clearAnswered"></button>
               <button id="bankManageCourseWrong" class="btn secondary" type="button" data-i18n="clearWrong"></button>
-              <button id="bankManageCourseClear" class="btn danger" type="button" data-i18n="bankManageClearCourse"></button>
             </div>
           </section>
 
           <section class="card">
             <h2 data-i18n="bankManageCustomTitle"></h2>
             <p id="bankManageCustomMeta" class="muted"></p>
+            <p class="hint" data-i18n="bankManageCustomLead"></p>
             <div id="bankManageCustomList" class="settings-list"></div>
             <p id="bankManageCustomEmpty" class="hint hidden" data-i18n="maintenanceSourceNoTags"></p>
             <button id="bankManageCustomClear" class="btn danger block hidden" type="button" data-i18n="bankManageClearCustom"></button>
+          </section>
+
+          <section class="card">
+            <h2 data-i18n="bankManageWrongTitle"></h2>
+            <p id="bankManageWrongMeta" class="muted"></p>
+            <button id="bankManageWrongClear" class="btn danger block" type="button" data-i18n="bankManageClearWrong"></button>
           </section>
 
           <section class="card">
@@ -704,17 +705,23 @@
               accept=".json,.txt,application/json,text/plain">
             <p id="importFileName" class="hint import-file-name"></p>
             <label for="importText" data-i18n="importPasteLabel"></label>
-            <textarea id="importText" rows="8" maxlength="524288"
+            <textarea id="importText" rows="8" maxlength="16777216"
               data-i18n-placeholder="importTextPlaceholder"></textarea>
             <div class="inline-actions import-tools">
-              <button id="downloadTemplate" class="btn text small" type="button" data-i18n="importDownloadTemplate"></button>
-              <button id="copyPrompt" class="btn text small" type="button" data-i18n="importCopyPrompt"></button>
+              <button id="copyConvertPrompt" class="btn text small" type="button"
+                aria-pressed="false" data-i18n="importCopyConvertPrompt"></button>
+              <button id="copyGeneratePrompt" class="btn text small" type="button"
+                aria-pressed="false" data-i18n="importCopyGeneratePrompt"></button>
             </div>
-            <p id="importCopyState" class="ok" role="status"></p>
-            <details id="promptFold" class="import-prompt">
-              <summary data-i18n="importViewPrompt"></summary>
-              <pre id="promptText" class="import-prompt-text"></pre>
-            </details>
+            <p class="hint import-prompt-hint" data-i18n="importPromptHint"></p>
+            <section id="importPromptPanel" class="import-prompt-panel hidden">
+              <div class="import-prompt-head">
+                <span id="importPromptTitle" class="import-prompt-title"></span>
+                <span id="importCopyState" class="import-copy-state" role="status"></span>
+              </div>
+              <pre id="importPromptText" class="import-prompt-text"></pre>
+            </section>
+            <p class="hint import-risk" data-i18n="importLargeRisk"></p>
             <p class="hint import-ai-hint" data-i18n="importAiHint"></p>
           </section>
 
@@ -729,20 +736,43 @@
 
           <p id="importError" class="error" role="alert"></p>
           <ul id="importErrorList" class="import-error-list hidden"></ul>
+          <div id="importErrorActions" class="import-error-actions hidden">
+            <button id="copyImportErrors" class="btn secondary small" type="button"
+              data-i18n="importErrorCopy"></button>
+            <p id="importErrorCopyState" class="ok" role="status"></p>
+          </div>
 
           <section id="importPreview" class="card import-preview hidden" aria-live="polite">
             <p class="section-label" data-i18n="importPreviewTitle"></p>
             <dl class="import-summary">
               <div><dt data-i18n="importPreviewTarget"></dt><dd><span id="previewTarget"></span><span id="previewTargetBadge" class="import-target-badge hidden"></span></dd></div>
               <div><dt data-i18n="importPreviewTotal"></dt><dd id="previewTotal"></dd></div>
-              <div><dt data-i18n="importPreviewFileDup"></dt><dd id="previewFileDup"></dd></div>
-              <div><dt data-i18n="importPreviewCollectionDup"></dt><dd id="previewCollectionDup"></dd></div>
-              <div><dt data-i18n="importPreviewCrossDup"></dt><dd id="previewCrossDup"></dd></div>
-              <div class="emphasis"><dt data-i18n="importPreviewAppend"></dt><dd id="previewAppend"></dd></div>
+              <div><dt data-i18n="importPreviewFormat"></dt><dd id="previewFormat"></dd></div>
+              <div><dt data-i18n="importPreviewFileSize"></dt><dd id="previewFileSize"></dd></div>
+              <div><dt data-i18n="importPreviewBatches"></dt><dd id="previewBatches"></dd></div>
               <div><dt data-i18n="importPreviewRemaining"></dt><dd id="previewRemaining"></dd></div>
             </dl>
             <p id="importPreviewNote" class="hint"></p>
             <div id="importPreviewList" class="import-preview-list"></div>
+            <div id="importPreviewPager" class="import-pager hidden">
+              <button id="importPreviewPrev" class="btn text small" type="button" data-i18n="importPagePrev"></button>
+              <span id="importPreviewPageLabel" class="import-page-label"></span>
+              <button id="importPreviewNext" class="btn text small" type="button" data-i18n="importPageNext"></button>
+              <span class="import-page-jump">
+                <input id="importPreviewPageInput" type="number" min="1" inputmode="numeric"
+                  data-i18n-aria="importPageJump">
+                <button id="importPreviewGo" class="btn text small" type="button" data-i18n="importPageGo"></button>
+              </span>
+            </div>
+          </section>
+
+          <section id="importProgress" class="card import-progress hidden" aria-live="polite">
+            <div class="import-progress-track"><div id="importProgressFill" class="import-progress-fill"></div></div>
+            <p id="importProgressCount" class="import-progress-count"></p>
+            <p id="importProgressBatch" class="muted"></p>
+            <p id="importProgressStats" class="muted"></p>
+            <p class="hint" data-i18n="importProgressHint"></p>
+            <button id="cancelImport" class="btn secondary block" type="button" data-i18n="importCancel"></button>
           </section>
 
           <section id="importResult" class="card import-result hidden" role="status" aria-live="polite">
@@ -750,6 +780,8 @@
             <p id="importResultFileDup" class="muted"></p>
             <p id="importResultCross" class="muted"></p>
             <p id="importResultRemaining" class="hint"></p>
+            <p id="importResultProcessed" class="muted"></p>
+            <p id="importResultNote" class="hint hidden"></p>
           </section>
 
           <div id="importActions" class="sticky-bar">
@@ -876,6 +908,39 @@
           <label for="apiKey" data-i18n="apiKey"></label>
           <input id="apiKey" type="password" autocomplete="off" spellcheck="false">
           <p id="keyHint" class="hint"></p>
+
+          <div id="speechSettings" class="speech-settings hidden">
+            <label class="toggle-row" for="speechEnabled">
+              <span class="toggle-copy">
+                <span class="toggle-title" data-i18n="speechTitle"></span>
+                <span class="toggle-hint" data-i18n="speechHint"></span>
+              </span>
+              <span class="switch">
+                <input id="speechEnabled" type="checkbox" checked>
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+            <div id="speechContent" class="speech-content">
+              <p class="section-label" data-i18n="speechContent"></p>
+              <label class="check">
+                <input id="speechPrompt" type="checkbox" checked>
+                <span data-i18n="speechQuestion"></span>
+              </label>
+              <label class="check">
+                <input id="speechOptions" type="checkbox" checked>
+                <span data-i18n="speechOptions"></span>
+              </label>
+              <label class="check">
+                <input id="speechAnswer" type="checkbox" checked>
+                <span data-i18n="speechAnswer"></span>
+              </label>
+              <p class="hint" data-i18n="speechKeepHint"></p>
+            </div>
+            <p class="hint" data-i18n="speechModelHint"></p>
+            <p class="hint" data-i18n="speechBillingHint"></p>
+            <p id="speechSaveHint" class="hint hidden" data-i18n="speechSaveToApply"></p>
+          </div>
+
           <p id="providerError" class="error" role="alert"></p>
           <p id="providerWarn" class="warn" role="status"></p>
           <p id="providerOk" class="ok" role="status"></p>
@@ -1036,11 +1101,23 @@
         <button id="scopeMismatchKeep" class="btn secondary" type="button" data-i18n="keepCurrentScope"></button>
       </div>
     </section>
+
+    <section id="levelDeleteDialog" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="levelDeleteTitle">
+      <div class="modal-head">
+        <h2 id="levelDeleteTitle" data-i18n="levelDeleteConfirmTitle"></h2>
+        <button class="icon-btn close" type="button" data-close-modal data-i18n-aria="close">×</button>
+      </div>
+      <p id="levelDeleteLead" class="muted"></p>
+      <div class="modal-actions">
+        <button class="btn text" type="button" data-close-modal data-i18n="cancel"></button>
+        <button id="levelDeleteConfirm" class="btn primary" type="button" data-i18n="levelDeleteConfirmAction"></button>
+      </div>
+    </section>
   </div>
 
   <div id="parentCenterRoot" class="parent-root hidden"></div>
 
   <script src="parent.js?v=39"></script>
-  <script src="quiz.js?v=39"></script>
+  <script src="quiz.js?v=44"></script>
 </body>
 </html>

@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import app.orchard.tv.policy.media.PolicyMediaKind
 import app.orchard.tv.policy.media.PolicyVideoLibrary
 import app.orchard.tv.policy.media.PolicyVideoSource
+import app.orchard.tv.quiz.QuizIntroVideo
 import app.orchard.tv.ui.policy.lockdesktop.PolicyLockFilm
 import app.orchard.tv.wallpaper.Images
 import app.orchard.tv.wallpaper.Wallpapers
@@ -56,6 +57,8 @@ internal data class PolicyChildWallpaper(
     val image: ImageBitmap?,
     val frosted: ImageBitmap?,
     val loading: Boolean,
+    /** The parent-center sound preference; the player also requires [source] to have audio. */
+    val soundEnabled: Boolean = false,
 )
 
 /**
@@ -69,6 +72,7 @@ internal class PolicyHomeWallpaper(
     val frosted: ImageBitmap?,
     internal val source: PolicyVideoSource?,
     internal val filmCover: Animatable<Float, *>,
+    internal val soundEnabled: Boolean = false,
 ) {
     val cover: () -> Float = { filmCover.value }
 }
@@ -78,7 +82,12 @@ internal class PolicyHomeWallpaper(
 internal fun PolicyHomeFilm(wallpaper: PolicyHomeWallpaper, active: Boolean) {
     // A picture is drawn by HomeBackground; only a video may reach the player.
     val source = wallpaper.source?.takeIf { it.kind == PolicyMediaKind.VIDEO } ?: return
-    PolicyLockFilm(source = source, cover = wallpaper.filmCover, active = active)
+    PolicyLockFilm(
+        source = source,
+        cover = wallpaper.filmCover,
+        active = active,
+        soundEnabled = wallpaper.soundEnabled && source.hasAudio,
+    )
 }
 
 internal val LocalPolicyHomeWallpaper = compositionLocalOf<PolicyHomeWallpaper?> { null }
@@ -105,7 +114,7 @@ internal fun rememberPolicyChildWallpaperState(): PolicyChildWallpaper {
     DisposableEffect(context) {
         val prefs = context.getSharedPreferences("quiz-intro", Context.MODE_PRIVATE)
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == null || key == "lock_id") roleRevision++
+            if (key == null || key == "lock_id" || key == "lock_sound") roleRevision++
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
         onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
@@ -133,14 +142,32 @@ private fun initialChildWallpaper(context: Context): PolicyChildWallpaper {
             fallback?.image,
             fallback?.frosted,
             loading = fallback == null,
+            soundEnabled = false,
         )
     }
+    // Preferences only: this runs during composition, and the player separately checks the
+    // source's audio capability. The effective, item-aware value is for the parent snapshot.
+    val sound = runCatching { QuizIntroVideo.lockSound(context) }.getOrDefault(true)
     val hit = cachedChildWallpaper?.takeIf { it.lockId == lockId }
     if (hit != null) {
-        return PolicyChildWallpaper(lockId, hit.source, hit.image, hit.frosted, loading = false)
+        return PolicyChildWallpaper(
+            lockId,
+            hit.source,
+            hit.image,
+            hit.frosted,
+            loading = false,
+            soundEnabled = sound,
+        )
     }
     val fallback = cachedPolicyDefaultWallpaper()
-    return PolicyChildWallpaper(lockId, null, fallback?.image, fallback?.frosted, loading = true)
+    return PolicyChildWallpaper(
+        lockId,
+        null,
+        fallback?.image,
+        fallback?.frosted,
+        loading = true,
+        soundEnabled = sound,
+    )
 }
 
 private suspend fun loadPolicyChildWallpaper(
@@ -156,10 +183,18 @@ private suspend fun loadPolicyChildWallpaper(
             fallback?.image ?: initial.image,
             fallback?.frosted ?: initial.frosted,
             loading = false,
+            soundEnabled = false,
         )
     }
     cachedChildWallpaper?.takeIf { it.lockId == lockId }?.let {
-        return PolicyChildWallpaper(lockId, it.source, it.image, it.frosted, loading = false)
+        return PolicyChildWallpaper(
+            lockId,
+            it.source,
+            it.image,
+            it.frosted,
+            loading = false,
+            soundEnabled = initial.soundEnabled,
+        )
     }
     val loaded = loadLock.withLock {
         cachedChildWallpaper?.takeIf { it.lockId == lockId } ?: withContext(Dispatchers.IO) {
@@ -185,7 +220,14 @@ private suspend fun loadPolicyChildWallpaper(
             wallpaper.also { cachedChildWallpaper = it }
         }
     }
-    return PolicyChildWallpaper(lockId, loaded.source, loaded.image, loaded.frosted, loading = false)
+    return PolicyChildWallpaper(
+        lockId,
+        loaded.source,
+        loaded.image,
+        loaded.frosted,
+        loading = false,
+        soundEnabled = initial.soundEnabled,
+    )
 }
 
 /**

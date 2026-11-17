@@ -14,6 +14,7 @@ import java.net.URI
 internal object QuizUrl {
     private const val MIN_TOKEN_LENGTH = 4
     private const val MAX_TOKEN_LENGTH = 64
+    private const val PARENT_FRAGMENT = "parent"
 
     /** Returns the canonical URL to load, or null when [raw] is not a Parent Center address. */
     fun normalize(raw: String): String? {
@@ -44,19 +45,36 @@ internal object QuizUrl {
         val path = (uri.rawPath ?: return null).trimEnd('/')
         val segments = path.split('/').filter { it.isNotEmpty() }
         if (segments.isEmpty()) return null
-        val token = if (segments.last() == "quiz") {
-            segments.dropLast(1).lastOrNull()
-        } else {
-            // Accept the address printed under the QR as well; the page itself
-            // is one level deeper.
-            segments.singleOrNull()
-        }
+        // Accept the address printed under the QR as well; the page itself is
+        // one level deeper.
+        val hasQuiz = segments.lastOrNull() == "quiz"
+        val token = if (hasQuiz) segments.dropLast(1).lastOrNull() else segments.singleOrNull()
         if (token == null || token.length !in MIN_TOKEN_LENGTH..MAX_TOKEN_LENGTH) return null
         if (!token.all { it.isLetterOrDigit() || it == '-' || it == '_' }) return null
 
-        val quizPath = if (segments.last() == "quiz") path else "$path/quiz"
+        val quizPath = if (hasQuiz) path else "$path/quiz"
         val query = uri.rawQuery?.takeIf { it.isNotEmpty() }?.let { "?$it" }.orEmpty()
-        return "$scheme://$authority$quizPath$query"
+        // The TV's "open Parent Center" link adds #parent so the page opens the
+        // More tab after the PIN. Keep that one fragment; drop anything else a
+        // browser may have appended to the address.
+        val fragment = uri.rawFragment?.takeIf { it == PARENT_FRAGMENT }?.let { "#$it" }.orEmpty()
+        return "$scheme://$authority$quizPath$query$fragment"
+    }
+
+    /**
+     * The stable identity of a TV: the token in the path, never the IP or port.
+     * A DHCP change preserves the token, so re-scanning the same TV updates the
+     * saved address instead of creating a second entry.
+     */
+    fun deviceKey(raw: String): String? {
+        val uri = runCatching { URI(raw.trim()) }.getOrNull() ?: return null
+        val segments = (uri.rawPath ?: return null).trimEnd('/').split('/')
+            .filter { it.isNotEmpty() }
+        val hasQuiz = segments.lastOrNull() == "quiz"
+        val token = if (hasQuiz) segments.dropLast(1).lastOrNull() else segments.singleOrNull()
+        if (token == null || token.length !in MIN_TOKEN_LENGTH..MAX_TOKEN_LENGTH) return null
+        if (!token.all { it.isLetterOrDigit() || it == '-' || it == '_' }) return null
+        return token
     }
 
     /** True when both addresses belong to the same scheme, host and port. */

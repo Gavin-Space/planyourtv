@@ -595,9 +595,10 @@ object QuizConfigSync {
     fun reportPayload(): JSONObject {
         val config = QuizSessionStore.loadChallengeConfig() ?: QuizConfig()
         val source = QuizSessionStore.loadSourceConfig()
-        // The backend model has one scope; report the first level so a bound TV
-        // keeps a meaningful scope. Local challenges always use the full list.
-        val answerScope = QuizAnswerScopeStore.defaultScope()
+        // The backend model has one scope; report the first course scope from
+        // the level packages so a bound TV keeps a meaningful scope. Local
+        // challenges always use the full list.
+        val answerScope = QuizLevelPackageStore.defaultCourseScope()
         return JSONObject()
             .put("enabled", QuizSessionStore.enabled())
             // Binding alone decides the source; the backend normalizes this anyway.

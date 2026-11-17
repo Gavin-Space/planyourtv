@@ -16,11 +16,10 @@ import com.planyourtv.policy.SessionState
 import com.planyourtv.policy.quiz.QUIZ_MAX_EARNED_MINUTES
 import com.planyourtv.policy.quiz.QUIZ_MAX_PULL_COUNT
 import com.planyourtv.policy.quiz.QUIZ_MIN_LOCAL_PULL_COUNT
-import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizConfig
 import com.planyourtv.policy.quiz.QuizFeedbackHold
 import com.planyourtv.policy.quiz.QuizItem
-import com.planyourtv.policy.quiz.QuizLevel
+import com.planyourtv.policy.quiz.QuizLevelPackage
 import com.planyourtv.policy.quiz.QuizRun
 import com.planyourtv.policy.quiz.QuizSession
 import com.planyourtv.policy.quiz.QuizSessionStatus
@@ -262,42 +261,22 @@ object QuizChallenge {
         return BeginResult.Started
     }
 
-    /** A local level is a curriculum scope, one custom tag, or wrong review. */
-    private data class LocalLevelTarget(
-        val scope: QuizAnswerScope?,
-        val collectionId: String?,
-        val wrongReview: Boolean = false,
-    )
-
+    /**
+     * An explicit id names exactly one enabled package; without one, take the
+     * first enabled package in the parent's order that can supply at least one
+     * question. Paused levels never reach the child, even through a stale id.
+     */
     private fun resolveLocalLevel(
         levelId: String?,
-        courseLevels: List<QuizLevel>,
+        packages: List<QuizLevelPackage>,
         nowMs: Long,
-    ): LocalLevelTarget? {
+    ): QuizLevelPackage? {
         if (!levelId.isNullOrBlank()) {
-            courseLevels.firstOrNull { it.id == levelId }?.let {
-                return LocalLevelTarget(it.scope, null)
-            }
-            QuizCollectionStore.customLevel(levelId)?.let {
-                return LocalLevelTarget(null, it.collectionId)
-            }
-            if (QuizWrongReviewLevelStore.level()?.id == levelId) {
-                return LocalLevelTarget(null, null, wrongReview = true)
-            }
-            return null
+            return packages.firstOrNull { it.id == levelId && it.enabled }
         }
-        courseLevels.firstOrNull {
-            QuizQuestionCache.availableCount(QuizQuestionCache.LOCAL_SCOPE, nowMs, it.scope) > 0
-        }?.let { return LocalLevelTarget(it.scope, null) }
-        QuizCollectionStore.customLevels().firstOrNull {
-            QuizQuestionCache.availableCollectionCount(it.collectionId, nowMs) > 0
-        }?.let { return LocalLevelTarget(null, it.collectionId) }
-        if (QuizWrongReviewLevelStore.level() != null &&
-            QuizQuestionCache.wrongReviewCount() > 0
-        ) {
-            return LocalLevelTarget(null, null, wrongReview = true)
+        return packages.firstOrNull {
+            it.enabled && QuizQuestionCache.packageAvailability(it, nowMs).available > 0
         }
-        return null
     }
 
     /**
@@ -306,30 +285,37 @@ object QuizChallenge {
      * failed save cannot leave questions stranded in RESERVED.
      */
     private fun startLocalRound(nowMs: Long, levelId: String?): BeginResult {
-        // One read of the active document supplies every frozen input below.
-        // A missing or invalid document is refused instead of silently falling
+        // One read supplies the document and its package extension. A missing,
+        // invalid or broken package list is refused instead of silently falling
         // back to stale legacy keys the parent can no longer see.
+        val loaded = when (val result = QuizLevelPackageStore.load(nowMs)) {
+            is QuizLevelPackageStore.LoadResult.Ok -> result
+            is QuizLevelPackageStore.LoadResult.Unreadable,
+            QuizLevelPackageStore.LoadResult.Storage ->
+                return BeginResult.Rejected("DOCUMENT_UNREADABLE")
+        }
         val plan = when (val planned = QuizLocalRoundPlanner.plan(
-            QuizConfigDocumentStore.activeDocument(),
+            loaded.document,
             nowMs,
+            loaded.packages,
         )) {
             is QuizLocalPlanResult.Ready -> planned.plan
             is QuizLocalPlanResult.Rejected -> return BeginResult.Rejected(planned.code)
         }
         val config = plan.config
-        // An explicit level that disappeared while the dialog was open must not
-        // silently start a different one. Without an id, take the first level
-        // that can actually fill a round across course levels and custom tags.
-        val target = resolveLocalLevel(levelId, plan.levels, nowMs)
+        // A paused level that is still selected on a stale dialog gets its own
+        // reason instead of looking like a deleted level. Without an id, take
+        // the first enabled package that can actually supply a question.
+        if (!levelId.isNullOrBlank() &&
+            plan.packages.any { it.id == levelId && !it.enabled }
+        ) {
+            return BeginResult.Rejected("LEVEL_PAUSED")
+        }
+        val target = resolveLocalLevel(levelId, plan.packages, nowMs)
             ?: return BeginResult.Rejected("NO_LEVELS")
         val explicitLevel = !levelId.isNullOrBlank()
         val scope = QuizQuestionCache.LOCAL_SCOPE
-        val unused = when {
-            target.wrongReview -> QuizQuestionCache.wrongReviewCount(scope)
-            target.collectionId != null ->
-                QuizQuestionCache.availableCollectionCount(target.collectionId, nowMs)
-            else -> QuizQuestionCache.availableCount(scope, nowMs, target.scope)
-        }
+        val unused = QuizQuestionCache.packageAvailability(target, nowMs).available
         if (unused <= 0) return BeginResult.Rejected("LOCAL_BANK_EMPTY")
         // Any level the child explicitly picked, including wrong review, must
         // supply the full configured round. Only the legacy caller without a
@@ -342,30 +328,14 @@ object QuizChallenge {
         val required = if (requiresFullRound) config.pullCount else 1
         val roundId = QbClient.SESSION_ID_PREFIX + UUID.randomUUID().toString().replace("-", "")
         val reserved = try {
-            when {
-                target.wrongReview -> QuizQuestionCache.reserveWrongForRound(
-                    count = count,
-                    sessionId = roundId,
-                    scopeKey = scope,
-                    minRequired = required,
-                    nowMs = nowMs,
-                )
-                target.collectionId != null -> QuizQuestionCache.reserveCollectionForRound(
-                    count = count,
-                    sessionId = roundId,
-                    collectionId = target.collectionId,
-                    minRequired = required,
-                    nowMs = nowMs,
-                )
-                else -> QuizQuestionCache.reserveForRound(
-                    count = count,
-                    sessionId = roundId,
-                    scopeKey = scope,
-                    minRequired = required,
-                    nowMs = nowMs,
-                    answerScope = target.scope,
-                )
-            }
+            QuizQuestionCache.reservePackageForRound(
+                level = target,
+                count = count,
+                sessionId = roundId,
+                minRequired = required,
+                nowMs = nowMs,
+                scopeKey = scope,
+            )
         } catch (_: QuizQuestionCache.CacheException) {
             return BeginResult.Rejected("CACHE_UNAVAILABLE")
         }
@@ -431,9 +401,25 @@ object QuizChallenge {
         return BeginResult.Started
     }
 
-    @Synchronized
     fun answer(
         selectedIndex: Int?,
+        timedOut: Boolean,
+        nowMs: Long = System.currentTimeMillis(),
+    ): AnswerOutcome = answer(
+        selectedIndices = if (selectedIndex == null) emptyList() else listOf(selectedIndex),
+        timedOut = timedOut,
+        nowMs = nowMs,
+    )
+
+    /**
+     * Commits one answer. Single-choice callers pass a one-element list; a
+     * multiple-choice caller passes the complete confirmed set. The submission
+     * stores display-order indices for feedback, while the cache and cloud
+     * mapping convert back through [QuizItem.optionOrder].
+     */
+    @Synchronized
+    fun answer(
+        selectedIndices: List<Int>,
         timedOut: Boolean,
         nowMs: Long = System.currentTimeMillis(),
     ): AnswerOutcome {
@@ -452,11 +438,17 @@ object QuizChallenge {
         // A tap that lands after the deadline must never beat the clock, even if
         // the 1 Hz UI timer has not fired yet.
         val expired = timedOut || nowMs >= run.deadlineAt
-        if (!expired && (selectedIndex == null || selectedIndex !in item.options.indices)) {
-            return AnswerOutcome.Failed("INVALID_ANSWER")
+        val chosen = selectedIndices.distinct().sorted()
+        if (!expired) {
+            if (chosen.isEmpty() || chosen.any { it !in item.options.indices }) {
+                return AnswerOutcome.Failed("INVALID_ANSWER")
+            }
+            if (!item.isMultipleChoice && chosen.size != 1) {
+                return AnswerOutcome.Failed("INVALID_ANSWER")
+            }
         }
 
-        val correct = !expired && selectedIndex == item.answerIndex
+        val correct = !expired && chosen.isNotEmpty() && chosen.toSet() == item.correctIndices.toSet()
         // v6 freezes the nominal feedback floor when the answer is recorded, so
         // a later config edit cannot shorten the stay this child already sees.
         // v5 records keep null and use their historical answerDisplaySec.
@@ -468,11 +460,12 @@ object QuizChallenge {
         )
         val submission = QuizSubmission(
             questionId = item.questionId,
-            selectedIndex = if (expired) null else selectedIndex,
+            selectedIndex = if (expired) null else chosen.firstOrNull(),
             correct = correct,
             timedOut = expired,
             answeredAt = nowMs,
             feedbackHoldMs = feedbackHoldMs,
+            selectedIndices = if (expired || !item.isMultipleChoice) emptyList() else chosen,
         )
         // A wrong answer or timeout never ends the round. The child still gets
         // every remaining question, and the score is settled only after the last
@@ -497,6 +490,11 @@ object QuizChallenge {
         // rows are updated in their own scope too, while the outbox uploads the
         // same submission to QB.
         QuizRecovery.scopeFor(session, PolicyModeCoordinator.state.value.deviceNo)?.let { cacheScope ->
+            // Cache rows are stored in the published option order. Map every
+            // selected display index, not just the first one.
+            val storedIndices = submission.selectedIndices.mapNotNull { displayIndex ->
+                if (item.optionOrder.isEmpty()) displayIndex else item.optionOrder.getOrNull(displayIndex)
+            }
             val storedIndex = submission.selectedIndex?.let { displayIndex ->
                 if (item.optionOrder.isEmpty()) displayIndex else item.optionOrder.getOrNull(displayIndex)
             }
@@ -511,6 +509,7 @@ object QuizChallenge {
                         correct = correct,
                         timedOut = expired,
                         answeredAt = nowMs,
+                        selectedIndices = storedIndices,
                     ),
                 ),
                 nowMs,
@@ -519,23 +518,28 @@ object QuizChallenge {
         // Queue the answer before showing feedback. The queue uploads in the
         // background; settlement flushes it again, so a slow network never eats
         // the child's earned time.
-        cloudAttempt(session)?.let { attemptUid ->
-            // QB judges in the published option order, while the TV may have
-            // shown a shuffled order. Upload the original index; the submission
-            // kept in the run stays in display space so the feedback page keeps
-            // reading "你的选择" correctly.
-            val displayIndex = submission.selectedIndex
-            val cloudSubmission = submission.copy(
-                selectedIndex = if (displayIndex == null || submission.timedOut) {
-                    null
-                } else if (item.optionOrder.isEmpty()) {
-                    displayIndex
-                } else {
-                    item.optionOrder[displayIndex]
-                },
-            )
-            QuizCloudOutbox.appendAnswer(attemptUid, cloudSubmission)
-            QuizCloudOutbox.flushAsync()
+        // The current QB contract only carries a scalar answer and the device
+        // reports SINGLE capability. Never truncate a confirmed multiple-choice
+        // set into that legacy shape.
+        if (!item.isMultipleChoice) {
+            cloudAttempt(session)?.let { attemptUid ->
+                // QB judges in the published option order, while the TV may have
+                // shown a shuffled order. Upload the original index; the
+                // submission kept in the run stays in display space so the
+                // feedback page keeps reading "你的选择" correctly.
+                val displayIndex = submission.selectedIndex
+                val cloudSubmission = submission.copy(
+                    selectedIndex = if (displayIndex == null || submission.timedOut) {
+                        null
+                    } else if (item.optionOrder.isEmpty()) {
+                        displayIndex
+                    } else {
+                        item.optionOrder[displayIndex]
+                    },
+                )
+                QuizCloudOutbox.appendAnswer(attemptUid, cloudSubmission)
+                QuizCloudOutbox.flushAsync()
+            }
         }
         QuizRuntime.refresh()
         return AnswerOutcome.Answered
@@ -1064,9 +1068,13 @@ object QuizChallenge {
 
     private fun shuffleOptions(items: List<QuizItem>): List<QuizItem> = items.map { item ->
         val order = item.options.indices.shuffled()
+        val displayIndices = item.correctIndices
+            .map { publishedIndex -> order.indexOf(publishedIndex) }
+            .sorted()
         item.copy(
             options = order.map { item.options[it] },
-            answerIndex = order.indexOf(item.answerIndex),
+            answerIndex = displayIndices.firstOrNull() ?: 0,
+            answerIndices = if (item.isMultipleChoice) displayIndices else emptyList(),
             // Display position -> published position, persisted with the session
             // so a process restart cannot lose the cloud upload mapping.
             optionOrder = order,

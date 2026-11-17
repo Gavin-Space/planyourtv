@@ -106,4 +106,9 @@ internal object PolicyKeys {
     const val LOCAL_SESSION_ACTIVATION = "local_session_activation"
     const val LOCAL_SESSION_ACCESS_MODE = "local_session_access_mode"
     const val LOCAL_SESSION_ALLOWED_PACKAGES = "local_session_allowed_packages"
+    // V37 durable execution state. Each key is one atomic JSON snapshot with a version and CRC;
+    // the legacy keys above remain as the migration/rollback source and are never the authority
+    // once these exist.
+    const val LOCAL_RUNTIME_V2 = "local_runtime_v2"
+    const val LOCAL_GUARD_V2 = "local_guard_v2"
 }

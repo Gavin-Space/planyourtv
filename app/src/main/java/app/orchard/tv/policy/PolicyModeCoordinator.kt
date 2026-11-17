@@ -267,7 +267,8 @@ object PolicyModeCoordinator {
             when (mode) {
                 PolicyMode.LOCAL -> {
                     LocalPolicyRuntime.setSource(PolicySource.LOCAL)
-                    LocalPolicyRuntime.lockForModeSwitch()
+                    // Do not reset the guard here: initialize() has already restored a
+                    // parent override or study lease that still has live evidence.
                     LocalPolicyRuntime.ensureLocalManualActivation()
                     LocalPolicyRuntime.activate()
                 }
@@ -567,7 +568,9 @@ object PolicyModeCoordinator {
             // Stop the legacy grant engine before the local one starts: it remains the network
             // and identity adapter, but only the local executor may own a pending gate.
             PolicyRuntime.setHostedRuleActive(true)
-            LocalPolicyRuntime.lockForModeSwitch()
+            // Attaching the guard is not a mode switch: a cold start may be attaching after
+            // initialize() restored an evidence-backed override. Genuine LOCAL/CLOUD/NONE
+            // transitions reset the guard at their own call sites.
             LocalPolicyRuntime.activate()
             ruleGuardActive = true
             if (LocalPolicyRuntime.state.value.source == PolicySource.HOSTED) {
@@ -1564,7 +1567,7 @@ object PolicyModeCoordinator {
                             PolicyModeStore.save(mode)
                             ensureLocalRules()
                             LocalPolicyRuntime.setSource(PolicySource.LOCAL)
-                            LocalPolicyRuntime.lockForModeSwitch()
+                            LocalPolicyRuntime.resetGuardForModeSwitch()
                             LocalPolicyRuntime.ensureLocalManualActivation()
                             LocalPolicyRuntime.activate()
                         }
@@ -1601,7 +1604,7 @@ object PolicyModeCoordinator {
                         PolicyModeStore.save(mode)
                         ensureLocalRules()
                         LocalPolicyRuntime.setSource(PolicySource.LOCAL)
-                        LocalPolicyRuntime.lockForModeSwitch()
+                        LocalPolicyRuntime.resetGuardForModeSwitch()
                         LocalPolicyRuntime.ensureLocalManualActivation()
                         LocalPolicyRuntime.activate()
                     }
@@ -1876,7 +1879,7 @@ object PolicyModeCoordinator {
         PolicyModeStore.save(mode)
         ensureLocalRules()
         LocalPolicyRuntime.setSource(PolicySource.LOCAL)
-        LocalPolicyRuntime.lockForModeSwitch()
+        LocalPolicyRuntime.resetGuardForModeSwitch()
         LocalPolicyRuntime.ensureLocalManualActivation()
         LocalPolicyRuntime.activate()
         publishModeChange()
@@ -1898,7 +1901,7 @@ object PolicyModeCoordinator {
         PolicyModeStore.save(mode)
         ensureLocalRules()
         LocalPolicyRuntime.setSource(PolicySource.LOCAL)
-        LocalPolicyRuntime.lockForModeSwitch()
+        LocalPolicyRuntime.resetGuardForModeSwitch()
         LocalPolicyRuntime.ensureLocalManualActivation()
         LocalPolicyRuntime.activate()
         publishModeChange()

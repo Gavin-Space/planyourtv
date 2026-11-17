@@ -4,7 +4,8 @@ import java.util.Properties
 
 // A phone shell for the Parent Center page served by the TV over the LAN. It is
 // deliberately a separate application: the TV app stays the only thing that is
-// installed, guarded and released; this shell only needs INTERNET and CAMERA.
+// installed, guarded and released; this shell needs INTERNET and CAMERA, plus
+// the install permission for its own optional update.
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,12 +23,13 @@ android {
         targetSdk = 34
         // The shell is versioned independently from the TV app: the web page and
         // the TV server define the contract, not the APK version.
-        versionCode = 5
-        versionName = "1.1.1"
+        versionCode = 8
+        versionName = "1.2.2"
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     // The phone shell has its own release identity. Sharing the TV app's key
@@ -96,9 +98,14 @@ dependencies {
     // was the bottleneck: it decoded at most every 100 ms and could not keep up
     // with the continuous frames that make the phone browser scan so quickly.
     implementation("androidx.appcompat:appcompat:1.6.1")
+    // Photo picker contracts (activity 1.7+) open media uploads in the system
+    // gallery instead of the document browser.
+    implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.camera:camera-camera2:1.4.2")
     implementation("androidx.camera:camera-lifecycle:1.4.2")
     implementation("androidx.camera:camera-view:1.4.2")
     implementation("io.github.zxing-cpp:android:2.3.0")
     testImplementation("junit:junit:4.13.2")
+    // android.jar's org.json methods are stubs in local unit tests.
+    testImplementation("org.json:json:20231013")
 }

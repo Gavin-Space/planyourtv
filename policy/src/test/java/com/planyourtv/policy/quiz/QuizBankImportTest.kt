@@ -3,7 +3,6 @@ package com.planyourtv.policy.quiz
 import org.json.JSONArray
 import org.json.JSONObject
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -51,8 +50,15 @@ class QuizBankImportTest {
     }
 
     @Test
-    fun jsonRejectsUnknownFieldsAndAnswerConflicts() {
-        val unknown = jsonItem().put("type", "single")
+    fun jsonAcceptsTypeAndRejectsUnknownFieldsAndAnswerConflicts() {
+        val typed = success(
+            QuizBankImport.parseJsonItems(
+                JSONArray().put(jsonItem().put("type", "single")),
+            ),
+        ).single()
+        assertEquals(QuizAnswerKind.SINGLE, typed.answerKind)
+
+        val unknown = jsonItem().put("notAField", "single")
         val unknownErrors = errors(QuizBankImport.parseJsonItems(JSONArray().put(unknown)))
         assertEquals("UNKNOWN_FIELD", unknownErrors.single().code)
 
@@ -61,14 +67,25 @@ class QuizBankImportTest {
     }
 
     @Test
-    fun jsonRejectsBadAnswersAndOptions() {
+    fun jsonParsesMultipleChoiceAndRejectsBadAnswersAndOptions() {
+        val multi = success(
+            QuizBankImport.parseJsonItems(
+                JSONArray().put(
+                    jsonItem(answer = "A、C").put("type", "multiple"),
+                ),
+            ),
+        ).single()
+        assertEquals(QuizAnswerKind.MULTIPLE, multi.answerKind)
+        assertEquals(listOf(0, 2), multi.answerIndices)
+        assertEquals(0, multi.answerIndex)
+
         assertEquals(
             "ANSWER_RANGE",
             errors(QuizBankImport.parseJsonItems(JSONArray().put(jsonItem(answer = "F")))).single().code,
         )
         assertEquals(
             "ANSWER_FORMAT",
-            errors(QuizBankImport.parseJsonItems(JSONArray().put(jsonItem(answer = "AB")))).single().code,
+            errors(QuizBankImport.parseJsonItems(JSONArray().put(jsonItem(answer = "A、A")))).single().code,
         )
         assertEquals(
             "COUNT",
@@ -93,12 +110,14 @@ class QuizBankImportTest {
     }
 
     @Test
-    fun jsonRejectsMultiAnswerSeparatorsAndUnmatchedText() {
+    fun jsonParsesMultiAnswerSeparatorsAndRejectsUnmatchedText() {
         listOf("AB", "A、B", "A,B", "A 和 B").forEach { answer ->
-            assertEquals(
-                "ANSWER_FORMAT",
-                errors(QuizBankImport.parseJsonItems(JSONArray().put(jsonItem(answer = answer)))).single().code,
-            )
+            val item = success(
+                QuizBankImport.parseJsonItems(JSONArray().put(jsonItem(answer = answer))),
+            ).single()
+            assertEquals(QuizAnswerKind.MULTIPLE, item.answerKind)
+            assertEquals(listOf(0, 1), item.answerIndices)
+            assertEquals(0, item.answerIndex)
         }
         assertEquals(
             "ANSWER_RANGE",
@@ -111,6 +130,34 @@ class QuizBankImportTest {
                     JSONArray().put(jsonItem(answer = null, answerIndex = -1)),
                 ),
             ).single().code,
+        )
+    }
+
+    @Test
+    fun jsonMultiChoiceRequiresAtLeastThreeOptionsAndADistractor() {
+        val twoOptions = jsonItem(
+            options = JSONArray().put("一").put("二"),
+            answer = "A、B",
+            answerIndex = null,
+        )
+        assertEquals(
+            "OPTIONS_TOO_FEW",
+            errors(QuizBankImport.parseJsonItems(JSONArray().put(twoOptions))).single().code,
+        )
+        val allCorrect = jsonItem(
+            answer = "A、B、C、D",
+            answerIndex = null,
+        )
+        assertEquals(
+            "ANSWER_ALL",
+            errors(QuizBankImport.parseJsonItems(JSONArray().put(allCorrect))).single().code,
+        )
+        val tooFewAnswers = jsonItem(answer = null, answerIndex = null)
+            .put("type", "multiple")
+            .put("answerIndices", JSONArray().put(0))
+        assertEquals(
+            "ANSWER_TOO_FEW",
+            errors(QuizBankImport.parseJsonItems(JSONArray().put(tooFewAnswers))).single().code,
         )
     }
 
@@ -173,7 +220,7 @@ class QuizBankImportTest {
     }
 
     @Test
-    fun textRejectsMultiAnswerAndDuplicateOptions() {
+    fun textParsesMultiAnswerAndRejectsDuplicateOptions() {
         listOf("AB", "A、B", "A,B", "A 和 B").forEach { answer ->
             val multi = """
                 1. 多选题
@@ -182,9 +229,21 @@ class QuizBankImportTest {
                 C. 三
                 答案：$answer
             """.trimIndent()
-            assertFalse(successOrNull(QuizBankImport.parseText(multi)) != null)
-            assertEquals("ANSWER_FORMAT", errors(QuizBankImport.parseText(multi)).single().code)
+            val item = success(QuizBankImport.parseText(multi)).single()
+            assertEquals(QuizAnswerKind.MULTIPLE, item.answerKind)
+            assertEquals(listOf(0, 1), item.answerIndices)
         }
+
+        val tooFewOptions = """
+            1. 选项不足
+            A. 一
+            B. 二
+            答案：A、B
+        """.trimIndent()
+        assertEquals(
+            "OPTIONS_TOO_FEW",
+            errors(QuizBankImport.parseText(tooFewOptions)).single().code,
+        )
 
         val duplicate = """
             1. 重复选项
@@ -247,6 +306,4 @@ class QuizBankImportTest {
         )
     }
 
-    private fun successOrNull(result: QuizImportResult): List<QuizItem>? =
-        (result as? QuizImportResult.Success)?.items
 }

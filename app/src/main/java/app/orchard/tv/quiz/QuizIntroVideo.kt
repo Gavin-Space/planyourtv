@@ -23,6 +23,7 @@ data class QuizIntroVideoEntry(
     val createdAt: Long,
     val poster: File? = null,
     val kind: PolicyMediaKind = PolicyMediaKind.VIDEO,
+    val hasAudio: Boolean = false,
 )
 
 /**
@@ -30,8 +31,9 @@ data class QuizIntroVideoEntry(
  *
  * This deliberately does not reuse [app.orchard.tv.wallpaper.ScreensaverVideos]: those films
  * are allowed to be 2 GB and are tied to the screensaver's own list. Here a video must be a
- * short 16:9 MP4/MOV that this TV can decode without transcoding, and a picture is normalised
- * to one 1920x1080 JPEG. Both live in a separate directory. Uploads are validated before they
+ * 16:9 MP4/MOV that this TV can decode without transcoding, with no duration cap for the
+ * wallpaper role and 15 seconds when it is used as a quiz intro; a picture is normalised to one
+ * 1920x1080 JPEG. Both live in a separate directory. Uploads are validated before they
  * are published, then moved into a complete directory so a failed upload can never become the
  * active wallpaper.
  *
@@ -41,18 +43,24 @@ data class QuizIntroVideoEntry(
  * [PolicyVideoValidation] and [PolicyImageValidation] so local and cloud paths cannot drift.
  */
 object QuizIntroVideo {
-    /** A video is capped at 4 MiB; a raw picture may be larger and is normalised first. */
+    /**
+     * Legacy snapshot values. A local wallpaper may be up to [MAX_VIDEO_BYTES] and has no
+     * duration limit; the old `introVideo` fields stay at their previous meaning for cached
+     * pages.
+     */
     const val MAX_FILE_BYTES = PolicyVideoValidation.MAX_FILE_BYTES
+    const val MAX_VIDEO_BYTES = PolicyVideoValidation.MAX_WALLPAPER_FILE_BYTES
     const val MAX_UPLOAD_BYTES = PolicyImageValidation.MAX_UPLOAD_BYTES
     const val MAX_IMAGE_BYTES = PolicyImageValidation.MAX_STORED_BYTES
-    const val MAX_VIDEOS = 6
-    const val MAX_TOTAL_BYTES = 24L * 1024 * 1024
-    private const val KEEP_FREE_BYTES = 64L * 1024 * 1024
-    const val MAX_DURATION_MS = PolicyVideoValidation.MAX_DURATION_MS
+    // No count or total-byte quota: only the per-file decoders and the free-space guard below
+    // bound a library, so the parent can keep as many wallpapers as the TV can hold.
+    const val KEEP_FREE_BYTES = 256L * 1024 * 1024
+    const val MAX_DURATION_MS = PolicyVideoValidation.MAX_QUIZ_DURATION_MS
     private const val MAX_NAME_LENGTH = 80
     private const val PREFS = "quiz-intro"
     private const val KEY_ACTIVE = "active_id"
     private const val KEY_LOCK = "lock_id"
+    private const val KEY_LOCK_SOUND = "lock_sound"
     private const val TAG = "QuizIntroVideo"
     private val idPattern = Regex("[a-f0-9]{32}")
     private val videoExtensions = setOf(".mp4", ".mov")
@@ -91,6 +99,23 @@ object QuizIntroVideo {
         val name = info.optString("name", "").ifBlank {
             if (kind == PolicyMediaKind.IMAGE) "image.jpg" else "video.mp4"
         }
+        val hasAudio = when (kind) {
+            PolicyMediaKind.IMAGE -> false
+            PolicyMediaKind.VIDEO -> {
+                if (info.has("hasAudio")) {
+                    info.optBoolean("hasAudio", false)
+                } else {
+                    // Videos uploaded before V36 did not persist this. Probe once and write it
+                    // back so later snapshots do not touch the decoder list again.
+                    val probed = PolicyVideoValidation.probeHasAudio(file)
+                    runCatching {
+                        info.put("hasAudio", probed)
+                        File(dir, "info.json").writeText(info.toString())
+                    }
+                    probed
+                }
+            }
+        }
         return QuizIntroVideoEntry(
             id = dir.name,
             name = name,
@@ -106,6 +131,7 @@ object QuizIntroVideo {
                     .takeIf { it.isFile && it.length() > 0 }
             },
             kind = kind,
+            hasAudio = hasAudio,
         )
     }
 
@@ -141,17 +167,10 @@ object QuizIntroVideo {
         }
         if (upload.kind == PolicyMediaKind.IMAGE) {
             if (length > MAX_UPLOAD_BYTES) return ReceiveResult.Rejected("INTRO_IMAGE_TOO_LARGE")
-        } else if (length > MAX_FILE_BYTES) {
+        } else if (length > MAX_VIDEO_BYTES) {
             return ReceiveResult.Rejected("INTRO_VIDEO_TOO_LARGE")
         }
 
-        val stored = all(context)
-        if (stored.size >= MAX_VIDEOS) {
-            return ReceiveResult.Rejected("INTRO_VIDEO_LIBRARY_FULL")
-        }
-        if (stored.sumOf { it.sizeBytes } + length > MAX_TOTAL_BYTES) {
-            return ReceiveResult.Rejected("INTRO_VIDEO_LIBRARY_FULL")
-        }
         val root = directory(context)
         if (root.usableSpace < length + KEEP_FREE_BYTES) {
             return ReceiveResult.Rejected("INTRO_VIDEO_NO_SPACE")
@@ -191,7 +210,7 @@ object QuizIntroVideo {
         if (size <= 0L) return ReceiveResult.Rejected("INTRO_VIDEO_INVALID")
         if (target.kind == PolicyMediaKind.IMAGE) {
             if (size > MAX_UPLOAD_BYTES) return ReceiveResult.Rejected("INTRO_IMAGE_TOO_LARGE")
-        } else if (size > MAX_FILE_BYTES) {
+        } else if (size > MAX_VIDEO_BYTES) {
             return ReceiveResult.Rejected("INTRO_VIDEO_TOO_LARGE")
         }
         val looksLikeImage = PolicyImageValidation.sniffImage(upload)
@@ -202,10 +221,6 @@ object QuizIntroVideo {
             return ReceiveResult.Rejected("INTRO_VIDEO_BAD_FORMAT")
         }
 
-        val stored = all(context)
-        if (stored.size >= MAX_VIDEOS) {
-            return ReceiveResult.Rejected("INTRO_VIDEO_LIBRARY_FULL")
-        }
         if (root.usableSpace < size + KEEP_FREE_BYTES) {
             return ReceiveResult.Rejected("INTRO_VIDEO_NO_SPACE")
         }
@@ -261,9 +276,6 @@ object QuizIntroVideo {
                     if (storedBytes <= 0L || storedBytes > MAX_IMAGE_BYTES) {
                         return ReceiveResult.Rejected("INTRO_IMAGE_TOO_LARGE")
                     }
-                    if (stored.sumOf { it.sizeBytes } + storedBytes > MAX_TOTAL_BYTES) {
-                        return ReceiveResult.Rejected("INTRO_VIDEO_LIBRARY_FULL")
-                    }
                     if (root.usableSpace < storedBytes + KEEP_FREE_BYTES) {
                         return ReceiveResult.Rejected("INTRO_VIDEO_NO_SPACE")
                     }
@@ -281,6 +293,7 @@ object QuizIntroVideo {
                     .put("durationMs", durationMs)
                     .put("width", width)
                     .put("height", height)
+                    .put("hasAudio", videoInfo?.hasAudio ?: false)
                     .put("createdAt", System.currentTimeMillis())
                     .toString(),
             )
@@ -297,6 +310,7 @@ object QuizIntroVideo {
                 poster = poster?.let { File(targetDir, it.name) }
                     ?.takeIf { it.isFile },
                 kind = target.kind,
+                hasAudio = videoInfo?.hasAudio ?: false,
             )
             ReceiveResult.Ok(entry)
         } catch (error: Exception) {
@@ -319,9 +333,12 @@ object QuizIntroVideo {
         }
         if (!idPattern.matches(target)) return false
         val entry = all(context).firstOrNull { it.id == target } ?: return false
-        // Pictures have no playback semantics and must never reach the quiz intro.
+        // Pictures have no playback semantics and must never reach the quiz intro. The legacy
+        // entry point has no server-side capability check of its own, so repeat the quiz caps.
         if (entry.kind != PolicyMediaKind.VIDEO) return false
         if (!entry.file.isFile || entry.file.length() <= 0L) return false
+        if (entry.durationMs !in 1..PolicyVideoValidation.MAX_QUIZ_DURATION_MS) return false
+        if (entry.sizeBytes > PolicyVideoValidation.MAX_QUIZ_FILE_BYTES) return false
         prefs(context).edit().putString(KEY_ACTIVE, target).apply()
         return true
     }
@@ -341,12 +358,23 @@ object QuizIntroVideo {
             val preferences = prefs(context)
             val editor = preferences.edit()
             // Only clear the slots that pointed at this item; another kind's role must survive.
+            // The sound preference is kept: it applies to the next audio wallpaper too.
             if (preferences.getString(KEY_ACTIVE, null) == id) editor.remove(KEY_ACTIVE)
             if (preferences.getString(KEY_LOCK, null) == id) editor.remove(KEY_LOCK)
             editor.apply()
         }
         return deleted
     }
+
+    /**
+     * The child wallpaper's sound preference. Default on: a newly chosen video with an audio
+     * track plays it unless the parent turns the switch off. Only the child lock/home players
+     * read this, never an Aerial parent-mode player.
+     */
+    fun lockSound(context: Context): Boolean = prefs(context).getBoolean(KEY_LOCK_SOUND, true)
+
+    fun setLockSound(context: Context, enabled: Boolean): Boolean =
+        prefs(context).edit().putBoolean(KEY_LOCK_SOUND, enabled).commit()
 
     /** Snapshot for pages cached before V30. New pages use `media`. */
     fun snapshot(context: Context): JSONObject {
@@ -363,6 +391,7 @@ object QuizIntroVideo {
                     .put("durationMs", video.durationMs)
                     .put("width", video.width)
                     .put("height", video.height)
+                    .put("hasAudio", video.hasAudio)
                     .put("createdAt", video.createdAt)
                     .put("active", video.id == activeId && video.kind == PolicyMediaKind.VIDEO),
             )
@@ -371,18 +400,22 @@ object QuizIntroVideo {
             .put("activeId", activeId)
             .put("builtins", JSONArray())
             .put("videos", array)
-            .put("maxVideos", MAX_VIDEOS)
             .put("maxFileBytes", MAX_FILE_BYTES)
             .put("maxUploadBytes", MAX_UPLOAD_BYTES)
-            .put("maxTotalBytes", MAX_TOTAL_BYTES)
             .put("maxDurationMs", MAX_DURATION_MS)
+            .put("lockSound", lockSound(context))
     }
 
     private fun activeId(context: Context): String {
         val stored = prefs(context).getString(KEY_ACTIVE, null) ?: return ""
         if (!idPattern.matches(stored)) return ""
         val entry = all(context).firstOrNull { it.id == stored } ?: return ""
-        return stored.takeIf { entry.kind == PolicyMediaKind.VIDEO && entry.file.length() > 0L }.orEmpty()
+        return stored.takeIf {
+            entry.kind == PolicyMediaKind.VIDEO &&
+                entry.file.length() > 0L &&
+                entry.durationMs in 1..PolicyVideoValidation.MAX_QUIZ_DURATION_MS &&
+                entry.sizeBytes <= PolicyVideoValidation.MAX_QUIZ_FILE_BYTES
+        }.orEmpty()
     }
 
     /**

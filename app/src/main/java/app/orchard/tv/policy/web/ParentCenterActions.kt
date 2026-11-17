@@ -591,7 +591,6 @@ object ParentCenterActions {
             OfficialMediaDownloader.StartResult.NotFound -> error("MEDIA_NOT_FOUND")
             OfficialMediaDownloader.StartResult.RoleInvalid -> error("MEDIA_ROLE_INVALID")
             OfficialMediaDownloader.StartResult.NoSpace -> error("MEDIA_NO_SPACE")
-            OfficialMediaDownloader.StartResult.LibraryFull -> error("MEDIA_LIBRARY_FULL")
         }
     }
 
@@ -628,6 +627,19 @@ object ParentCenterActions {
             PolicyVideoLibrary.EditResult.NotReady,
             PolicyVideoLibrary.EditResult.RoleInvalid -> error("MEDIA_NOT_FOUND")
         }
+    }
+
+    /**
+     * The child wallpaper sound switch. It only changes the child lock/Home player; parent mode
+     * never reads this preference. Turning it on requires a selected video with a decodable
+     * audio track, while turning it off is always allowed.
+     */
+    fun setMediaSound(context: Context, body: JSONObject): Outcome {
+        val enabled = body.optBoolean("enabled", false)
+        if (!PolicyVideoLibrary.setLockSound(context.applicationContext, enabled)) {
+            return error("MEDIA_SOUND_UNAVAILABLE")
+        }
+        return ok("MEDIA_SOUND_SAVED")
     }
 
     fun endSession(body: JSONObject): Outcome {

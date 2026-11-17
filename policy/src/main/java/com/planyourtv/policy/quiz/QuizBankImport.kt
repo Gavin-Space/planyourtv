@@ -21,15 +21,25 @@ sealed interface QuizImportResult {
  * Parses manually supplied questions into the same [QuizItem] shape the cache
  * and round engine already use. The parser is intentionally strict: an import
  * batch is all-or-nothing, so a partially understood file never reaches the
- * bank. Unsupported shapes (multi-answer, fill-in, images) are rejected or
- * skipped by the instructions, never guessed here.
+ * bank. Single- and multiple-answer questions are supported; unsupported shapes
+ * (fill-in, images) are rejected or skipped by the instructions, never guessed
+ * here.
  */
 object QuizBankImport {
     const val MAX_ITEMS = 200
     const val MAX_ERRORS = 20
 
     private val DIFFICULTIES = setOf("easy", "medium", "hard")
-    private val ANSWER_FIELDS = setOf("prompt", "options", "answer", "answerIndex", "explanation", "difficulty")
+    private val ANSWER_FIELDS = setOf(
+        "prompt",
+        "options",
+        "type",
+        "answer",
+        "answerIndex",
+        "answerIndices",
+        "explanation",
+        "difficulty",
+    )
     private val QUESTION_NUMBER = Regex("^\\s*(?:(\\d+)[.、．)）]|【(\\d+)】)\\s*(.*)$")
     private val OPTION_LINE = Regex("^\\s*([A-Fa-f])[.、．:：)）]\\s*(.*)$")
     private val ANSWER_LINE = Regex("^\\s*(?:参考答案|正确答案|答案)\\s*[:：]\\s*(.*)$")
@@ -63,7 +73,7 @@ object QuizBankImport {
 
             val prompt = readPrompt(item, index, errors) ?: continue
             val options = readOptions(item, index, errors) ?: continue
-            val answerIndex = readAnswer(item, options, index, errors) ?: continue
+            val answer = readAnswer(item, options, index, errors) ?: continue
             val explanation = readExplanation(item, index, errors) ?: continue
             val difficulty = readDifficulty(item, index, fallback, errors) ?: continue
 
@@ -71,12 +81,18 @@ object QuizBankImport {
                 questionId = newQuestionId(),
                 prompt = prompt,
                 options = options,
-                answerIndex = answerIndex,
+                answerIndex = answer.indices.first(),
                 explanation = explanation,
                 difficulty = difficulty,
                 points = 1,
                 timeLimitSec = 60,
                 recommendedTimeSec = 60,
+                answerIndices = if (answer.kind == QuizAnswerKind.MULTIPLE) {
+                    answer.indices
+                } else {
+                    emptyList()
+                },
+                answerKind = answer.kind,
             )
         }
         if (errors.isNotEmpty()) return QuizImportResult.Failure(errors.take(MAX_ERRORS))
@@ -207,18 +223,22 @@ object QuizBankImport {
             errors += QuizImportError(index, "options", "DUPLICATE")
         }
 
-        val answerIndex = if (answerRaw.isNullOrBlank() || optionTexts.isEmpty()) {
+        val answer = if (answerRaw.isNullOrBlank() || optionTexts.isEmpty()) {
             null
         } else {
-            val resolved = resolveAnswer(answerRaw, optionLetters, optionTexts)
-            if (resolved == null) {
-                errors += QuizImportError(
-                    index,
-                    "answer",
-                    if (isMultipleAnswer(answerRaw)) "ANSWER_FORMAT" else "ANSWER_RANGE",
-                )
+            val resolved = resolveTextAnswer(answerRaw, optionLetters, optionTexts)
+            when {
+                resolved == null -> {
+                    errors += QuizImportError(
+                        index,
+                        "answer",
+                        if (isMultipleAnswer(answerRaw)) "ANSWER_FORMAT" else "ANSWER_RANGE",
+                    )
+                    null
+                }
+                !validateAnswerShape(index, optionTexts, resolved, errors) -> null
+                else -> resolved
             }
-            resolved
         }
 
         val explanation = buildExplanation(lines, explanationLine, explanationRaw) ?: run {
@@ -229,7 +249,7 @@ object QuizBankImport {
         if (prompt.isEmpty() || prompt.length > QUIZ_MAX_PROMPT_CHARS ||
             optionTexts.size !in QUIZ_MIN_OPTIONS..QUIZ_MAX_OPTIONS ||
             optionTexts.any { it.isEmpty() || it.length > QUIZ_MAX_OPTION_CHARS } ||
-            answerIndex == null
+            answer == null
         ) {
             return null
         }
@@ -237,12 +257,18 @@ object QuizBankImport {
             questionId = newQuestionId(),
             prompt = prompt,
             options = optionTexts.toList(),
-            answerIndex = answerIndex,
+            answerIndex = answer.indices.first(),
             explanation = explanation,
             difficulty = fallbackDifficulty,
             points = 1,
             timeLimitSec = 60,
             recommendedTimeSec = 60,
+            answerIndices = if (answer.kind == QuizAnswerKind.MULTIPLE) {
+                answer.indices
+            } else {
+                emptyList()
+            },
+            answerKind = answer.kind,
         )
     }
 
@@ -309,44 +335,135 @@ object QuizBankImport {
         return options
     }
 
+    private data class ParsedAnswer(
+        val kind: QuizAnswerKind,
+        val indices: List<Int>,
+    )
+
     private fun readAnswer(
         item: JSONObject,
         options: List<String>,
         index: Int,
         errors: MutableList<QuizImportError>,
-    ): Int? {
+    ): ParsedAnswer? {
         val hasAnswer = item.has("answer") && !item.isNull("answer")
         val hasIndex = item.has("answerIndex") && !item.isNull("answerIndex")
-        if (hasAnswer && hasIndex) {
+        val hasIndices = item.has("answerIndices") && !item.isNull("answerIndices")
+        if (listOf(hasAnswer, hasIndex, hasIndices).count { it } > 1) {
             errors += QuizImportError(index, "answer", "ANSWER_CONFLICT")
             return null
         }
-        if (hasAnswer) {
-            val raw = item.opt("answer") as? String
-            if (raw == null || raw.isBlank()) {
-                errors += QuizImportError(index, "answer", "ANSWER_FORMAT")
-                return null
-            }
-            val resolved = resolveAnswer(raw.trim(), options.indices.map { ('A' + it) }, options)
-            if (resolved == null) {
-                errors += QuizImportError(
-                    index,
-                    "answer",
-                    if (isMultipleAnswer(raw)) "ANSWER_FORMAT" else "ANSWER_RANGE",
-                )
-            }
-            return resolved
-        }
-        if (!hasIndex) {
+        if (!hasAnswer && !hasIndex && !hasIndices) {
             errors += QuizImportError(index, "answer", "REQUIRED")
             return null
         }
-        val number = numberValue(item.opt("answerIndex"))
-        if (number == null || number !in options.indices) {
-            errors += QuizImportError(index, "answer", "ANSWER_RANGE")
+
+        val declared: QuizAnswerKind?
+        if (item.has("type") && !item.isNull("type")) {
+            val rawType = item.opt("type")
+            if (rawType !is String) {
+                errors += QuizImportError(index, "type", "ANSWER_FORMAT")
+                return null
+            }
+            declared = QuizAnswerKind.fromWire(rawType)
+            if (declared == null) {
+                errors += QuizImportError(index, "type", "ANSWER_FORMAT")
+                return null
+            }
+        } else {
+            declared = null
+        }
+
+        val parsed = when {
+            hasAnswer -> {
+                val raw = item.opt("answer") as? String
+                if (raw == null || raw.isBlank()) {
+                    errors += QuizImportError(index, "answer", "ANSWER_FORMAT")
+                    return null
+                }
+                val resolved = resolveTextAnswer(
+                    raw,
+                    options.indices.map { ('A' + it) },
+                    options,
+                )
+                if (resolved == null) {
+                    errors += QuizImportError(
+                        index,
+                        "answer",
+                        if (isMultipleAnswer(raw)) "ANSWER_FORMAT" else "ANSWER_RANGE",
+                    )
+                    return null
+                }
+                resolved
+            }
+            hasIndex -> {
+                val number = numberValue(item.opt("answerIndex"))
+                if (number == null || number !in options.indices) {
+                    errors += QuizImportError(index, "answer", "ANSWER_RANGE")
+                    return null
+                }
+                ParsedAnswer(QuizAnswerKind.SINGLE, listOf(number))
+            }
+            else -> {
+                val array = item.opt("answerIndices") as? JSONArray
+                if (array == null) {
+                    errors += QuizImportError(index, "answerIndices", "ANSWER_FORMAT")
+                    return null
+                }
+                val indices = mutableListOf<Int>()
+                for (position in 0 until array.length()) {
+                    val number = numberValue(array.opt(position))
+                    if (number == null) {
+                        errors += QuizImportError(index, "answerIndices", "ANSWER_FORMAT")
+                        return null
+                    }
+                    indices += number
+                }
+                if (indices.distinct().size != indices.size) {
+                    errors += QuizImportError(index, "answerIndices", "ANSWER_FORMAT")
+                    return null
+                }
+                if (indices.any { it !in options.indices }) {
+                    errors += QuizImportError(index, "answerIndices", "ANSWER_RANGE")
+                    return null
+                }
+                ParsedAnswer(QuizAnswerKind.MULTIPLE, indices.sorted())
+            }
+        }
+
+        if (declared != null && declared != parsed.kind) {
+            errors += QuizImportError(index, "answer", "ANSWER_FORMAT")
             return null
         }
-        return number
+        return if (validateAnswerShape(index, options, parsed, errors)) parsed else null
+    }
+
+    private fun validateAnswerShape(
+        index: Int,
+        options: List<String>,
+        answer: ParsedAnswer,
+        errors: MutableList<QuizImportError>,
+    ): Boolean {
+        if (answer.kind == QuizAnswerKind.SINGLE) {
+            if (answer.indices.size != 1) {
+                errors += QuizImportError(index, "answer", "ANSWER_FORMAT")
+                return false
+            }
+            return true
+        }
+        if (options.size < 3) {
+            errors += QuizImportError(index, "options", "OPTIONS_TOO_FEW")
+            return false
+        }
+        if (answer.indices.size < 2) {
+            errors += QuizImportError(index, "answer", "ANSWER_TOO_FEW")
+            return false
+        }
+        if (answer.indices.size >= options.size) {
+            errors += QuizImportError(index, "answer", "ANSWER_ALL")
+            return false
+        }
+        return true
     }
 
     private fun readExplanation(
@@ -388,22 +505,46 @@ object QuizBankImport {
     }
 
     /**
-     * A single letter maps by its real label. Text imports may use A, C, D
-     * instead of A, B, C, so the label cannot be treated as an array index.
-     * Anything else must match one option's trimmed text exactly. Returns null
-     * when no option matches; callers report multiple-answer input separately.
+     * Exact option text wins before letter parsing, so an option whose text is
+     * literally "AB" is still a single-choice match. A single real label maps
+     * by its position; two or more labels become a multiple-choice set.
      */
-    private fun resolveAnswer(
+    private fun resolveTextAnswer(
         raw: String,
         letters: List<Char>,
         options: List<String>,
-    ): Int? {
+    ): ParsedAnswer? {
         val value = raw.trim()
+        val exact = options.indexOfFirst { it == value }
+        if (exact >= 0) return ParsedAnswer(QuizAnswerKind.SINGLE, listOf(exact))
+
         val upper = value.uppercase(Locale.ROOT)
         if (upper.length == 1 && upper[0] in 'A'..'F') {
-            return letters.indexOf(upper[0]).takeIf { it >= 0 }
+            val position = letters.indexOf(upper[0])
+            if (position >= 0) return ParsedAnswer(QuizAnswerKind.SINGLE, listOf(position))
         }
-        return options.indexOfFirst { it == value }.takeIf { it >= 0 }
+
+        val multiple = resolveMultipleLetters(value, letters, options) ?: return null
+        return ParsedAnswer(QuizAnswerKind.MULTIPLE, multiple)
+    }
+
+    private fun resolveMultipleLetters(
+        raw: String,
+        letters: List<Char>,
+        options: List<String>,
+    ): List<Int>? {
+        if (!MULTI_ANSWER.matches(raw)) return null
+        val selectedLetters = Regex("[A-Fa-f]").findAll(raw)
+            .map { it.value.first().uppercaseChar() }
+            .toList()
+        if (selectedLetters.size < 2 ||
+            selectedLetters.distinct().size != selectedLetters.size
+        ) {
+            return null
+        }
+        val indices = selectedLetters.map { letters.indexOf(it) }
+        if (indices.any { it !in options.indices }) return null
+        return indices.sorted()
     }
 
     private fun isMultipleAnswer(raw: String): Boolean =

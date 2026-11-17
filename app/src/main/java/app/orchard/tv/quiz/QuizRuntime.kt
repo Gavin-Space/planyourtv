@@ -5,7 +5,8 @@ import com.planyourtv.policy.PolicyMode
 import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizConfig
 import com.planyourtv.policy.quiz.QuizConfigDocument
-import com.planyourtv.policy.quiz.QuizLevel
+import com.planyourtv.policy.quiz.QuizLevelPackage
+import com.planyourtv.policy.quiz.QuizPackageSource
 import com.planyourtv.policy.quiz.QuizRewardProfile
 import com.planyourtv.policy.quiz.QuizSession
 import com.planyourtv.policy.quiz.QuizSessionStatus
@@ -23,9 +24,11 @@ import kotlinx.coroutines.flow.asStateFlow
 object QuizRuntime {
     /**
      * One parent-designed level plus how many bank questions it can use now.
-     * A course level carries [scope]; a custom-tag level carries
-     * [collectionId] and [tagName] instead. A wrong-review level has neither
-     * and is marked by [wrongReview].
+     * The level is a package of one or more sources. A single-source course
+     * level carries [scope]; a single custom-tag level carries [collectionId]
+     * and [tagName]; a single wrong-review level is marked by [wrongReview].
+     * A mixed package leaves those single-source fields empty and is detected
+     * by [packageSourceCount].
      */
     data class LevelState(
         val id: String,
@@ -34,6 +37,8 @@ object QuizRuntime {
         val collectionId: String? = null,
         val tagName: String = "",
         val available: Int,
+        /** Sources in this level's package; 0 for a cloud level. */
+        val packageSourceCount: Int = 0,
         /** Set only for cloud levels; the QB level id used by `serve-next`. Never zero. */
         val qbLevelId: Long? = null,
         /**
@@ -81,6 +86,11 @@ object QuizRuntime {
          */
         val documentUnreadable: Boolean = false,
         /**
+         * The local document's level-package extension is corrupt. Kept apart
+         * from [documentUnreadable] so the web can explain which part failed.
+         */
+        val levelPackagesUnreadable: Boolean = false,
+        /**
          * Bound TV: the active cloud QCD could not be projected into a round.
          * The code is internal; screens map it to human copy. Null in local mode
          * and when the plan is ready.
@@ -101,6 +111,8 @@ object QuizRuntime {
         val defaultChallengeConfig: QuizConfig = QuizConfig(),
         /** Ordered levels; the TV shows exactly this list to the child. */
         val answerLevels: List<LevelState> = emptyList(),
+        /** The same local levels in their editable source form, for the web. */
+        val levelPackages: List<QuizLevelPackage> = emptyList(),
         /** First level, kept for the cloud/legacy single-scope surfaces. */
         val answerScope: QuizAnswerScope? = null,
         val activeScope: String? = null,
@@ -216,20 +228,56 @@ object QuizRuntime {
             QuizRecovery.scopeFor(it, PolicyModeCoordinator.state.value.deviceNo)
         }
         val activeAvailable = activeScope?.let { QuizQuestionCache.availableCount(it) } ?: 0
-        val documentLevels = localDocument?.localLevels()
-        if (localMode && localDocument != null && documentLevels == null) {
-            documentUnreadable = true
+        // Level packages are the local source of truth. An absent extension is
+        // migrated once; a broken one blocks the bank instead of falling back
+        // to legacy keys the parent can no longer see.
+        var levelPackagesUnreadable = false
+        var localPackages: List<QuizLevelPackage> = emptyList()
+        if (localMode) {
+            val document = localDocument
+            if (document != null) {
+                when (val extension = QuizLevelPackageStore.read(document)) {
+                    is QuizLevelPackageStore.Extension.Present ->
+                        localPackages = extension.packages
+                    is QuizLevelPackageStore.Extension.Broken ->
+                        levelPackagesUnreadable = true
+                    QuizLevelPackageStore.Extension.Absent -> when (
+                        val loadedPackage = QuizLevelPackageStore.load()
+                    ) {
+                        is QuizLevelPackageStore.LoadResult.Ok -> {
+                            localDocument = loadedPackage.document
+                            localPackages = loadedPackage.packages
+                        }
+                        is QuizLevelPackageStore.LoadResult.Unreadable,
+                        QuizLevelPackageStore.LoadResult.Storage ->
+                            levelPackagesUnreadable = true
+                    }
+                }
+            }
         }
-        val courseLevels: List<LevelState> = if (localMode) {
-            (documentLevels ?: emptyList()).map { level: QuizLevel ->
+        // Paused levels stay in [levelPackages] for the parent page, but the
+        // child's wheel only receives enabled ones. A local bank whose levels
+        // are all paused becomes "paused", not "empty".
+        val enabledPackages = localPackages.filter { it.enabled }
+        val answerLevels: List<LevelState> = if (localMode) {
+            val tagNames = QuizCollectionStore.collections().associate { it.id to it.name }
+            enabledPackages.map { pkg ->
+                val only = pkg.sources.singleOrNull()
+                val collectionId = (only as? QuizPackageSource.Collection)?.collectionId
                 LevelState(
-                    id = level.id,
-                    name = level.name,
-                    scope = level.scope,
-                    available = QuizQuestionCache.availableCount(
-                        QuizQuestionCache.LOCAL_SCOPE,
-                        answerScope = level.scope,
-                    ),
+                    id = pkg.id,
+                    name = pkg.name,
+                    // A mixed package keeps its first course scope for the
+                    // legacy answerScope field, but the wheel names the package.
+                    scope = (only as? QuizPackageSource.Course)?.scope
+                        ?: pkg.sources.firstNotNullOfOrNull {
+                            (it as? QuizPackageSource.Course)?.scope
+                        },
+                    collectionId = collectionId,
+                    tagName = collectionId?.let { tagNames[it] }.orEmpty(),
+                    available = QuizQuestionCache.packageAvailability(pkg).available,
+                    packageSourceCount = pkg.sources.size,
+                    wrongReview = only == QuizPackageSource.WrongReview,
                 )
             }
         } else {
@@ -243,48 +291,18 @@ object QuizRuntime {
                 )
             } ?: emptyList()
         }
-        // Custom levels always come after course levels. Each draws only from
-        // its own tag; they never gain a curriculum scope. A cloud document
-        // cannot carry them, so querying the local store here would mix modes.
-        val customLevels = if (localMode) {
-            val tagNames = QuizCollectionStore.collections().associate { it.id to it.name }
-            QuizCollectionStore.customLevels().map { level ->
-                LevelState(
-                    id = level.id,
-                    name = level.name,
-                    collectionId = level.collectionId,
-                    tagName = tagNames[level.collectionId].orEmpty(),
-                    available = QuizQuestionCache.availableCollectionCount(level.collectionId),
-                )
-            }
-        } else {
-            emptyList()
-        }
-        // Wrong review always comes last; it has no curriculum scope and no
-        // custom tag. An empty name falls back to the localized TV title.
-        val wrongLevels = if (localMode) {
-            QuizWrongReviewLevelStore.level()?.let { level ->
-                listOf(
-                    LevelState(
-                        id = level.id,
-                        name = level.name,
-                        available = QuizQuestionCache.wrongReviewCount(),
-                        wrongReview = true,
-                    ),
-                )
-            }.orEmpty()
-        } else {
-            emptyList()
-        }
-        val answerLevels = courseLevels + customLevels + wrongLevels
-        // This legacy field always means a curriculum scope; a custom level in
-        // front must not turn it into null for cloud/reporting callers.
-        val answerScope = courseLevels.firstOrNull()?.scope
+        // This legacy field always means a curriculum scope; a custom or mixed
+        // level in front must not turn it into null for cloud/reporting callers.
+        val answerScope = answerLevels.firstNotNullOfOrNull { it.scope }
         val playable = answerLevels.maxOfOrNull { it.available } ?: 0
         val bankState = when {
             !localMode && cloudPlanError != null -> "blocked"
-            localMode && documentUnreadable -> "blocked"
+            localMode && (documentUnreadable || levelPackagesUnreadable) -> "blocked"
             !localMode && !enabled -> "disabled"
+            // A parent can pause every level; that is a deliberate state, not
+            // an empty bank, so the child sees the pause notice instead of a
+            // request to generate more questions.
+            localMode && localPackages.isNotEmpty() && enabledPackages.isEmpty() -> "paused"
             // Local mode hides the start page when no level has questions. The
             // cloud start page stays visible whenever the parent configured
             // levels, so an unavailable reason can be shown instead of the QR.
@@ -301,6 +319,7 @@ object QuizRuntime {
             consentAccepted = QuizSessionStore.consentAccepted(),
             unreadable = unreadable,
             documentUnreadable = documentUnreadable,
+            levelPackagesUnreadable = levelPackagesUnreadable,
             cloudPlanError = cloudPlanError,
             cloudCheckinBlocked = cloudPlan?.checkinBlocked ?: false,
             cloudCheckinMessage = cloudPlan?.checkinMessage,
@@ -312,6 +331,7 @@ object QuizRuntime {
             localBankActive = localMode,
             defaultChallengeConfig = defaultConfig,
             answerLevels = answerLevels,
+            levelPackages = localPackages,
             answerScope = answerScope,
             activeScope = activeScope,
             activeScopeAvailable = activeAvailable,

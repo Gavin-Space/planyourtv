@@ -598,6 +598,10 @@ object LocalPolicyStore {
             PolicyKeys.LOCAL_SESSION_ACTIVATION,
             PolicyKeys.LOCAL_SESSION_ACCESS_MODE,
             PolicyKeys.LOCAL_SESSION_ALLOWED_PACKAGES,
+            // V37 execution state: rules and PINs are gone, so a restored session/override
+            // would no longer be explainable to the parent.
+            PolicyKeys.LOCAL_RUNTIME_V2,
+            PolicyKeys.LOCAL_GUARD_V2,
         ).forEach { TvStore.remove(it) }
         TvStore.sync()
     }

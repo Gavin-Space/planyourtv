@@ -2,9 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- The page comes from the TV on the local network; the shell has no
-         backend, no analytics and no other permission. -->
+         backend, no analytics and no account. The install permission below is
+         only for the parent app's own update. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Used only for the parent app's own update. The system installer still
+         shows its confirmation; the APK is checked against release metadata,
+         the expected package and the installed signer first. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-feature
         android:name="android.hardware.camera"

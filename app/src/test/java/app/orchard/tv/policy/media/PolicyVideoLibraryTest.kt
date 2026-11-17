@@ -1,15 +1,20 @@
 package app.orchard.tv.policy.media
 
 import android.content.Context
+import app.orchard.tv.quiz.QuizIntroVideo
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import java.io.File
+import java.util.UUID
 
 /**
  * Role slots share one preference store. Clearing one role must never clear the
@@ -29,6 +34,7 @@ class PolicyVideoLibraryTest {
     @After
     fun tearDown() {
         prefs().edit().clear().commit()
+        File(context.filesDir, "quiz-intro").deleteRecursively()
     }
 
     @Test
@@ -147,6 +153,65 @@ class PolicyVideoLibraryTest {
             "keep-me",
             prefs().getString(PolicyVideoRole.QUIZ_INTRO.prefKey, null),
         )
+    }
+
+    @Test
+    fun longLocalVideoIsWallpaperOnlyAndShortVideoCanAlsoBeAQuizIntro() {
+        val long = localVideo(durationMs = 600_000, hasAudio = true)
+        assertEquals(
+            setOf(PolicyVideoRole.LOCK_WALLPAPER),
+            PolicyVideoLibrary.capabilityRoles(context, long),
+        )
+
+        val short = localVideo(durationMs = 12_000, hasAudio = false)
+        assertEquals(
+            PolicyVideoRole.entries.toSet(),
+            PolicyVideoLibrary.capabilityRoles(context, short),
+        )
+    }
+
+    @Test
+    fun soundDefaultsOnButOnlyResolvesForAnAudioWallpaper() {
+        prefs().edit().putInt("media_schema", 1).commit()
+        assertTrue(QuizIntroVideo.lockSound(context))
+        assertFalse(PolicyVideoLibrary.lockSound(context))
+        assertFalse(PolicyVideoLibrary.setLockSound(context, true))
+        assertTrue(QuizIntroVideo.lockSound(context))
+
+        val silent = localVideo(durationMs = 600_000, hasAudio = false)
+        setLockRole(silent)
+        assertFalse(PolicyVideoLibrary.lockSound(context))
+        assertFalse(PolicyVideoLibrary.setLockSound(context, true))
+
+        val audio = localVideo(durationMs = 600_000, hasAudio = true)
+        setLockRole(audio)
+        assertTrue(PolicyVideoLibrary.lockSound(context))
+        assertTrue(PolicyVideoLibrary.setLockSound(context, false))
+        assertFalse(PolicyVideoLibrary.lockSound(context))
+        assertTrue(PolicyVideoLibrary.setLockSound(context, true))
+        assertTrue(PolicyVideoLibrary.lockSound(context))
+    }
+
+    /** A tiny complete local entry; the library only reads metadata here, never decodes it. */
+    private fun localVideo(durationMs: Long, hasAudio: Boolean): String {
+        val id = UUID.randomUUID().toString().replace("-", "")
+        val dir = File(File(context.filesDir, "quiz-intro"), id)
+        check(dir.mkdirs())
+        File(dir, "video.mp4").writeBytes(byteArrayOf(0, 0, 0, 1))
+        File(dir, "info.json").writeText(
+            """
+            {"kind":"video","name":"$id.mp4","durationMs":$durationMs,
+             "width":1920,"height":1080,"hasAudio":$hasAudio,"createdAt":1}
+            """.trimIndent(),
+        )
+        return id
+    }
+
+    private fun setLockRole(id: String) {
+        prefs().edit()
+            .putString(PolicyVideoRole.LOCK_WALLPAPER.prefKey, id)
+            .putInt("media_schema", 1)
+            .commit()
     }
 
     private fun prefs() = context.getSharedPreferences("quiz-intro", Context.MODE_PRIVATE)

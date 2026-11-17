@@ -9,9 +9,14 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizItem
+import com.planyourtv.policy.quiz.QuizLevelPackage
+import com.planyourtv.policy.quiz.QuizPackageSource
 import com.planyourtv.policy.quiz.QuizSession
 import com.planyourtv.policy.quiz.QuizSessionCodec
+import com.planyourtv.policy.quiz.QuizTypeFilter
+import org.json.JSONArray
 import java.security.MessageDigest
+import java.util.Random
 import java.util.UUID
 
 /**
@@ -24,15 +29,18 @@ object QuizQuestionCache {
     const val LOCAL_SCOPE = "local"
 
     /**
-     * Leaves room for the 5,500 bundled questions plus user-generated batches.
-     * The seed import is one transaction; the web lists the bank with paging,
-     * so the larger bound does not turn into a larger page.
+     * The bank is local-only and user-owned. Large manual imports are accepted
+     * in batches; storage and speed are the user's responsibility. The web
+     * lists and previews with paging, so the larger bound never means a larger
+     * DOM or one huge transaction.
      */
-    const val BANK_CAPACITY = 6_000
+    const val BANK_CAPACITY = 100_000
+    /** Seed rows are inserted in small chunks so streaming import stays small. */
+    private const val SEED_IMPORT_BATCH = 200
 
     private const val TABLE = "quiz_question_cache"
     private const val DB_NAME = "quiz_question_cache.db"
-    private const val DB_VERSION = 3
+    private const val DB_VERSION = 4
 
     private const val STATE_AVAILABLE = "AVAILABLE"
     private const val STATE_RESERVED = "RESERVED"
@@ -52,7 +60,19 @@ object QuizQuestionCache {
     private const val SELECT_COLUMNS =
         "cache_id, question_json, source_kind, source_ref, scope_key, collection_id, " +
             "received_at, expires_at, state, last_result, wrong_count, answered_at, " +
-            "last_timed_out, last_selected_index"
+            "last_timed_out, last_selected_index, last_selected_indices"
+
+    private const val ROUND_EXCLUSION_TABLE = "qc_round_exclusion"
+    private const val PICKED_EXCLUSION =
+        " AND NOT EXISTS (SELECT 1 FROM $ROUND_EXCLUSION_TABLE e " +
+            "WHERE e.kind = 'id' AND e.value = $TABLE.question_id)" +
+            " AND NOT EXISTS (SELECT 1 FROM $ROUND_EXCLUSION_TABLE e " +
+            "WHERE e.kind = 'fp' AND e.value = $TABLE.fingerprint)"
+    private const val NORMAL_SOURCE_EXCLUSION = PICKED_EXCLUSION +
+        " AND NOT EXISTS (SELECT 1 FROM $ROUND_EXCLUSION_TABLE e " +
+        "WHERE e.kind = 'wrong-id' AND e.value = $TABLE.question_id)" +
+        " AND NOT EXISTS (SELECT 1 FROM $ROUND_EXCLUSION_TABLE e " +
+        "WHERE e.kind = 'wrong-fp' AND e.value = $TABLE.fingerprint)"
 
     private val lock = Any()
     @Volatile private var helper: Helper? = null
@@ -93,6 +113,8 @@ object QuizQuestionCache {
         val answeredAt: Long?,
         val timedOut: Boolean,
         val selectedIndex: Int?,
+        /** Published-order multiple-choice selection; empty for single rows. */
+        val selectedIndices: List<Int> = emptyList(),
     ) {
         fun status(nowMs: Long = System.currentTimeMillis()): String = when {
             state == STATE_AVAILABLE && expiresAt != null && expiresAt <= nowMs -> "expired"
@@ -124,6 +146,8 @@ object QuizQuestionCache {
         val correct: Boolean,
         val timedOut: Boolean,
         val answeredAt: Long,
+        /** Published-order multiple-choice selection; empty for single rows. */
+        val selectedIndices: List<Int> = emptyList(),
     )
 
     data class AppendResult(
@@ -165,6 +189,45 @@ object QuizQuestionCache {
     data class CollectionCounts(
         val collectionId: String,
         val counts: BankCounts,
+    )
+
+    /** Raw available counts for one course scope; the filter never widens. */
+    data class AnswerKindCounts(
+        val total: Int = 0,
+        val single: Int = 0,
+        val multiple: Int = 0,
+    )
+
+    /**
+     * A package's sources overlap, so [available] is a distinct union rather
+     * than the sum of [sourceCounts]. Wrong-review rows are added because they
+     * live in CONSUMED, outside the normal available set.
+     */
+    data class PackageAvailability(
+        val sourceCounts: List<Int> = emptyList(),
+        val available: Int = 0,
+    )
+
+    /**
+     * One distinct scope combination. The faceted picker only needs counts,
+     * not question text, so grouping the indexed scope columns avoids decoding
+     * every row at a 100,000-question bank.
+     */
+    data class FacetGroup(
+        val grade: Int?,
+        val semester: Int?,
+        val subject: String,
+        val textbook: String,
+        val scopeType: String,
+        val unitNo: Int?,
+        val difficulty: String,
+        val answerKind: String,
+        val count: Int,
+    )
+
+    data class FacetSnapshot(
+        val total: Int = 0,
+        val groups: List<FacetGroup> = emptyList(),
     )
 
     enum class ClearMode {
@@ -442,16 +505,206 @@ object QuizQuestionCache {
     ): List<CachedQuestion> =
         reserveForRound(count, sessionId, LOCAL_SCOPE, minRequired, nowMs, collectionId = collectionId)
 
+    /**
+     * Round-robin package sampling.
+     *
+     * Every source contributes at most one question per cycle, starting at a
+     * random offset so the first source cannot dominate a round. Course sources
+     * honor their type filter; wildcard-subject sources rotate subjects so one
+     * subject cannot fill the round. Wrong-review rows are drawn before normal
+     * sources can reuse their content, so a correct answer actually clears the
+     * mistake. All row reservations happen in this one transaction: a short
+     * round rolls back and leaves the bank untouched.
+     *
+     * [random] is injectable so tests can replay a distribution.
+     */
+    fun reservePackageForRound(
+        level: QuizLevelPackage,
+        count: Int,
+        sessionId: String,
+        minRequired: Int,
+        nowMs: Long = System.currentTimeMillis(),
+        scopeKey: String = LOCAL_SCOPE,
+        random: Random = Random(),
+    ): List<CachedQuestion> = synchronized(lock) {
+        if (count <= 0 || minRequired <= 0) return emptyList()
+        val db = database() ?: throw CacheException("cache not initialized")
+        db.beginTransaction()
+        try {
+            expire(db, scopeKey, nowMs)
+            val sources = level.sources
+            if (sources.isEmpty()) {
+                db.setTransactionSuccessful()
+                return emptyList()
+            }
+            resetRoundExclusions(db)
+            val wrongSource = sources.any { it is QuizPackageSource.WrongReview }
+            if (wrongSource) blockWrongReviewCandidates(db, scopeKey)
+
+            val sourceOrder = IntArray(sources.size) { it }
+            val offset = random.nextInt(sourceOrder.size)
+            val order = IntArray(sourceOrder.size) { sourceOrder[(offset + it) % sourceOrder.size] }
+            val exhausted = BooleanArray(sources.size)
+            val picked = ArrayList<CachedQuestion>(count)
+            val pickedIds = HashSet<String>(count * 2 + 8)
+            val pickedFingerprints = HashSet<String>(count * 2 + 8)
+            val wrongPicked = HashSet<String>(count)
+            val subjectUsage = HashMap<Int, MutableMap<String, Int>>()
+
+            while (picked.size < count) {
+                var progressed = false
+                for (index in order) {
+                    if (picked.size >= count || exhausted[index]) continue
+                    val source = sources[index]
+                    val drawn = when (source) {
+                        is QuizPackageSource.Course -> drawCourseSource(
+                            db = db,
+                            scopeKey = scopeKey,
+                            nowMs = nowMs,
+                            source = source,
+                            random = random,
+                            usage = subjectUsage.getOrPut(index) { mutableMapOf() },
+                        )
+                        is QuizPackageSource.Collection -> drawCollectionSource(
+                            db = db,
+                            scopeKey = scopeKey,
+                            nowMs = nowMs,
+                            collectionId = source.collectionId,
+                            random = random,
+                        )
+                        QuizPackageSource.WrongReview -> drawWrongSource(
+                            db = db,
+                            scopeKey = scopeKey,
+                            random = random,
+                        )
+                    }
+                    if (drawn == null) {
+                        exhausted[index] = true
+                        continue
+                    }
+                    val questionId = drawn.question.questionId
+                    val fp = fingerprint(drawn.question)
+                    // The SQL exclusion should make this impossible; failing
+                    // closed here avoids a short or duplicated round.
+                    if ((questionId.isNotBlank() && !pickedIds.add(questionId)) ||
+                        !pickedFingerprints.add(fp)
+                    ) {
+                        exhausted[index] = true
+                        continue
+                    }
+                    picked += drawn
+                    if (source is QuizPackageSource.WrongReview) wrongPicked += drawn.cacheId
+                    addRoundExclusion(db, "id", questionId)
+                    addRoundExclusion(db, "fp", fp)
+                    progressed = true
+                    if (picked.size >= count) break
+                }
+                if (!progressed) break
+            }
+
+            if (picked.size < minRequired) {
+                // Expired rows should stay expired; no reservation has been
+                // written yet.
+                db.setTransactionSuccessful()
+                return emptyList()
+            }
+            picked.forEach { row ->
+                val updated = if (row.cacheId in wrongPicked) {
+                    db.update(
+                        TABLE,
+                        ContentValues().apply { putNull("last_round_id") },
+                        "cache_id = ? AND state = ? AND last_result = ?",
+                        arrayOf(row.cacheId, STATE_CONSUMED, RESULT_WRONG),
+                    )
+                } else {
+                    db.update(
+                        TABLE,
+                        ContentValues().apply {
+                            put("state", STATE_RESERVED)
+                            put("reserved_by", sessionId)
+                            put("reserved_at", nowMs)
+                        },
+                        "cache_id = ? AND state = ?",
+                        arrayOf(row.cacheId, STATE_AVAILABLE),
+                    )
+                }
+                if (updated != 1) throw CacheException("package row changed during reservation")
+            }
+            db.setTransactionSuccessful()
+            picked.map { row ->
+                if (row.cacheId in wrongPicked) row else row.copy(state = STATE_RESERVED)
+            }
+        } catch (e: CacheException) {
+            throw e
+        } catch (e: Exception) {
+            throw CacheException("package reserve failed", e)
+        } finally {
+            db.endTransaction()
+        }
+    }
+
     /** Every local row whose most recent answer was wrong, across sources and tags. */
     fun wrongReviewCount(scopeKey: String = LOCAL_SCOPE): Int = synchronized(lock) {
         val db = database() ?: return 0
+        runCatching { wrongReviewCount(db, scopeKey) }
+            .onFailure { Log.e(TAG, "wrong-review count failed", it) }
+            .getOrDefault(0)
+    }
+
+    /**
+     * Per-source raw counts plus a distinct package total. The runtime and the
+     * web both read this one snapshot, so a parent never sees two different
+     * availability numbers for the same package.
+     */
+    fun packageAvailability(
+        level: QuizLevelPackage,
+        nowMs: Long = System.currentTimeMillis(),
+        scopeKey: String = LOCAL_SCOPE,
+    ): PackageAvailability = synchronized(lock) {
+        val empty = PackageAvailability(List(level.sources.size) { 0 }, 0)
+        val db = database() ?: return empty
         runCatching {
-            db.rawQuery(
-                "SELECT COUNT(*) FROM $TABLE " +
-                    "WHERE scope_key = ? AND state = ? AND last_result = ?",
-                arrayOf(scopeKey, STATE_CONSUMED, RESULT_WRONG),
-            ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
-        }.onFailure { Log.e(TAG, "wrong-review count failed", it) }.getOrDefault(0)
+            expire(db, scopeKey, nowMs)
+            val perSource = level.sources.map { source ->
+                when (source) {
+                    is QuizPackageSource.Course -> countAvailable(
+                        db,
+                        courseWhere(scopeKey, nowMs, source.scope, source.answerKind),
+                    )
+                    is QuizPackageSource.Collection ->
+                        countAvailable(db, collectionWhere(scopeKey, nowMs, source.collectionId))
+                    QuizPackageSource.WrongReview -> wrongReviewCount(db, scopeKey)
+                }
+            }
+            val clauses = mutableListOf<String>()
+            val args = mutableListOf<String>()
+            level.sources.forEach { source ->
+                val pair = when (source) {
+                    is QuizPackageSource.Course ->
+                        courseWhere(scopeKey, nowMs, source.scope, source.answerKind)
+                    is QuizPackageSource.Collection ->
+                        collectionWhere(scopeKey, nowMs, source.collectionId)
+                    QuizPackageSource.WrongReview -> null
+                } ?: return@forEach
+                clauses += "(" + pair.first + ")"
+                args += pair.second
+            }
+            val normal = if (clauses.isEmpty()) {
+                0
+            } else {
+                db.rawQuery(
+                    "SELECT COUNT(DISTINCT question_id || ':' || fingerprint) FROM $TABLE " +
+                        "WHERE " + clauses.joinToString(" OR "),
+                    args.toTypedArray(),
+                ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+            }
+            val wrong = if (level.sources.any { it is QuizPackageSource.WrongReview }) {
+                wrongReviewCount(db, scopeKey)
+            } else {
+                0
+            }
+            PackageAvailability(perSource, normal + wrong)
+        }.onFailure { Log.e(TAG, "package availability failed", it) }.getOrDefault(empty)
     }
 
     /**
@@ -485,12 +738,16 @@ object QuizQuestionCache {
                     "ORDER BY COALESCE(answered_at, 0) ASC, received_at ASC, rowid ASC",
                 arrayOf(scopeKey, STATE_CONSUMED, RESULT_WRONG),
             ).use { cursor ->
+                // Look the two appended columns up by name; their position
+                // changes whenever SELECT_COLUMNS grows.
+                val questionIdColumn = cursor.getColumnIndexOrThrow("question_id")
+                val fingerprintColumn = cursor.getColumnIndexOrThrow("fingerprint")
                 while (cursor.moveToNext() && picked.size < count) {
                     val cached = readQuestion(cursor)
-                    val questionId = cursor.getString(WRONG_QUESTION_ID_COLUMN)
+                    val questionId = cursor.getString(questionIdColumn)
                         .orEmpty()
                         .ifBlank { cached.question.questionId }
-                    val fingerprint = cursor.getString(WRONG_FINGERPRINT_COLUMN).orEmpty()
+                    val fingerprint = cursor.getString(fingerprintColumn).orEmpty()
                     if (!questionIds.add(questionId)) continue
                     if (fingerprint.isNotEmpty() && !fingerprints.add(fingerprint)) continue
                     picked += cached
@@ -518,9 +775,6 @@ object QuizQuestionCache {
             db.endTransaction()
         }
     }
-
-    private const val WRONG_QUESTION_ID_COLUMN = 14
-    private const val WRONG_FINGERPRINT_COLUMN = 15
 
     private fun readCandidates(
         db: SQLiteDatabase,
@@ -605,12 +859,13 @@ object QuizQuestionCache {
         batchId: String,
         items: List<QuizItem>,
         nowMs: Long = System.currentTimeMillis(),
+        capacity: Int = BANK_CAPACITY,
     ): AppendResult = synchronized(lock) {
         if (batchId.isBlank() || items.isEmpty()) return AppendResult(rejected = items.size)
         val db = database() ?: return AppendResult(rejected = items.size)
         db.beginTransaction()
         try {
-            val result = appendLocalQuestionsLocked(db, batchId, items, nowMs)
+            val result = appendLocalQuestionsLocked(db, batchId, items, nowMs, capacity = capacity)
             db.setTransactionSuccessful()
             result
         } catch (error: Exception) {
@@ -623,31 +878,110 @@ object QuizQuestionCache {
 
     /**
      * Replaces the bundled seed rows in one transaction. Only rows whose source
-     * ref starts with `local:preset-v` are removed, so questions generated by
-     * the user keep both their content and their answer history. Rows reserved
-     * by a running round are kept: deleting them would strand that round's
-     * answer writes during an APK upgrade.
+     * ref starts with `local:<sourceRefPrefix>` are removed, so questions
+     * generated by the user keep both their content and their answer history,
+     * and the single- and multiple-choice banks never delete each other. Rows
+     * reserved by a running round are kept: deleting them would strand that
+     * round's answer writes during an APK upgrade.
      */
     fun replaceSeedQuestions(
         batchId: String,
         items: List<QuizItem>,
         nowMs: Long = System.currentTimeMillis(),
+        capacity: Int = BANK_CAPACITY,
+        sourceRefPrefix: String = "preset-v",
+    ): AppendResult = replaceSeedQuestionsStreaming(
+        batchId = batchId,
+        items = items.asSequence(),
+        nowMs = nowMs,
+        capacity = capacity,
+        sourceRefPrefix = sourceRefPrefix,
+    )
+
+    /**
+     * Streaming form of [replaceSeedQuestions]. The caller supplies a lazy
+     * sequence so the seed asset can be parsed with `android.util.JsonReader`
+     * instead of building the whole JSON tree and question list in memory.
+     *
+     * The whole import still runs in one SQLite transaction; a malformed asset
+     * or a read failure rolls back the old rows. If the new asset yields no
+     * usable row at all, the transaction is also rolled back so a broken bank
+     * cannot erase the previous one.
+     */
+    fun replaceSeedQuestionsStreaming(
+        batchId: String,
+        items: Sequence<QuizItem>,
+        nowMs: Long = System.currentTimeMillis(),
+        capacity: Int = BANK_CAPACITY,
+        sourceRefPrefix: String = "preset-v",
+        batchSize: Int = SEED_IMPORT_BATCH,
     ): AppendResult = synchronized(lock) {
-        if (batchId.isBlank() || items.isEmpty()) return AppendResult(rejected = items.size)
-        val db = database() ?: return AppendResult(rejected = items.size)
+        if (batchId.isBlank()) return AppendResult()
+        val db = database() ?: return AppendResult(rejected = 1)
+        val iterator = items.iterator()
+        // Parse the first item before touching the old rows. An empty or
+        // unreadable asset must leave the current bank untouched.
+        val first = try {
+            if (!iterator.hasNext()) return AppendResult()
+            iterator.next()
+        } catch (error: Exception) {
+            Log.e(TAG, "replace seed questions failed while reading", error)
+            return AppendResult(rejected = 1)
+        }
         db.beginTransaction()
         try {
             db.delete(
                 TABLE,
                 "scope_key = ? AND source_kind = ? AND source_ref LIKE ? AND state != ?",
-                arrayOf(LOCAL_SCOPE, SOURCE_LOCAL, "local:preset-v%", STATE_RESERVED),
+                arrayOf(LOCAL_SCOPE, SOURCE_LOCAL, "local:$sourceRefPrefix%", STATE_RESERVED),
             )
-            val result = appendLocalQuestionsLocked(db, batchId, items, nowMs)
+            val chunkSize = batchSize.coerceAtLeast(1)
+            val batch = ArrayList<QuizItem>(chunkSize)
+            var appended = 0
+            var duplicates = 0
+            var rejected = 0
+            var capacityReached = false
+            fun flush() {
+                if (batch.isEmpty()) return
+                val result = appendLocalQuestionsLocked(
+                    db,
+                    batchId,
+                    batch,
+                    nowMs,
+                    capacity = capacity,
+                )
+                appended += result.appended
+                duplicates += result.duplicates
+                rejected += result.rejected
+                capacityReached = capacityReached || result.capacityReached
+                batch.clear()
+            }
+            batch += first
+            while (iterator.hasNext()) {
+                batch += iterator.next()
+                if (batch.size >= chunkSize) flush()
+            }
+            flush()
+            if (appended == 0 && duplicates == 0) {
+                // Nothing usable made it in; roll back the delete instead of
+                // leaving an empty seed bank behind.
+                return AppendResult(
+                    appended = appended,
+                    duplicates = duplicates,
+                    rejected = rejected,
+                    capacityReached = capacityReached,
+                )
+            }
             db.setTransactionSuccessful()
-            result
+            AppendResult(
+                appended = appended,
+                duplicates = duplicates,
+                rejected = rejected,
+                capacityReached = capacityReached,
+            )
         } catch (error: Exception) {
             Log.e(TAG, "replace seed questions failed", error)
-            AppendResult(rejected = items.size)
+            AppendResult(rejected = 1)
         } finally {
             db.endTransaction()
         }
@@ -659,8 +993,9 @@ object QuizQuestionCache {
         items: List<QuizItem>,
         nowMs: Long,
         collectionId: String? = null,
+        capacity: Int = BANK_CAPACITY,
     ): AppendResult {
-        var remaining = (BANK_CAPACITY - rowCount(db, LOCAL_SCOPE)).coerceAtLeast(0)
+        var remaining = (capacity - rowCount(db, LOCAL_SCOPE)).coerceAtLeast(0)
         val seen = mutableSetOf<String>()
         val appended = mutableListOf<CachedQuestion>()
         var duplicates = 0
@@ -788,13 +1123,14 @@ object QuizQuestionCache {
         collectionId: String,
         items: List<QuizItem>,
         nowMs: Long = System.currentTimeMillis(),
+        capacity: Int = BANK_CAPACITY,
     ): ImportPlan = synchronized(lock) {
         if (collectionId.isBlank() || items.isEmpty()) return ImportPlan()
         val db = database() ?: return ImportPlan(total = items.size)
         runCatching {
             expire(db, LOCAL_SCOPE, nowMs)
             val plan = planLocalImportLocked(db, collectionId, items)
-            val remaining = (BANK_CAPACITY - rowCount(db, LOCAL_SCOPE)).coerceAtLeast(0)
+            val remaining = (capacity - rowCount(db, LOCAL_SCOPE)).coerceAtLeast(0)
             ImportPlan(
                 total = items.size,
                 fileDuplicates = plan.fileDuplicates,
@@ -819,6 +1155,7 @@ object QuizQuestionCache {
         batchId: String,
         items: List<QuizItem>,
         nowMs: Long = System.currentTimeMillis(),
+        capacity: Int = BANK_CAPACITY,
     ): ImportResult = synchronized(lock) {
         if (collectionId.isBlank() || batchId.isBlank() || items.isEmpty()) {
             return ImportResult(rejected = items.size)
@@ -827,7 +1164,7 @@ object QuizQuestionCache {
         db.beginTransaction()
         try {
             val plan = planLocalImportLocked(db, collectionId, items)
-            val remaining = (BANK_CAPACITY - rowCount(db, LOCAL_SCOPE)).coerceAtLeast(0)
+            val remaining = (capacity - rowCount(db, LOCAL_SCOPE)).coerceAtLeast(0)
             val result = ImportResult(
                 fileDuplicates = plan.fileDuplicates,
                 collectionDuplicates = plan.collectionDuplicates,
@@ -909,7 +1246,51 @@ object QuizQuestionCache {
         )
     }
 
-    /** Every local bank row, used by the faceted custom-range picker (capacity is bounded). */
+    /**
+     * Scope counts for the faceted custom-range picker. Grouping in SQLite
+     * keeps the 100,000-row bank off the heap; the caller only re-expands the
+     * distinct combinations through the existing curriculum validation.
+     */
+    fun facetSnapshot(
+        scopeKey: String,
+        nowMs: Long = System.currentTimeMillis(),
+    ): FacetSnapshot = synchronized(lock) {
+        val db = database() ?: return FacetSnapshot()
+        runCatching {
+            expire(db, scopeKey, nowMs)
+            val total = db.rawQuery(
+                "SELECT COUNT(*) FROM $TABLE WHERE scope_key = ?",
+                arrayOf(scopeKey),
+            ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+            val groups = mutableListOf<FacetGroup>()
+            db.rawQuery(
+                "SELECT scope_grade, scope_semester, scope_subject, scope_textbook, " +
+                    "scope_type, scope_unit_no, difficulty, answer_kind, COUNT(*) FROM $TABLE " +
+                    "WHERE scope_key = ? " +
+                    "GROUP BY scope_grade, scope_semester, scope_subject, scope_textbook, " +
+                    "scope_type, scope_unit_no, difficulty, answer_kind",
+                arrayOf(scopeKey),
+            ).use { cursor ->
+                while (cursor.moveToNext()) {
+                    groups += FacetGroup(
+                        grade = if (cursor.isNull(0)) null else cursor.getInt(0),
+                        semester = if (cursor.isNull(1)) null else cursor.getInt(1),
+                        subject = cursor.getString(2).orEmpty(),
+                        textbook = cursor.getString(3).orEmpty(),
+                        scopeType = cursor.getString(4).orEmpty(),
+                        unitNo = if (cursor.isNull(5)) null else cursor.getInt(5),
+                        difficulty = cursor.getString(6).orEmpty(),
+                        answerKind = cursor.getString(7).orEmpty(),
+                        count = cursor.getInt(8),
+                    )
+                }
+            }
+            FacetSnapshot(total, groups)
+        }.onFailure { Log.e(TAG, "facet snapshot failed", it) }
+            .getOrDefault(FacetSnapshot())
+    }
+
+    /** Every local bank row, used by legacy callers; the faceted picker uses [facetSnapshot]. */
     fun listAllBank(
         scopeKey: String,
         nowMs: Long = System.currentTimeMillis(),
@@ -1272,18 +1653,58 @@ object QuizQuestionCache {
         scopeKey: String = LOCAL_SCOPE,
         nowMs: Long = System.currentTimeMillis(),
         answerScope: QuizAnswerScope? = null,
+        answerKind: QuizTypeFilter = QuizTypeFilter.ANY,
     ): Int = synchronized(lock) {
-        if (answerScope == null) return counts(scopeKey, nowMs).available
+        if (answerScope == null && answerKind == QuizTypeFilter.ANY) {
+            return counts(scopeKey, nowMs).available
+        }
         val db = database() ?: return 0
         runCatching {
             expire(db, scopeKey, nowMs)
             val (scopeWhere, scopeArgs) = answerScopeWhere(answerScope)
+            val (kindWhere, kindArgs) = answerKindWhere(answerKind)
             db.rawQuery(
                 "SELECT COUNT(*) FROM $TABLE WHERE scope_key = ? AND state = ? " +
-                    "AND (expires_at IS NULL OR expires_at > ?)$scopeWhere",
-                arrayOf(scopeKey, STATE_AVAILABLE, nowMs.toString()) + scopeArgs,
+                    "AND (expires_at IS NULL OR expires_at > ?)$scopeWhere$kindWhere",
+                arrayOf(scopeKey, STATE_AVAILABLE, nowMs.toString()) + scopeArgs + kindArgs,
             ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
         }.onFailure { Log.e(TAG, "scoped available count failed", it) }.getOrDefault(0)
+    }
+
+    /**
+     * The web course picker shows the mixed total and the single/multiple split
+     * before a parent saves a type-filtered source.
+     */
+    fun availableTypeCounts(
+        scopeKey: String = LOCAL_SCOPE,
+        nowMs: Long = System.currentTimeMillis(),
+        answerScope: QuizAnswerScope,
+    ): AnswerKindCounts = synchronized(lock) {
+        val db = database() ?: return AnswerKindCounts()
+        runCatching {
+            expire(db, scopeKey, nowMs)
+            val (scopeWhere, scopeArgs) = answerScopeWhere(answerScope)
+            var total = 0
+            var single = 0
+            var multiple = 0
+            db.rawQuery(
+                "SELECT answer_kind, COUNT(*) FROM $TABLE " +
+                    "WHERE scope_key = ? AND state = ? " +
+                    "AND (expires_at IS NULL OR expires_at > ?)$scopeWhere " +
+                    "GROUP BY answer_kind",
+                arrayOf(scopeKey, STATE_AVAILABLE, nowMs.toString()) + scopeArgs,
+            ).use { cursor ->
+                while (cursor.moveToNext()) {
+                    val count = cursor.getInt(1)
+                    total += count
+                    when (cursor.getString(0)) {
+                        "single" -> single += count
+                        "multiple" -> multiple += count
+                    }
+                }
+            }
+            AnswerKindCounts(total, single, multiple)
+        }.onFailure { Log.e(TAG, "answer kind counts failed", it) }.getOrDefault(AnswerKindCounts())
     }
 
     /**
@@ -1417,6 +1838,182 @@ object QuizQuestionCache {
         return " AND " + clauses.joinToString(" AND ") to args
     }
 
+    private fun answerKindWhere(kind: QuizTypeFilter): Pair<String, List<String>> =
+        if (kind == QuizTypeFilter.ANY) {
+            "" to emptyList()
+        } else {
+            " AND answer_kind = ?" to listOf(kind.wire)
+        }
+
+    private fun courseWhere(
+        scopeKey: String,
+        nowMs: Long,
+        scope: QuizAnswerScope,
+        answerKind: QuizTypeFilter,
+    ): Pair<String, List<String>> {
+        val (scopeWhere, scopeArgs) = answerScopeWhere(scope)
+        val (kindWhere, kindArgs) = answerKindWhere(answerKind)
+        return "scope_key = ? AND state = ? " +
+            "AND (expires_at IS NULL OR expires_at > ?)$scopeWhere$kindWhere" to
+            listOf(scopeKey, STATE_AVAILABLE, nowMs.toString()) + scopeArgs + kindArgs
+    }
+
+    private fun collectionWhere(
+        scopeKey: String,
+        nowMs: Long,
+        collectionId: String,
+    ): Pair<String, List<String>> =
+        "scope_key = ? AND state = ? " +
+            "AND (expires_at IS NULL OR expires_at > ?) AND collection_id = ?" to
+            listOf(scopeKey, STATE_AVAILABLE, nowMs.toString(), collectionId)
+
+    private fun countAvailable(db: SQLiteDatabase, where: Pair<String, List<String>>): Int =
+        db.rawQuery(
+            "SELECT COUNT(*) FROM $TABLE WHERE ${where.first}",
+            where.second.toTypedArray(),
+        ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+
+    private fun wrongReviewCount(db: SQLiteDatabase, scopeKey: String): Int =
+        db.rawQuery(
+            "SELECT COUNT(*) FROM $TABLE " +
+                "WHERE scope_key = ? AND state = ? AND last_result = ?",
+            arrayOf(scopeKey, STATE_CONSUMED, RESULT_WRONG),
+        ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+
+    /**
+     * The web and runtime share one temp table per connection. It is reset at
+     * the start of every package round, so a failed transaction cannot leak
+     * exclusions into the next attempt.
+     */
+    private fun resetRoundExclusions(db: SQLiteDatabase) {
+        db.execSQL(
+            "CREATE TEMP TABLE IF NOT EXISTS $ROUND_EXCLUSION_TABLE (" +
+                "kind TEXT NOT NULL, value TEXT NOT NULL, PRIMARY KEY(kind, value))",
+        )
+        db.execSQL("DELETE FROM $ROUND_EXCLUSION_TABLE")
+    }
+
+    private fun addRoundExclusion(db: SQLiteDatabase, kind: String, value: String) {
+        if (value.isBlank()) return
+        db.execSQL(
+            "INSERT OR IGNORE INTO $ROUND_EXCLUSION_TABLE(kind, value) VALUES (?, ?)",
+            arrayOf(kind, value),
+        )
+    }
+
+    /**
+     * Block the whole wrong pool for normal sources before drawing starts.
+     * Otherwise a wrong question that appears later in the source order could
+     * be duplicated by a normal source and never cleared this round.
+     */
+    private fun blockWrongReviewCandidates(db: SQLiteDatabase, scopeKey: String) {
+        db.rawQuery(
+            "SELECT question_id, fingerprint FROM $TABLE " +
+                "WHERE scope_key = ? AND state = ? AND last_result = ?",
+            arrayOf(scopeKey, STATE_CONSUMED, RESULT_WRONG),
+        ).use { cursor ->
+            while (cursor.moveToNext()) {
+                addRoundExclusion(db, "wrong-id", cursor.getString(0).orEmpty())
+                addRoundExclusion(db, "wrong-fp", cursor.getString(1).orEmpty())
+            }
+        }
+    }
+
+    private fun drawCourseSource(
+        db: SQLiteDatabase,
+        scopeKey: String,
+        nowMs: Long,
+        source: QuizPackageSource.Course,
+        random: Random,
+        usage: MutableMap<String, Int>,
+    ): CachedQuestion? {
+        val (base, args) = courseWhere(scopeKey, nowMs, source.scope, source.answerKind)
+        val where = base + NORMAL_SOURCE_EXCLUSION
+        if (!source.scope.subject.equals(QuizAnswerScope.SUBJECT_ALL, ignoreCase = true)) {
+            return drawRandomRow(db, where, args, random)
+        }
+        // A wildcard subject must not let one subject fill the round. Prefer a
+        // subject that has not appeared yet from this source, then the least
+        // used, and randomize ties.
+        val subjects = mutableListOf<String>()
+        db.rawQuery(
+            "SELECT UPPER(scope_subject), COUNT(*) FROM $TABLE WHERE $where " +
+                "GROUP BY UPPER(scope_subject)",
+            args.toTypedArray(),
+        ).use { cursor ->
+            while (cursor.moveToNext()) subjects += cursor.getString(0).orEmpty()
+        }
+        if (subjects.isEmpty()) return null
+        val unused = subjects.filter { usage[it] == null }
+        val pool = if (unused.isNotEmpty()) {
+            unused
+        } else {
+            val minimum = subjects.minOf { usage[it] ?: 0 }
+            subjects.filter { (usage[it] ?: 0) == minimum }
+        }
+        val subject = pool[random.nextInt(pool.size)]
+        val row = drawRandomRow(
+            db,
+            "$where AND UPPER(scope_subject) = ?",
+            args + subject,
+            random,
+        )
+        if (row != null) usage[subject] = (usage[subject] ?: 0) + 1
+        return row
+    }
+
+    private fun drawCollectionSource(
+        db: SQLiteDatabase,
+        scopeKey: String,
+        nowMs: Long,
+        collectionId: String,
+        random: Random,
+    ): CachedQuestion? {
+        val (base, args) = collectionWhere(scopeKey, nowMs, collectionId)
+        return drawRandomRow(db, base + NORMAL_SOURCE_EXCLUSION, args, random)
+    }
+
+    private fun drawWrongSource(
+        db: SQLiteDatabase,
+        scopeKey: String,
+        random: Random,
+    ): CachedQuestion? {
+        val where = "scope_key = ? AND state = ? AND last_result = ?$PICKED_EXCLUSION"
+        return drawRandomRow(
+            db,
+            where,
+            listOf(scopeKey, STATE_CONSUMED, RESULT_WRONG),
+            random,
+        )
+    }
+
+    /**
+     * Uniform random row without SQLite's `ORDER BY RANDOM()` sort. The stable
+     * ordering plus an offset from the injected [Random] makes tests
+     * reproducible while still covering the whole candidate pool.
+     */
+    private fun drawRandomRow(
+        db: SQLiteDatabase,
+        where: String,
+        args: List<String>,
+        random: Random,
+    ): CachedQuestion? {
+        val total = db.rawQuery(
+            "SELECT COUNT(*) FROM $TABLE WHERE $where",
+            args.toTypedArray(),
+        ).use { if (it.moveToFirst()) it.getInt(0) else 0 }
+        if (total <= 0) return null
+        val offset = random.nextInt(total)
+        db.rawQuery(
+            "SELECT $SELECT_COLUMNS FROM $TABLE WHERE $where " +
+                "ORDER BY received_at ASC, rowid ASC LIMIT 1 OFFSET ?",
+            (args + offset.toString()).toTypedArray(),
+        ).use { cursor ->
+            if (cursor.moveToNext()) return readQuestion(cursor)
+        }
+        return null
+    }
+
     private fun database(): SQLiteDatabase? = helper?.writableDatabase
 
     private fun expire(db: SQLiteDatabase, scopeKey: String, nowMs: Long) {
@@ -1508,6 +2105,12 @@ object QuizQuestionCache {
                 } else {
                     put("last_selected_index", answer.selectedIndex)
                 }
+                val selectedIndices = answer.selectedIndices.distinct().sorted()
+                if (selectedIndices.isEmpty()) {
+                    putNull("last_selected_indices")
+                } else {
+                    put("last_selected_indices", JSONArray(selectedIndices).toString())
+                }
                 put("consumed_at", nowMs)
                 putNull("reserved_by")
                 putNull("reserved_at")
@@ -1590,6 +2193,14 @@ object QuizQuestionCache {
             answeredAt = if (cursor.isNull(11)) null else cursor.getLong(11),
             timedOut = cursor.getInt(12) != 0,
             selectedIndex = if (cursor.isNull(13)) null else cursor.getInt(13),
+            selectedIndices = if (cursor.isNull(14)) {
+                emptyList()
+            } else {
+                runCatching {
+                    val array = JSONArray(cursor.getString(14))
+                    (0 until array.length()).map { array.getInt(it) }.distinct().sorted()
+                }.getOrDefault(emptyList())
+            },
         )
     }
 
@@ -1610,12 +2221,20 @@ object QuizQuestionCache {
         put("scope_type", item.scopeType)
         if (item.scopeUnitNo == null) putNull("scope_unit_no") else put("scope_unit_no", item.scopeUnitNo)
         put("difficulty", item.difficulty)
+        put("answer_kind", item.answerKind.wire)
     }
 
     private fun fingerprint(item: QuizItem): String {
+        val answerKey = if (item.isMultipleChoice) {
+            "multiple:" + item.answerIndices.distinct().sorted().joinToString(",")
+        } else {
+            // Keep the legacy single-choice canonical string byte-for-byte
+            // stable so an upgrade never re-imports an existing bank.
+            item.answerIndex.toString()
+        }
         val canonical = item.prompt.trim().lowercase() + " " +
             item.options.joinToString(" ") { it.trim().lowercase() } + " " +
-            item.answerIndex
+            answerKey
         return MessageDigest.getInstance("SHA-256")
             .digest(canonical.toByteArray(Charsets.UTF_8))
             .joinToString("") { "%02x".format(it) }
@@ -1641,6 +2260,7 @@ object QuizQuestionCache {
                     "scope_type TEXT NOT NULL DEFAULT '', " +
                     "scope_unit_no INTEGER, " +
                     "difficulty TEXT NOT NULL DEFAULT '', " +
+                    "answer_kind TEXT NOT NULL DEFAULT '', " +
                     "fingerprint TEXT NOT NULL, " +
                     "state TEXT NOT NULL, " +
                     "reserved_by TEXT, " +
@@ -1653,10 +2273,15 @@ object QuizQuestionCache {
                     "answered_at INTEGER, " +
                     "last_round_id TEXT, " +
                     "last_timed_out INTEGER NOT NULL DEFAULT 0, " +
-                    "last_selected_index INTEGER)",
+                    "last_selected_index INTEGER, " +
+                    "last_selected_indices TEXT)",
             )
             createIndexes(db)
             createAnswerScopeIndex(db)
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS idx_qc_answer_kind " +
+                    "ON $TABLE(scope_key, answer_kind)",
+            )
         }
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -1672,6 +2297,7 @@ object QuizQuestionCache {
                 addColumn(db, "last_round_id", "TEXT")
                 addColumn(db, "last_timed_out", "INTEGER NOT NULL DEFAULT 0")
                 addColumn(db, "last_selected_index", "INTEGER")
+                addColumn(db, "last_selected_indices", "TEXT")
                 backfillQuestionIds(db)
                 db.execSQL(
                     "UPDATE $TABLE SET scope_key = 'cloud:legacy' " +
@@ -1679,6 +2305,11 @@ object QuizQuestionCache {
                     arrayOf(LOCAL_SCOPE, SOURCE_CLOUD),
                 )
                 createIndexes(db)
+            }
+            // The type column must exist before addScopeColumns backfills scope
+            // fields; putScopeFields now writes both sets of columns.
+            if (oldVersion < 4) {
+                ensureAnswerKindColumn(db)
             }
             if (oldVersion < 3) {
                 addScopeColumns(db)
@@ -1694,6 +2325,8 @@ object QuizQuestionCache {
         override fun onOpen(db: SQLiteDatabase) {
             super.onOpen(db)
             ensureCollectionColumn(db)
+            ensureSelectedIndicesColumn(db)
+            ensureAnswerKindColumn(db)
             db.execSQL(
                 "CREATE INDEX IF NOT EXISTS idx_qc_scope_collection_fp " +
                     "ON $TABLE(scope_key, collection_id, fingerprint)",
@@ -1701,16 +2334,42 @@ object QuizQuestionCache {
         }
 
         private fun ensureCollectionColumn(db: SQLiteDatabase) {
-            var present = false
+            if (!hasColumn(db, "collection_id")) addColumn(db, "collection_id", "TEXT")
+        }
+
+        /**
+         * Additive like `collection_id`: no DB_VERSION bump, so an older APK
+         * can still open a database that has the extra v7 column.
+         */
+        private fun ensureSelectedIndicesColumn(db: SQLiteDatabase) {
+            if (!hasColumn(db, "last_selected_indices")) {
+                addColumn(db, "last_selected_indices", "TEXT")
+            }
+        }
+
+        /**
+         * Additive like `collection_id`, so a downgrade can still open the
+         * database. The JSON remains the source of truth; this column is only
+         * the type filter for course package sources.
+         */
+        private fun ensureAnswerKindColumn(db: SQLiteDatabase) {
+            if (!hasColumn(db, "answer_kind")) {
+                addColumn(db, "answer_kind", "TEXT NOT NULL DEFAULT ''")
+                backfillAnswerKinds(db)
+            }
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS idx_qc_answer_kind " +
+                    "ON $TABLE(scope_key, answer_kind)",
+            )
+        }
+
+        private fun hasColumn(db: SQLiteDatabase, name: String): Boolean {
             db.rawQuery("PRAGMA table_info($TABLE)", null).use { cursor ->
                 while (cursor.moveToNext()) {
-                    if (cursor.getString(1) == "collection_id") {
-                        present = true
-                        break
-                    }
+                    if (cursor.getString(1) == name) return true
                 }
             }
-            if (!present) addColumn(db, "collection_id", "TEXT")
+            return false
         }
 
         private fun addScopeColumns(db: SQLiteDatabase) {
@@ -1741,6 +2400,28 @@ object QuizQuestionCache {
                 db.update(
                     TABLE,
                     ContentValues().apply { putScopeFields(item) },
+                    "cache_id = ?",
+                    arrayOf(cacheId),
+                )
+            }
+        }
+
+        private fun backfillAnswerKinds(db: SQLiteDatabase) {
+            val rows = mutableListOf<Triple<String, String, String>>()
+            db.rawQuery(
+                "SELECT cache_id, question_json, answer_kind FROM $TABLE WHERE answer_kind = ''",
+                null,
+            ).use { cursor ->
+                while (cursor.moveToNext()) {
+                    rows += Triple(cursor.getString(0), cursor.getString(1), cursor.getString(2).orEmpty())
+                }
+            }
+            rows.forEach { (cacheId, raw, current) ->
+                if (current.isNotEmpty()) return@forEach
+                val item = QuizSessionCodec.decodeItem(raw) ?: return@forEach
+                db.update(
+                    TABLE,
+                    ContentValues().apply { put("answer_kind", item.answerKind.wire) },
                     "cache_id = ?",
                     arrayOf(cacheId),
                 )

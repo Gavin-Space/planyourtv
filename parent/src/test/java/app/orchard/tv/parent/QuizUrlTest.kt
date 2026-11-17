@@ -48,6 +48,34 @@ class QuizUrlTest {
     }
 
     @Test
+    fun keepsTheParentCenterFragment() {
+        assertEquals(
+            "http://192.0.2.10:8790/abcd2345/quiz#parent",
+            QuizUrl.normalize("http://192.0.2.10:8790/abcd2345/quiz#parent"),
+        )
+        assertEquals(
+            "http://192.0.2.10:8790/abcd2345/quiz#parent",
+            QuizUrl.normalize("http://192.0.2.10:8790/abcd2345/#parent"),
+        )
+    }
+
+    @Test
+    fun dropsUnknownFragments() {
+        assertEquals(
+            "http://192.0.2.10:8790/abcd2345/quiz",
+            QuizUrl.normalize("http://192.0.2.10:8790/abcd2345/quiz#something"),
+        )
+    }
+
+    @Test
+    fun deviceKeyIsTheStableToken() {
+        assertEquals("abcd2345", QuizUrl.deviceKey("http://192.0.2.10:8790/abcd2345/quiz"))
+        assertEquals("abcd2345", QuizUrl.deviceKey("http://192.0.2.10:8790/abcd2345/#parent"))
+        assertEquals("abcd2345", QuizUrl.deviceKey("http://192.0.2.20:8790/abcd2345/quiz"))
+        assertNull(QuizUrl.deviceKey("http://192.0.2.10:8790/"))
+    }
+
+    @Test
     fun keepsHttps() {
         assertEquals(
             "https://tv.example:9443/abcd2345/quiz",

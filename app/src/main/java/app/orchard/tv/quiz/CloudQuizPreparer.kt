@@ -271,7 +271,7 @@ fun cloudPlanMessage(code: String): String = when (code) {
     QuizCloudRoundPlanner.CLOUD_ENVELOPE_MISSING,
     -> "答题设置还没有同步到电视，请连接网络稍等一会儿"
 
-    QuizCloudRoundPlanner.DISABLED -> "家长还没有开启答题挑战"
+    QuizCloudRoundPlanner.DISABLED -> "家长还没有开启答题闯关"
 
     QuizCloudRoundPlanner.QUESTION_COUNT_UNSUPPORTED ->
         "答题题目数量超出电视支持范围，请让家长调整"

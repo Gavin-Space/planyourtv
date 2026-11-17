@@ -131,6 +131,33 @@ object QuizSessionValidation {
                 errors += "$prefix.options: duplicate"
             }
             if (item.answerIndex !in item.options.indices) errors += "$prefix.answerIndex: out of range"
+            when (item.answerKind) {
+                QuizAnswerKind.SINGLE -> {
+                    if (item.answerIndices.isNotEmpty()) {
+                        errors += "$prefix.answerIndices: not allowed for single"
+                    }
+                }
+                QuizAnswerKind.MULTIPLE -> {
+                    if (item.options.size < 3) {
+                        errors += "$prefix.options: multiple-choice requires at least 3"
+                    }
+                    if (item.answerIndices.size !in 2..item.options.lastIndex) {
+                        errors += "$prefix.answerIndices: count out of range"
+                    }
+                    if (item.answerIndices != item.answerIndices.distinct().sorted()) {
+                        errors += "$prefix.answerIndices: not sorted and unique"
+                    }
+                    if (item.answerIndices.any { it !in item.options.indices }) {
+                        errors += "$prefix.answerIndices: out of range"
+                    }
+                    if (item.answerIndices.size == item.options.size) {
+                        errors += "$prefix.answerIndices: must leave a distractor"
+                    }
+                    if (item.answerIndices.firstOrNull() != item.answerIndex) {
+                        errors += "$prefix.answerIndex: mismatch"
+                    }
+                }
+            }
             if (item.explanation.length > QUIZ_MAX_EXPLANATION_CHARS) errors += "$prefix.explanation: too long"
             if (item.subject.length > 32 || item.grade.length > 32) errors += "$prefix.metadata: too long"
             if (item.difficulty.isNotEmpty() && item.difficulty !in difficulties) {
@@ -209,6 +236,34 @@ object QuizSessionValidation {
                         errors += "run.submissions[$i].questionId: unknown"
                     } else if (sub.selectedIndex != null && sub.selectedIndex !in item.options.indices) {
                         errors += "run.submissions[$i].selectedIndex: out of range"
+                    } else {
+                        when (item.answerKind) {
+                            QuizAnswerKind.SINGLE -> {
+                                if (sub.selectedIndices.isNotEmpty()) {
+                                    errors += "run.submissions[$i].selectedIndices: not allowed for single"
+                                }
+                            }
+                            QuizAnswerKind.MULTIPLE -> {
+                                if (sub.timedOut) {
+                                    if (sub.selectedIndex != null || sub.selectedIndices.isNotEmpty()) {
+                                        errors += "run.submissions[$i].selectedIndices: timeout must be empty"
+                                    }
+                                } else {
+                                    if (sub.selectedIndices.isEmpty()) {
+                                        errors += "run.submissions[$i].selectedIndices: required"
+                                    }
+                                    if (sub.selectedIndices.any { it !in item.options.indices }) {
+                                        errors += "run.submissions[$i].selectedIndices: out of range"
+                                    }
+                                    if (sub.selectedIndices != sub.selectedIndices.distinct().sorted()) {
+                                        errors += "run.submissions[$i].selectedIndices: not sorted and unique"
+                                    }
+                                    if (sub.selectedIndex != sub.selectedIndices.firstOrNull()) {
+                                        errors += "run.submissions[$i].selectedIndex: mismatch"
+                                    }
+                                }
+                            }
+                        }
                     }
                     if (!submitted.add(sub.questionId)) errors += "run.submissions[$i].questionId: duplicate"
                     if (sub.answeredAt <= 0) errors += "run.submissions[$i].answeredAt: invalid"

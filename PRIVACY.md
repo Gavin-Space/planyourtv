@@ -13,6 +13,8 @@ The app stores the following in its private app storage:
 - parent PIN hash and salt, never the PIN itself; failed-attempt counters and lockout state;
 - the chosen wallpaper, screensaver, weather city and display settings;
 - photos and videos added through the local phone page;
+- the local question bank, wrong-answer history, quiz levels and quiz progress;
+- an optional AI provider API key, stored on the TV when the parent configures AI generation;
 - cached weather and daily-wallpaper metadata;
 - crash/diagnostic log lines with addresses masked when shown in the diagnostics report;
 - local pairing state if the TV has been bound to a hosted account.
@@ -42,6 +44,13 @@ makes these optional requests:
 | Daily wallpaper | Bing image service | Image request and market/locale |
 | App icon artwork | Disabled in the community build | None |
 | Phone settings page | Local TV network | LAN traffic only |
+| AI question generation (optional) | The parent's own OpenAI-compatible provider (DeepSeek by default) | The parent's API key as authorization, plus subject, grade, difficulty and count; generated questions return to the TV |
+| DeepSeek voice reading (optional) | DeepSeek speech service | Question, option, answer and explanation text; uses the parent's key and quota |
+
+AI question generation and voice reading are off until a parent configures and enables them. The
+manual question bank and built-in bank never contact an AI service. The optional parent app checks
+the project site and GitHub Releases for its own updates; its device list and QR scans stay on the
+phone.
 
 The community snapshot omits Aerial's Apple-hosted film catalogue, so it makes no requests to
 Apple's film servers. There is no analytics, advertising, crash-reporting or attribution SDK in the
@@ -62,9 +71,11 @@ unbind/delete controls for that data.
 ## Children's privacy
 
 PlanYourTV is a tool for parents and guardians. It does not create child accounts, collect names,
-birthdates, contacts, precise GPS location, or microphone/camera data. Parents should not enter a
-child's personal information into rules, app names, wallpapers or device names. App inventory and
-usage rules may reveal household app usage; protect the parent PIN and the TV's network.
+birthdates, contacts, precise GPS location, or microphone data. The TV app has no camera access;
+the optional phone parent app uses the camera only to scan the TV's local Parent Center QR code, and
+the image is not uploaded. Parents should not enter a child's personal information into rules, app
+names, wallpapers, device names or quiz questions sent to an AI provider. App inventory and usage
+rules may reveal household app usage; protect the parent PIN and the TV's network.
 
 ## Changes
 

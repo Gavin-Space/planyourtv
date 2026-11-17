@@ -92,11 +92,6 @@
     <string name="policy_v29_qr_pane_title">Батьківський центр</string>
     <string name="policy_v29_qr_pane_status">Налаштування з телефона</string>
     <string name="policy_v29_qr_pane_summary">Локальні налаштування тепер на телефоні. На телевізорі залишилися лише перемикач дитячого режиму й віддалене керування.</string>
-    <string name="policy_v29_qr_title">Налаштуйте з телефона</string>
-    <string name="policy_v29_qr_same_wifi">Підключіть телефон до тієї самої мережі Wi-Fi, що й телевізор, і відскануйте код браузером.</string>
-    <string name="policy_v29_ro_rules">Поточні правила (лише читання)</string>
-    <string name="policy_v29_ro_windows">Будні: %1$d · Вихідні: %2$d</string>
-    <string name="policy_v29_ro_used">Сьогодні використано: %1$d хв</string>
     <string name="policy_v6_study_apps">Навчальні застосунки</string>
     <string name="policy_v6_study_none">Немає</string>
     <string name="policy_v6_study_hint">Навчальні застосунки не обліковуються і відкриваються лише в режимі навчання.</string>

@@ -47,7 +47,7 @@
     <string name="policy_quiz_bank_stock">Джерело: локальний банк · не використано: %1$d</string>
     <string name="policy_quiz_wrong_stock">Джерело: помилки · повторити: %1$d</string>
     <string name="policy_quiz_source_cloud">Джерело: хмарний банк</string>
-    <string name="policy_quiz_scope_label">Діапазон питань</string>
+    <string name="policy_quiz_scope_label">Вибір рівня</string>
     <string name="policy_quiz_level_hint">Перемикання рівня: вгору/вниз</string>
     <string name="policy_quiz_key_ok">OK</string>
     <string name="policy_quiz_preparing">Підготовка раунду…</string>
@@ -57,8 +57,11 @@
     <string name="policy_quiz_scope_any">Не задано</string>
     <string name="policy_quiz_scope_custom_tag">Власний тег · %1$s</string>
     <string name="policy_quiz_scope_wrong_review">Повторення помилок</string>
+    <string name="policy_quiz_scope_mixed_level">Змішаний рівень · джерел: %1$d</string>
     <string name="policy_quiz_format_label">Формат відповіді</string>
     <string name="policy_quiz_format_single">Одна відповідь</string>
+    <string name="policy_quiz_format_multiple">Кілька відповідей</string>
+    <string name="policy_quiz_format_mixed">Один / кілька</string>
     <string name="policy_quiz_semester_first">1-й семестр</string>
     <string name="policy_quiz_semester_second">2-й семестр</string>
     <string name="policy_quiz_scope_unit">Розділ %1$d</string>
@@ -73,6 +76,8 @@
     <string name="policy_quiz_bank_empty_body">У локальному банку немає готових питань. Відскануйте код і створіть питання на сторінці телефона.</string>
     <string name="policy_quiz_bank_blocked_title">Налаштування вікторини-випробування потрібно зберегти знову</string>
     <string name="policy_quiz_bank_blocked_body">Телевізор не зміг прочитати локальні налаштування вікторини. Відскануйте код і збережіть налаштування знову на сторінці телефона.</string>
+    <string name="policy_quiz_bank_paused_title">Рівні завдань призупинено</string>
+    <string name="policy_quiz_bank_paused_body">Батьки призупинили всі рівні. Щоб продовжити, увімкніть принаймні один рівень на сторінці телефона.</string>
     <string name="policy_quiz_bank_insufficient">Для початку потрібно ще %1$d пит.</string>
     <string name="policy_quiz_bank_refresh">Оновити</string>
     <string name="policy_quiz_ready_title">Вікторина готова</string>
@@ -92,6 +97,10 @@
     <string name="policy_quiz_time_left">Залишилося %1$d с</string>
     <string name="policy_quiz_points_hint">Правильна відповідь: %1$d хв</string>
     <string name="policy_quiz_question_scroll_hint">Використовуйте ↑/↓, щоб прочитати питання й варіанти повністю</string>
+    <string name="policy_quiz_single_hint">Одна відповідь: виберіть один варіант — відповідь надішлеться одразу</string>
+    <string name="policy_quiz_multiple_hint">Кілька відповідей: виберіть усі правильні варіанти й натисніть «Підтвердити»</string>
+    <string name="policy_quiz_confirm_answer">Підтвердити відповідь</string>
+    <string name="policy_quiz_select_at_least_one">Виберіть принаймні один варіант</string>
     <string name="policy_quiz_feedback_scroll_hint">Читайте за допомогою ↑/↓; натисніть OK, щоб продовжити</string>
     <string name="policy_quiz_feedback_continue">Зрозуміло — я це вивчив(ла)</string>
     <string name="policy_quiz_feedback_wait">Продовжити через %1$d с</string>
@@ -167,6 +176,7 @@
     <string name="policy_quiz_reason_storage">телевізор не зміг зберегти стан</string>
     <string name="policy_quiz_reason_not_ready">немає готової вікторини</string>
     <string name="policy_quiz_reason_no_levels">батьки ще не налаштували рівні</string>
+    <string name="policy_quiz_reason_level_paused">цей рівень призупинено; попросіть батьків увімкнути його</string>
     <string name="policy_quiz_reason_not_available">телевізор не в ручному режимі</string>
     <string name="policy_quiz_reason_screen">екран вимкнено</string>
     <string name="policy_quiz_reason_cache_empty">зараз немає доступних питань</string>
@@ -243,6 +253,7 @@
     <string name="policy_lock_quiz_expired_footer">Попросіть батьків налаштувати знову.</string>
     <string name="policy_lock_quiz_empty_footer">Банк запитань не готовий. Попросіть батьків налаштувати його.</string>
     <string name="policy_lock_quiz_blocked_footer">Налаштування вікторини-випробування потрібно зберегти знову.</string>
+    <string name="policy_lock_quiz_paused_footer">Батьки призупинили рівні завдань.</string>
     <string name="policy_lock_manual_local_footer">Оберіть тривалість, потім батьки введуть PIN.</string>
     <string name="policy_lock_manual_remote_footer">Батьки надсилають час із телефона або дитина обмінює бажання.</string>
     <string name="policy_lock_auto_local_footer">Враховує денний ліміт і тривалість, потім перерва.</string>

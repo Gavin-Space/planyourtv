@@ -9,15 +9,27 @@ page, its PIN gate and its data stay on the TV.
 - Scans the QR code shown in Parent Center on the TV, or accepts the complete address encoded
   in that code. The scanner uses a CameraX preview and native zxing-cpp decoding, with continuous
   focus, tap-to-focus, zoom and a torch.
-- Remembers the address, so the code is scanned once.
+- Remembers each paired TV, so the code is scanned once per TV. The device list can hold several
+  TVs, switch between them, and give each one a name. Names and the list are stored only on the
+  phone; nothing is registered with the TV or a cloud service.
 - Shows the page full screen in a WebView, with the browser behavior the page relies on:
   file import, JSON export through the system save dialog, copy to clipboard, and external links
   in the system browser.
-- Refreshes the page and can pair with another TV from the menu.
+- Refreshes the page, opens the device list, and can pair another TV from the menu.
+- Checks for parent-app updates. A newer version is downloaded from the official release,
+  verified against its published SHA-256, package name, version and signing certificate, then
+  handed to Android's installer, which still asks the user to confirm.
 
-It has no account, no cloud service and no connection to any server other than the paired TV. Its
-only permissions are `INTERNET` and `CAMERA`. The admin session is stored in the WebView's local
-storage, exactly as it would be in a browser; uninstalling the app or clearing its data removes it.
+The app has no account, analytics or cloud storage. It connects to the paired TV or TVs over the
+local network. When checking for updates it also requests the release `notes.json` and the
+optional parent APK from `planyourtv.me`, falling back to the project's GitHub Releases; it does
+not upload TV data, parent-page content or the device list. Its permissions are `INTERNET`,
+`CAMERA` and `REQUEST_INSTALL_PACKAGES`; the last one is used only for the app's own update.
+
+The admin session for each TV is stored in the WebView's per-origin local storage, exactly as it
+would be in a browser. Switching TVs keeps each session separate. If a TV's IP address changes,
+its storage origin changes too, so that TV asks for the PIN once at the new address. Uninstalling
+the app or clearing its data removes the sessions and the device list.
 
 ## What it does not do
 
@@ -27,6 +39,8 @@ storage, exactly as it would be in a browser; uninstalling the app or clearing i
   Parent Center is not running.
 - It is not a TV APK and is not installed by the TV installer. The TV release still contains only
   `standard` / `guard`; the parent app is a separate optional download.
+- It does not install updates silently, and it never downloads or installs a TV APK. Android
+  shows its normal install confirmation every time.
 
 ## Download
 
@@ -46,13 +60,18 @@ It requires Android 7.0 (API 24) or newer. Open the link in the phone's browser,
 to install unknown apps, install the APK, and open it. The phone and TV must be on the same Wi-Fi
 when pairing. This is not a TV APK: do not install it on the television.
 
+Once installed, the app can update itself: use “Check for updates” in the menu, or accept the
+banner when a newer version is found. Android asks for permission to install unknown apps the
+first time; without it, the update is not downloaded or installed. The update keeps the paired
+TV list and each TV's session.
+
 ## Build
 
 The module targets Android 7.0 (API 24) and newer. It is built with the same Gradle wrapper as the
 TV app:
 
 ```bash
-./gradlew :parent:assembleDebug
+./gradlew :parent:assembleDebug :parent:testDebugUnitTest
 adb install -r parent/build/outputs/apk/debug/parent-debug.apk
 ```
 
@@ -73,9 +92,13 @@ update. Official builds must use a stable parent-only key; never reuse the TV re
    "Can't scan? Enter the address manually" and type the complete address encoded in the QR code,
    including the IP, port and the code after them (for example
    `192.0.2.10:8790/abcd2345/quiz`).
-3. Use the menu to refresh, open the page in the system browser, or scan a different TV.
+3. Use the menu to refresh, open the page in the system browser, or open “My devices” to switch
+   TVs, rename or remove one, or add another TV by scanning or entering its address.
+4. If the TV's IP address changes, scan its QR code again: the app updates that TV's entry instead
+   of adding a duplicate. Removing a TV from the phone does not change anything on the TV.
 
-The phone and the TV must be on the same Wi-Fi network, and the TV's address and token must not
-change. If the page cannot be reached, check that Parent Center is open on the TV and try again.
+The phone and the TV must be on the same Wi-Fi network. If the page cannot be reached, check that
+Parent Center is open on the TV and that its address still matches; scan the new QR code after a
+DHCP address change.
 
 See [BUILDING.md](BUILDING.md) for the general toolchain and build requirements.

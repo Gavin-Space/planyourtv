@@ -13,6 +13,7 @@ import com.planyourtv.policy.quiz.QuizDocDecodeResult
 import com.planyourtv.policy.quiz.QuizDocIssue
 import com.planyourtv.policy.quiz.QuizDocUpdatedBy
 import com.planyourtv.policy.quiz.QuizLevel
+import com.planyourtv.policy.quiz.QuizLevelPackage
 import com.planyourtv.policy.quiz.QuizSessionCodec
 import org.json.JSONArray
 import org.json.JSONObject
@@ -149,6 +150,12 @@ object QuizConfigDocumentStore {
         levels: List<QuizLevel>,
         nowMs: Long = System.currentTimeMillis(),
     ): QuizDocSaveResult = core.updateLevels(levels, nowMs)
+
+    /** Writes the local package extension without touching the legacy levels. */
+    fun updateLevelPackages(
+        packages: List<QuizLevelPackage>,
+        nowMs: Long = System.currentTimeMillis(),
+    ): QuizDocSaveResult = core.updateLevelPackages(packages, nowMs)
 
     fun markEnabled(
         enabled: Boolean,
@@ -536,6 +543,16 @@ internal class QuizConfigDocumentCore(
                 QuizLocalConfigDocument.levelDoc(level, index)
             },
         )
+        writeWithRetry(updated, current.revision, QuizDocUpdatedBy.TV_LOCAL_EDIT, nowMs)
+    }
+
+    fun updateLevelPackages(
+        packages: List<QuizLevelPackage>,
+        nowMs: Long,
+    ): QuizDocSaveResult = synchronized(lock) {
+        val current = (ensureLocalDocument(nowMs) as? QuizDocLoadResult.Ok)?.document
+            ?: return QuizDocSaveResult.Storage
+        val updated = QuizLevelPackageStore.withPackages(current, packages)
         writeWithRetry(updated, current.revision, QuizDocUpdatedBy.TV_LOCAL_EDIT, nowMs)
     }
 

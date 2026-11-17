@@ -34,6 +34,14 @@ object QuizGeneration {
     const val MAX_CUSTOM_TOPIC_CHARS = 30
     const val BATCH_SIZE = 5
     const val DEFAULT_TARGET_COUNT = 20
+    const val QUESTION_TYPE_SINGLE = "single"
+    const val QUESTION_TYPE_MULTIPLE = "multiple"
+    const val QUESTION_TYPE_MIXED = "mixed"
+    val QUESTION_TYPES = setOf(
+        QUESTION_TYPE_SINGLE,
+        QUESTION_TYPE_MULTIPLE,
+        QUESTION_TYPE_MIXED,
+    )
     // 版本 3：取消默认“期中必考”，题目要求改为自由输入；旧版 0/2 仍只读兼容。
     const val PRESET_VERSION = 3
     val TARGET_COUNTS = setOf(20, 30, 50)
@@ -57,6 +65,8 @@ object QuizGeneration {
         val textbook: String = "",
         val scopeType: String = "",
         val unitNo: Int? = null,
+        /** "single", "multiple" or "mixed"; old pages default to single. */
+        val questionType: String = QUESTION_TYPE_SINGLE,
     ) {
         fun scope(): QuizAnswerScope? {
             if (subjectId.isBlank() || gradeNo == 0 || semester == 0) return null
@@ -401,6 +411,7 @@ object QuizGeneration {
         points = DEFAULT_POINTS,
         timeLimitSec = DEFAULT_TIME_LIMIT_SEC,
         gradeNo = gradeNo,
+        questionType = questionType,
     )
 
     private fun Request.stamp(item: QuizItem): QuizItem {
@@ -461,6 +472,9 @@ object QuizGeneration {
         val grade = root.optString("grade", "").trim()
         val prompt = root.optString("prompt", "").trim()
         val difficulty = root.optString("difficulty", "").trim().lowercase()
+        val questionType = root.optString("questionType", QUESTION_TYPE_SINGLE)
+            .trim()
+            .lowercase()
         val subjectId = root.optString("subjectId", "").trim().lowercase()
         val gradeNo = root.optInt("gradeNo", 0)
         val semester = root.optInt("semester", 0)
@@ -482,6 +496,7 @@ object QuizGeneration {
         if (difficulty.isNotEmpty() && difficulty !in setOf("easy", "medium", "hard")) {
             errors += "difficulty: invalid"
         }
+        if (questionType !in QUESTION_TYPES) errors += "questionType: invalid"
         val hasScopeMetadata = subjectId.isNotEmpty() || gradeNo != 0 || semester != 0 ||
             textbook.isNotEmpty() || scopeType.isNotEmpty() || unitNo != null
         if (hasScopeMetadata) {
@@ -526,6 +541,7 @@ object QuizGeneration {
                     textbook = textbook,
                     scopeType = scopeType,
                     unitNo = if (scopeType == "unit") unitNo else null,
+                    questionType = questionType,
                 ),
             )
         } else {
@@ -545,6 +561,9 @@ object QuizGeneration {
         val unit = root.optInt("unit", 0)
         val options = root.optInt("options", 0)
         val difficulty = root.optString("difficulty", "").trim().lowercase()
+        val questionType = root.optString("questionType", QUESTION_TYPE_SINGLE)
+            .trim()
+            .lowercase()
         val rawCustomTopic = if (root.has("customTopic") && !root.isNull("customTopic")) {
             root.opt("customTopic")
         } else {
@@ -592,6 +611,7 @@ object QuizGeneration {
                 ?: curriculum.unitMax(gradeNo) ?: Int.MAX_VALUE)) &&
             options in setOf(4, 6) &&
             difficulty in setOf("", "easy", "medium", "hard") &&
+            questionType in QUESTION_TYPES &&
             (targetCount in TARGET_COUNTS || (root.has("count") && targetCount in 1..LEGACY_BATCH_COUNT))
         if (!valid) return null
         val effectiveTarget = if (targetCount in TARGET_COUNTS) targetCount else DEFAULT_TARGET_COUNT
@@ -604,6 +624,7 @@ object QuizGeneration {
             .put("targetCount", effectiveTarget)
             .put("options", options)
             .put("difficulty", difficulty)
+            .put("questionType", questionType)
             .put("customTopic", customTopic)
             .put("autoAdd", autoAdd)
             .put("presetVersion", presetVersion)

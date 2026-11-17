@@ -47,7 +47,7 @@
     <string name="policy_quiz_bank_stock">Source: local bank · %1$d unused</string>
     <string name="policy_quiz_wrong_stock">Source: wrong answers · %1$d to review</string>
     <string name="policy_quiz_source_cloud">Source: cloud bank</string>
-    <string name="policy_quiz_scope_label">Question range</string>
+    <string name="policy_quiz_scope_label">Choose level</string>
     <string name="policy_quiz_level_hint">Up/down to switch level</string>
     <string name="policy_quiz_key_ok">OK</string>
     <string name="policy_quiz_preparing">Preparing this round…</string>
@@ -57,8 +57,11 @@
     <string name="policy_quiz_scope_any">Not set</string>
     <string name="policy_quiz_scope_custom_tag">Custom tag · %1$s</string>
     <string name="policy_quiz_scope_wrong_review">Wrong review</string>
+    <string name="policy_quiz_scope_mixed_level">Mixed level · %1$d sources</string>
     <string name="policy_quiz_format_label">Answer format</string>
     <string name="policy_quiz_format_single">Single choice</string>
+    <string name="policy_quiz_format_multiple">Multiple choice</string>
+    <string name="policy_quiz_format_mixed">Single / multiple</string>
     <string name="policy_quiz_semester_first">Semester 1</string>
     <string name="policy_quiz_semester_second">Semester 2</string>
     <string name="policy_quiz_scope_unit">Unit %1$d</string>
@@ -73,6 +76,8 @@
     <string name="policy_quiz_bank_empty_body">The local bank has no questions ready. Scan the code and create questions from the phone page.</string>
     <string name="policy_quiz_bank_blocked_title">Quiz challenge settings need saving again</string>
     <string name="policy_quiz_bank_blocked_body">This TV could not read its local quiz settings. Scan the code and save the quiz settings again from the phone page.</string>
+    <string name="policy_quiz_bank_paused_title">Answer levels are paused</string>
+    <string name="policy_quiz_bank_paused_body">A parent paused every level. Re-enable at least one level on the phone page to continue.</string>
     <string name="policy_quiz_bank_insufficient">%1$d more questions are needed to start.</string>
     <string name="policy_quiz_bank_refresh">Refresh</string>
     <string name="policy_quiz_ready_title">Challenge ready</string>
@@ -92,6 +97,10 @@
     <string name="policy_quiz_time_left">%1$d s left</string>
     <string name="policy_quiz_points_hint">Earns %1$d min</string>
     <string name="policy_quiz_question_scroll_hint">Use Up/Down to read the whole question and scroll the choices</string>
+    <string name="policy_quiz_single_hint">Single choice: choose one answer to submit</string>
+    <string name="policy_quiz_multiple_hint">Multiple choice: select every correct answer, then press Confirm</string>
+    <string name="policy_quiz_confirm_answer">Confirm answer</string>
+    <string name="policy_quiz_select_at_least_one">Select at least one answer, then confirm</string>
     <string name="policy_quiz_feedback_scroll_hint">Use Up/Down to read; press OK to continue</string>
     <string name="policy_quiz_feedback_continue">Got it — I’ve learned this</string>
     <string name="policy_quiz_feedback_wait">Continue in %1$d s</string>
@@ -173,6 +182,7 @@
     <string name="policy_quiz_reason_storage">the TV could not save the state</string>
     <string name="policy_quiz_reason_not_ready">there is no challenge ready</string>
     <string name="policy_quiz_reason_no_levels">a parent has not set up any level yet</string>
+    <string name="policy_quiz_reason_level_paused">this level is paused; ask a parent to re-enable it</string>
     <string name="policy_quiz_reason_not_available">the TV is not in manual mode</string>
     <string name="policy_quiz_reason_screen">the screen is not on</string>
     <string name="policy_quiz_reason_cache_empty">no questions are available right now</string>
@@ -255,6 +265,7 @@
     <string name="policy_lock_quiz_expired_footer">Ask a parent to set it up again.</string>
     <string name="policy_lock_quiz_empty_footer">The question bank is not ready. Ask a parent to set it up.</string>
     <string name="policy_lock_quiz_blocked_footer">Quiz challenge settings need saving again.</string>
+    <string name="policy_lock_quiz_paused_footer">A parent paused the answer levels.</string>
     <string name="policy_lock_manual_local_footer">Choose a length, then a parent enters the PIN.</string>
     <string name="policy_lock_manual_remote_footer">A parent sends time from the phone, or the child redeems a wish.</string>
     <string name="policy_lock_auto_local_footer">Counts against the daily limit and segment length, then rests.</string>

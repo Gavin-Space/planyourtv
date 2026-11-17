@@ -45,6 +45,7 @@ object QuizSessionStore {
     private const val KEY_SOURCE_CONFIG = "quiz.sourceConfig"
     private const val KEY_SYNC_STATE = "quiz.syncState"
     private const val KEY_GENERATION_PREFS = "quiz.generationPrefs"
+    private const val KEY_SPEECH_SETTINGS = "quiz.speechSettings"
     private const val KEY_ANSWER_SCOPE = "quiz.answerScope"
     // The ordered list the parent designs on the phone. The legacy single
     // scope above stays mirrored for cloud reporting and older readers.
@@ -295,6 +296,21 @@ object QuizSessionStore {
 
     fun saveGenerationPrefs(prefs: JSONObject): Boolean = synchronized(lock) {
         TvStore.putStringDurable(KEY_GENERATION_PREFS, prefs.toString())
+    }
+
+    /**
+     * DeepSeek voice selections. No text, key, or household data is stored here;
+     * [QuizSpeechSettings.initialized] prevents a default-on form from speaking
+     * before the parent has saved this build's AI settings once.
+     */
+    fun loadSpeechSettings(): QuizSpeechSettings = synchronized(lock) {
+        val raw = TvStore.getString(KEY_SPEECH_SETTINGS) ?: return QuizSpeechSettings()
+        val json = runCatching { JSONObject(raw) }.getOrNull()
+        QuizSpeechSettings.fromJson(json)
+    }
+
+    fun saveSpeechSettings(settings: QuizSpeechSettings): Boolean = synchronized(lock) {
+        TvStore.putStringDurable(KEY_SPEECH_SETTINGS, settings.toJson().toString())
     }
 
     /**

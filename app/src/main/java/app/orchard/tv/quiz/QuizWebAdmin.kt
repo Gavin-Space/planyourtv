@@ -10,10 +10,10 @@ import fi.iki.elonen.NanoHTTPD.Method
 import fi.iki.elonen.NanoHTTPD.Response
 import org.json.JSONObject
 import com.planyourtv.policy.PolicyMode
+import com.planyourtv.policy.quiz.QuizAnswerKind
 import com.planyourtv.policy.quiz.QuizAnswerScope
 import com.planyourtv.policy.quiz.QuizBankImport
 import com.planyourtv.policy.quiz.QuizCollection
-import com.planyourtv.policy.quiz.QuizCollectionLevel
 import com.planyourtv.policy.quiz.QuizConfigDocument
 import com.planyourtv.policy.quiz.QuizConfigDocumentCodec
 import com.planyourtv.policy.quiz.QuizCurriculum
@@ -24,13 +24,14 @@ import com.planyourtv.policy.quiz.QuizEngineConfig
 import com.planyourtv.policy.quiz.QuizImportError
 import com.planyourtv.policy.quiz.QuizImportResult
 import com.planyourtv.policy.quiz.QuizItem
-import com.planyourtv.policy.quiz.QuizLevel
+import com.planyourtv.policy.quiz.QuizLevelPackage
+import com.planyourtv.policy.quiz.QuizPackageSource
 import com.planyourtv.policy.quiz.QuizSession
 import com.planyourtv.policy.quiz.QuizSessionCodec
 import com.planyourtv.policy.quiz.QuizSessionStatus
 import com.planyourtv.policy.quiz.QuizSessionValidation
 import com.planyourtv.policy.quiz.QuizUnitCatalog
-import com.planyourtv.policy.quiz.QuizWrongReviewLevel
+import com.planyourtv.policy.quiz.SourceIssue
 import org.json.JSONArray
 import java.util.Locale
 import java.util.UUID
@@ -45,6 +46,9 @@ object QuizWebAdmin {
     private const val MAX_IMPORT_BYTES = 512 * 1024
     private const val MAX_PROVIDER_KEY_LENGTH = 4096
     private const val IMPORT_PATH = "/api/quiz/admin/bank/import"
+    /** The web level editor's shape; a cached older page saves through the legacy fields. */
+    private const val LEVEL_MODEL = 2
+    private const val MAX_LEVEL_COUNT_SCOPES = 64
 
     /** Device-capability failures share one 400 UNSUPPORTED contract. */
     private val CAPABILITY_ISSUE_CODES = setOf(
@@ -118,6 +122,7 @@ object QuizWebAdmin {
                 session.method == Method.PUT && path == "/api/quiz/admin/session" -> putSession(session)
                 session.method == Method.DELETE && path == "/api/quiz/admin/session" -> deleteSession(session)
                 session.method == Method.POST && path == "/api/quiz/admin/challenge-config" -> saveChallengeConfig(session)
+                session.method == Method.POST && path == "/api/quiz/admin/level-counts" -> levelSourceCounts(session)
                 session.method == Method.GET && path == "/api/quiz/admin/config-document" -> readConfigDocument(session)
                 session.method == Method.PUT && path == "/api/quiz/admin/config-document" -> saveConfigDocument(session)
                 session.method == Method.GET && path == "/api/quiz/admin/bank" -> readBank(session)
@@ -404,46 +409,34 @@ object QuizWebAdmin {
         body.put("consentAccepted", QuizSessionStore.consentAccepted())
         body.put("providerConfigured", QuizSessionStore.providerConfigured())
         body.put("challengeConfig", QuizSessionCodec.encodeConfig(challengeConfig))
-        val answerLevels = QuizAnswerScopeStore.levels()
-        val answerScope = answerLevels.firstOrNull()?.scope
-        body.put("answerScope", answerScope?.encode() ?: JSONObject.NULL)
+        // Level packages are the only editable model. The legacy fields below
+        // are a read-only projection for a page cached before V37; a save from
+        // that page is rejected with LEVEL_MODEL_UPGRADED.
+        val packages = state.levelPackages
+        val projection = legacyLevelProjection(packages)
+        body.put("levelModel", LEVEL_MODEL)
+        body.put("levelPackagesUnreadable", state.levelPackagesUnreadable)
+        body.put("levelPackages", levelPackagesJson(packages))
+        body.put(
+            "levelLimits",
+            JSONObject()
+                .put("maxLevels", QuizLevelPackage.MAX_LEVELS)
+                .put("maxSources", QuizLevelPackage.MAX_SOURCES)
+                .put("maxNameCodePoints", QuizLevelPackage.MAX_NAME_CODE_POINTS),
+        )
+        body.put("answerScope", projection.answerScope?.encode() ?: JSONObject.NULL)
         // Kept for a page cached before the level list existed; it only knows
         // one scope and reads the first level.
-        body.put("answerScopeMode", if (answerScope == null) "bound" else "custom")
-        body.put("answerScopes", answerLevelsJson(answerLevels))
+        body.put(
+            "answerScopeMode",
+            if (projection.answerScope == null) "bound" else "custom",
+        )
+        body.put("answerScopes", projection.answerScopes)
         val collections = QuizCollectionStore.collections()
         val countsByCollection = QuizQuestionCache.collectionCounts(QuizQuestionCache.LOCAL_SCOPE)
             .associateBy { it.collectionId }
-        body.put(
-            "customLevels",
-            JSONArray().apply {
-                QuizCollectionStore.customLevels().forEach { level ->
-                    put(
-                        JSONObject()
-                            .put("id", level.id)
-                            .put("name", level.name)
-                            .put("collectionId", level.collectionId)
-                            .put("collectionName", QuizCollectionStore.tagName(level.collectionId))
-                            .put(
-                                "available",
-                                QuizQuestionCache.availableCollectionCount(level.collectionId),
-                            ),
-                    )
-                }
-            },
-        )
-        val wrongReviewLevel = QuizWrongReviewLevelStore.level()
-        body.put(
-            "wrongLevel",
-            if (wrongReviewLevel == null) {
-                JSONObject.NULL
-            } else {
-                JSONObject()
-                    .put("id", wrongReviewLevel.id)
-                    .put("name", wrongReviewLevel.name)
-                    .put("available", QuizQuestionCache.wrongReviewCount())
-            },
-        )
+        body.put("customLevels", projection.customLevels)
+        body.put("wrongLevel", projection.wrongLevel ?: JSONObject.NULL)
         body.put(
             "collections",
             JSONArray().apply {
@@ -473,7 +466,7 @@ object QuizWebAdmin {
             "answerScopeAvailable",
             QuizQuestionCache.availableCount(
                 QuizQuestionCache.LOCAL_SCOPE,
-                answerScope = answerScope,
+                answerScope = projection.answerScope,
             ),
         )
         body.put("engineConfig", QuizEngineConfig.from(challengeConfig).let {
@@ -495,6 +488,44 @@ object QuizWebAdmin {
         body.put("cache", legacyCacheJson(state.bankCounts))
         body.put("bankCapacity", QuizQuestionCache.BANK_CAPACITY)
         return json(Response.Status.OK, body)
+    }
+
+    /**
+     * Stock for candidate course scopes while the parent builds a package.
+     * Counts stay separate from `packageAvailability` so an unsaved source can
+     * show "mixed / single / multiple" before it joins the package.
+     */
+    private fun levelSourceCounts(session: IHTTPSession): Response {
+        adminError(session)?.let { return it }
+        val body = jsonBody(session) ?: return error(Response.Status.BAD_REQUEST, "INVALID_JSON")
+        val array = body.optJSONArray("scopes")
+            ?: return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
+        if (array.length() > MAX_LEVEL_COUNT_SCOPES) {
+            return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
+        }
+        val now = System.currentTimeMillis()
+        val counts = JSONArray()
+        for (index in 0 until array.length()) {
+            val scope = QuizAnswerScope.parse(array.optJSONObject(index))
+                ?: return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
+            val typeCounts = QuizQuestionCache.availableTypeCounts(
+                nowMs = now,
+                answerScope = scope,
+            )
+            counts.put(
+                JSONObject()
+                    .put("total", typeCounts.total)
+                    .put("single", typeCounts.single)
+                    .put("multiple", typeCounts.multiple),
+            )
+        }
+        return json(
+            Response.Status.OK,
+            JSONObject()
+                .put("ok", true)
+                .put("counts", counts)
+                .put("wrong", QuizQuestionCache.wrongReviewCount()),
+        )
     }
 
     /**
@@ -609,8 +640,17 @@ object QuizWebAdmin {
                     )
                     .put("prompt", question.prompt)
                     .put("options", JSONArray(question.options))
+                    .put("type", question.answerKind.wire)
+                    .put("presentation", question.presentation.wire)
                     .put("answerIndex", question.answerIndex)
                     .put("answerText", question.options.getOrNull(question.answerIndex).orEmpty())
+                    .put("answerIndices", JSONArray(question.correctIndices))
+                    .put(
+                        "answerTexts",
+                        JSONArray(
+                            question.correctIndices.mapNotNull { question.options.getOrNull(it) },
+                        ),
+                    )
                     .put("explanation", question.explanation)
                     .put("subject", question.subject)
                     .put("grade", question.grade)
@@ -627,6 +667,13 @@ object QuizWebAdmin {
                     .put("wrongCount", row.wrongCount)
                     .put("selectedIndex", row.selectedIndex ?: JSONObject.NULL)
                     .put("selectedText", row.selectedIndex?.let { question.options.getOrNull(it) } ?: JSONObject.NULL)
+                    .put("selectedIndices", JSONArray(row.selectedIndices))
+                    .put(
+                        "selectedTexts",
+                        JSONArray(
+                            row.selectedIndices.mapNotNull { question.options.getOrNull(it) },
+                        ),
+                    )
                     .put("timedOut", row.timedOut)
                     .put("answeredAt", row.answeredAt ?: 0L)
                     .put("receivedAt", row.receivedAt),
@@ -709,19 +756,32 @@ object QuizWebAdmin {
             }
             normalized.ifEmpty { null }
         }
-        val filter = FacetFilters(grade, semester, subject, textbook, topic, difficulty)
+        // "any" means no type filter. The type chips themselves are driven by
+        // the answerKind facet, which ignores this filter so every backed type
+        // stays selectable while the hierarchy narrows to the chosen type.
+        val answerKind = param("answerKind")?.let { raw ->
+            if (raw.equals("any", ignoreCase = true)) return@let null
+            QuizAnswerKind.fromWire(raw)?.wire
+                ?: return error(Response.Status.BAD_REQUEST, "INVALID_REQUEST")
+        }
+        val filter = FacetFilters(
+            grade, semester, subject, textbook, topic, difficulty, answerKind,
+        )
         val now = System.currentTimeMillis()
-        val allRows = QuizQuestionCache.listAllBank(QuizQuestionCache.LOCAL_SCOPE, now)
-        val scopedRows = allRows.mapNotNull { row -> facetRow(row.question) }
-        val matched = scopedRows.count { it.matches(filter) }
-        val withoutDifficulty = scopedRows.count { it.matches(filter, skip = "difficulty") }
+        val snapshot = QuizQuestionCache.facetSnapshot(QuizQuestionCache.LOCAL_SCOPE, now)
+        val scopedRows = snapshot.groups.mapNotNull(::facetRow)
+        val scoped = scopedRows.sumOf { it.count }
+        val matched = scopedRows.filter { it.matches(filter) }.sumOf { it.count }
+        val withoutDifficulty = scopedRows
+            .filter { it.matches(filter, skip = "difficulty") }
+            .sumOf { it.count }
         return json(
             Response.Status.OK,
             JSONObject()
                 .put("ok", true)
-                .put("total", allRows.size)
-                .put("scoped", scopedRows.size)
-                .put("noScope", allRows.size - scopedRows.size)
+                .put("total", snapshot.total)
+                .put("scoped", scoped)
+                .put("noScope", snapshot.total - scoped)
                 .put("matched", matched)
                 .put("unrestricted", withoutDifficulty)
                 .put("filters", filter.toJson())
@@ -744,6 +804,11 @@ object QuizWebAdmin {
                         .put("difficulty", facetCounts(scopedRows, filter, "difficulty") {
                             it.item.difficulty.trim().uppercase()
                                 .takeIf { value -> value in FACET_DIFFICULTIES }
+                        })
+                        // No-op when the viewer is already filtering by type:
+                        // matches() skips this dimension for its own facet.
+                        .put("answerKind", facetCounts(scopedRows, filter, "answerKind") {
+                            it.item.answerKind.wire
                         }),
                 ),
         )
@@ -756,6 +821,7 @@ object QuizWebAdmin {
         val textbook: String?,
         val topic: String?,
         val difficulty: String?,
+        val answerKind: String? = null,
     ) {
         fun toJson(): JSONObject = JSONObject()
             .put("grade", grade ?: JSONObject.NULL)
@@ -764,9 +830,10 @@ object QuizWebAdmin {
             .put("textbook", textbook ?: JSONObject.NULL)
             .put("topic", topic ?: JSONObject.NULL)
             .put("difficulty", difficulty ?: JSONObject.NULL)
+            .put("answerKind", answerKind ?: JSONObject.NULL)
     }
 
-    private data class FacetRow(val item: QuizItem, val topic: String) {
+    private data class FacetRow(val item: QuizItem, val topic: String, val count: Int) {
         /** [skip] excludes one dimension from the match, for its own facet counts. */
         fun matches(filter: FacetFilters, skip: String? = null): Boolean {
             if (skip != "grade" && filter.grade != null && item.scopeGrade != filter.grade) return false
@@ -793,11 +860,38 @@ object QuizWebAdmin {
             ) {
                 return false
             }
+            if (skip != "answerKind" && filter.answerKind != null &&
+                !item.answerKind.wire.equals(filter.answerKind, ignoreCase = true)
+            ) {
+                return false
+            }
             return true
         }
     }
 
-    private fun facetRow(item: QuizItem): FacetRow? {
+    private fun facetRow(group: QuizQuestionCache.FacetGroup): FacetRow? =
+        facetRow(
+            QuizItem(
+                questionId = "",
+                prompt = "",
+                options = emptyList(),
+                answerIndex = 0,
+                difficulty = group.difficulty,
+                scopeGrade = group.grade,
+                scopeSemester = group.semester,
+                scopeSubject = group.subject,
+                scopeTextbook = group.textbook,
+                scopeType = group.scopeType,
+                scopeUnitNo = group.unitNo,
+                // Pre-v7 rows have no answer_kind column value until the
+                // backfill runs; they decode as single-choice everywhere else.
+                answerKind = QuizAnswerKind.fromWire(group.answerKind)
+                    ?: QuizAnswerKind.SINGLE,
+            ),
+            group.count,
+        )
+
+    private fun facetRow(item: QuizItem, count: Int = 1): FacetRow? {
         val grade = item.scopeGrade ?: return null
         val semester = item.scopeSemester ?: return null
         val curriculum = QuizCurriculum.current() ?: return null
@@ -823,7 +917,7 @@ object QuizWebAdmin {
             if (item.scopeUnitNo != null) return null
             type
         }
-        return FacetRow(item, topic)
+        return FacetRow(item, topic, count)
     }
 
     /** Facet queries may omit subject/textbook, so use the widest available limit. */
@@ -850,7 +944,9 @@ object QuizWebAdmin {
         val counts = sortedMapOf<String, Int>()
         rows.asSequence()
             .filter { it.matches(filter, skip) }
-            .forEach { row -> key(row)?.let { counts[it] = (counts[it] ?: 0) + 1 } }
+            .forEach { row ->
+                key(row)?.let { counts[it] = (counts[it] ?: 0) + row.count }
+            }
         return JSONObject().apply { counts.forEach { (value, count) -> put(value, count) } }
     }
 
@@ -862,10 +958,14 @@ object QuizWebAdmin {
      */
     private fun importBank(session: IHTTPSession): Response {
         adminError(session)?.let { return it }
-        if (QuizRuntime.refresh().session?.status in ACTIVE_STATUSES) {
+        // Read the stored session instead of running a full QuizRuntime.refresh():
+        // a 50-batch import would otherwise recompute bank and level counts
+        // before every batch just to answer "is a round running?".
+        if (QuizSessionStore.loadSession()?.status in ACTIVE_STATUSES) {
             return error(Response.Status.CONFLICT, "SESSION_RUNNING")
         }
         val body = jsonBody(session) ?: return error(Response.Status.BAD_REQUEST, "INVALID_JSON")
+        val batchMode = body.optBoolean("batchMode", false)
         val collectionId = body.optString("collectionId", "").trim()
         val newCollectionName = body.optString("newCollectionName", "").trim()
         if (collectionId.isEmpty() && newCollectionName.isEmpty()) {
@@ -987,24 +1087,27 @@ object QuizWebAdmin {
                 else -> error(Response.Status.BAD_REQUEST, "INVALID_IMPORT")
             }
         }
-        val state = QuizRuntime.refresh()
-        val collectionCounts = QuizQuestionCache.collectionCounts(QuizQuestionCache.LOCAL_SCOPE)
-            .firstOrNull { it.collectionId == collection.id }?.counts
-            ?: QuizQuestionCache.BankCounts()
-        val sourceCounts = QuizQuestionCache.sourceCounts(QuizQuestionCache.LOCAL_SCOPE)
-        return json(
-            Response.Status.OK,
-            JSONObject()
-                .put("ok", true)
-                .put("dryRun", false)
-                .put("collection", collectionJson(collection))
-                .put("appended", result.appended)
-                .put("fileDuplicates", result.fileDuplicates)
-                .put("collectionDuplicates", result.collectionDuplicates)
-                .put("crossSourceDuplicates", result.crossSourceDuplicates)
-                .put("rejected", result.rejected)
-                .put("capacity", QuizQuestionCache.BANK_CAPACITY)
-                .put("remaining", result.remaining)
+        val response = JSONObject()
+            .put("ok", true)
+            .put("dryRun", false)
+            .put("collection", collectionJson(collection))
+            .put("appended", result.appended)
+            .put("fileDuplicates", result.fileDuplicates)
+            .put("collectionDuplicates", result.collectionDuplicates)
+            .put("crossSourceDuplicates", result.crossSourceDuplicates)
+            .put("rejected", result.rejected)
+            .put("capacity", QuizQuestionCache.BANK_CAPACITY)
+            .put("remaining", result.remaining)
+        // A batched import refreshes the whole status once at the end. Counting
+        // every tag and source after each 200-row batch would multiply the
+        // same work by the number of batches.
+        if (!batchMode) {
+            val state = QuizRuntime.refresh()
+            val collectionCounts = QuizQuestionCache.collectionCounts(QuizQuestionCache.LOCAL_SCOPE)
+                .firstOrNull { it.collectionId == collection.id }?.counts
+                ?: QuizQuestionCache.BankCounts()
+            val sourceCounts = QuizQuestionCache.sourceCounts(QuizQuestionCache.LOCAL_SCOPE)
+            response
                 .put("counts", bankCountsJson(state.bankCounts))
                 .put(
                     "sourceCounts",
@@ -1017,8 +1120,9 @@ object QuizWebAdmin {
                     JSONObject()
                         .put("total", collectionCounts.total)
                         .put("unused", collectionCounts.unused),
-                ),
-        )
+                )
+        }
+        return json(Response.Status.OK, response)
     }
 
     private fun importFailure(errors: List<QuizImportError>): Response {
@@ -1057,7 +1161,13 @@ object QuizWebAdmin {
                     .put("index", index)
                     .put("prompt", item.prompt)
                     .put("options", JSONArray(item.options))
+                    .put("type", item.answerKind.wire)
                     .put("answerIndex", item.answerIndex)
+                    .put("answerIndices", JSONArray(item.correctIndices))
+                    .put(
+                        "answerTexts",
+                        JSONArray(item.correctIndices.mapNotNull { item.options.getOrNull(it) }),
+                    )
                     .put("explanation", item.explanation)
                     .put("difficulty", item.difficulty),
             )
@@ -1179,77 +1289,32 @@ object QuizWebAdmin {
         // Field ranges are enforced by decodeConfig. Cross-field combinations
         // (cap below one reward, threshold above cap) are intentional parent
         // choices and only produce soft warnings on the web page.
-        // The new page sends the whole ordered list. A page cached before the
-        // level list keeps sending one scope; it is mapped to a one-level list.
-        // Rules-only saves leave the levels untouched.
-        val levelsProvided = body.has("answerScopes")
-        val levels: List<QuizLevel>? = if (levelsProvided) {
-            if (body.isNull("answerScopes")) {
-                emptyList()
-            } else {
-                QuizLevel.parseList(body.optJSONArray("answerScopes"))
-                    ?: return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
-            }
-        } else {
-            val scopeMode = body.optString("scopeMode", "").trim().lowercase()
-            val scopeProvided = body.optBoolean("scopeProvided", false) || scopeMode.isNotEmpty()
-            when {
-                !scopeProvided -> null
-                scopeMode == "bound" -> QuizAnswerScopeStore.generationScope()?.let {
-                    listOf(QuizLevel(id = "legacy-1", name = "", scope = it))
-                }.orEmpty()
-                scopeMode == "custom" -> {
-                    if (!body.has("scope") || body.isNull("scope")) {
-                        return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
-                    }
-                    val scope = QuizAnswerScope.parse(body.optJSONObject("scope"))
-                        ?: return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
-                    listOf(QuizLevel(id = "legacy-1", name = "", scope = scope))
-                }
-                scopeMode.isEmpty() -> {
-                    when {
-                        !body.has("scope") ->
-                            return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
-                        body.isNull("scope") -> QuizAnswerScopeStore.generationScope()?.let {
-                            listOf(QuizLevel(id = "legacy-1", name = "", scope = it))
-                        }.orEmpty()
-                        else -> {
-                            val scope = QuizAnswerScope.parse(body.optJSONObject("scope"))
-                                ?: return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
-                            listOf(QuizLevel(id = "legacy-1", name = "", scope = scope))
-                        }
-                    }
-                }
-                else -> return error(Response.Status.BAD_REQUEST, "INVALID_SCOPE")
+        // Level packages (V37) are the only writable level model: one package
+        // can mix course, tag and wrong-review sources. A page cached before
+        // V37 still posts the three old fields; reject it so it reloads instead
+        // of silently writing a list that cannot represent mixed sources.
+        // Rules-only saves omit every level field and leave packages untouched.
+        val legacyLevelField = LEGACY_LEVEL_FIELDS.firstOrNull { body.has(it) }
+        if (legacyLevelField != null) {
+            return error(Response.Status.CONFLICT, "LEVEL_MODEL_UPGRADED", legacyLevelField)
+        }
+        val packages: List<QuizLevelPackage>? = when {
+            !body.has("levelPackages") -> null
+            // An explicit null clears every level, matching the old sections.
+            body.isNull("levelPackages") -> emptyList()
+            else -> when (val parsed = parseLevelPackages(body.optJSONArray("levelPackages"))) {
+                is LevelPackagesResult.Ok -> parsed.packages
+                is LevelPackagesResult.Invalid ->
+                    return error(Response.Status.BAD_REQUEST, parsed.code, parsed.detail)
             }
         }
-        if (levels?.any { isCloudJuniorBlocked(it.scope.grade) } == true) {
+        if (packages != null && packages.any { levelPackage ->
+                levelPackage.sources.any {
+                    it is QuizPackageSource.Course && isCloudJuniorBlocked(it.scope.grade)
+                }
+            }
+        ) {
             return error(Response.Status.CONFLICT, "CLOUD_JUNIOR_UNSUPPORTED")
-        }
-        // Custom tag levels are saved under their own key. Either list may be
-        // omitted independently; an explicit null clears that section.
-        val customLevels: List<QuizCollectionLevel>? = if (body.has("customLevels")) {
-            if (body.isNull("customLevels")) {
-                emptyList()
-            } else {
-                QuizCollectionLevel.parseList(body.optJSONArray("customLevels"))
-                    ?: return error(Response.Status.BAD_REQUEST, "INVALID_CUSTOM_LEVEL")
-            }
-        } else {
-            null
-        }
-        // Wrong review is a single optional level under its own key. An absent
-        // field leaves it untouched; an explicit null removes it.
-        val wrongLevelProvided = body.has("wrongLevel")
-        val wrongLevel: QuizWrongReviewLevel? = if (wrongLevelProvided) {
-            if (body.isNull("wrongLevel")) {
-                null
-            } else {
-                QuizWrongReviewLevel.parse(body.optJSONObject("wrongLevel"))
-                    ?: return error(Response.Status.BAD_REQUEST, "INVALID_WRONG_LEVEL")
-            }
-        } else {
-            null
         }
         // Phase 1 adapter: the old form edits the active QCD's default profile
         // and rules. Everything it cannot express survives the save.
@@ -1290,40 +1355,24 @@ object QuizWebAdmin {
             config = config,
             feedback = feedback,
             hasAnswerDisplaySec = configObject.has("answerDisplaySec"),
-            levels = levels,
+            // Packages now own the level list; the legacy QCD levels stay as
+            // the last pre-V37 snapshot for a downgrade.
+            levels = null,
         )
-        if (levels != null || customLevels != null || wrongLevelProvided) {
-            val knownTags = QuizCollectionStore.collections().mapTo(HashSet()) { it.id }
-            if (customLevels?.any { it.collectionId !in knownTags } == true) {
-                return error(Response.Status.BAD_REQUEST, "INVALID_CUSTOM_LEVEL")
-            }
-            if (wrongLevel != null) {
-                val usedIds = (levels ?: QuizAnswerScopeStore.levels())
-                    .mapTo(HashSet()) { it.id }
-                (customLevels ?: QuizCollectionStore.customLevels())
-                    .forEach { usedIds += it.id }
-                if (wrongLevel.id in usedIds) {
-                    return error(Response.Status.BAD_REQUEST, "INVALID_WRONG_LEVEL")
-                }
-            }
-            val courseCount = levels?.size ?: QuizAnswerScopeStore.levels().size
-            val customCount = customLevels?.size ?: QuizCollectionStore.customLevels().size
-            val wrongCount = when {
-                wrongLevelProvided -> if (wrongLevel == null) 0 else 1
-                QuizWrongReviewLevelStore.level() != null -> 1
-                else -> 0
-            }
-            if (courseCount + customCount + wrongCount > QuizLevel.MAX_LEVELS) {
-                return error(Response.Status.BAD_REQUEST, "TOO_MANY_LEVELS")
-            }
+        val next = if (packages != null) {
+            QuizLevelPackageStore.withPackages(updated, packages)
+        } else {
+            updated
         }
-        val previousScopeSignature = if (levels != null) {
-            QuizAnswerScopeStore.currentSignature()
+        // A package save does not touch the legacy scope store, so compare the
+        // package-derived first course scope before and after this edit.
+        val previousScopeSignature = if (packages != null) {
+            firstCourseScope(storedPackages(current))?.signature()
         } else {
             null
         }
-        // One write: rules, default profile and levels land in the same revision.
-        val saved = when (val result = QuizConfigDocumentStore.saveLocal(updated, current.revision)) {
+        // One write: rules, default profile and packages land in the same revision.
+        val saved = when (val result = QuizConfigDocumentStore.saveLocal(next, current.revision)) {
             is QuizDocSaveResult.Ok -> result.document
             is QuizDocSaveResult.Conflict -> return error(
                 Response.Status.CONFLICT,
@@ -1335,24 +1384,13 @@ object QuizWebAdmin {
                 "STORAGE_ERROR",
             )
         }
-        if (customLevels != null && !QuizCollectionStore.saveCustomLevels(customLevels)) {
-            return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
-        }
-        if (wrongLevelProvided) {
-            val savedWrong = if (wrongLevel == null) {
-                QuizWrongReviewLevelStore.clear()
-            } else {
-                QuizWrongReviewLevelStore.save(wrongLevel)
-            }
-            if (!savedWrong) return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
-        }
         QuizConfigSync.afterLocalEdit()
         val effectiveConfig = saved.toLegacyConfig()
             ?: return error(Response.Status.INTERNAL_ERROR, "DOCUMENT_PROJECTION_FAILED")
-        val effectiveLevels = saved.localLevels() ?: emptyList()
-        val effectiveScope = effectiveLevels.firstOrNull()?.scope
+        val effectivePackages = if (packages != null) packages else storedPackages(saved)
+        val projection = legacyLevelProjection(effectivePackages)
         if (previousScopeSignature != null &&
-            previousScopeSignature != QuizAnswerScopeStore.currentSignature()
+            previousScopeSignature != firstCourseScope(effectivePackages)?.signature()
         ) {
             QuizConfigSync.afterLocalScopeChange()
         }
@@ -1361,14 +1399,22 @@ object QuizWebAdmin {
             JSONObject()
                 .put("ok", true)
                 .put("config", QuizSessionCodec.encodeConfig(effectiveConfig))
-                .put("answerScope", effectiveScope?.encode() ?: JSONObject.NULL)
-                .put("answerScopeMode", if (effectiveScope == null) "bound" else "custom")
-                .put("answerScopes", answerLevelsJson(effectiveLevels))
+                .put("levelModel", LEVEL_MODEL)
+                .put("levelPackages", levelPackagesJson(effectivePackages))
+                .put("levelPackagesUnreadable", false)
+                .put("answerScope", projection.answerScope?.encode() ?: JSONObject.NULL)
+                .put(
+                    "answerScopeMode",
+                    if (projection.answerScope == null) "bound" else "custom",
+                )
+                .put("answerScopes", projection.answerScopes)
+                .put("customLevels", projection.customLevels)
+                .put("wrongLevel", projection.wrongLevel ?: JSONObject.NULL)
                 .put(
                     "answerScopeAvailable",
                     QuizQuestionCache.availableCount(
                         QuizQuestionCache.LOCAL_SCOPE,
-                        answerScope = effectiveScope,
+                        answerScope = projection.answerScope,
                     ),
                 )
                 .put("syncState", QuizSessionStore.loadSyncState().encode()),
@@ -1590,10 +1636,20 @@ object QuizWebAdmin {
                 if (supplied.isEmpty()) "PROVIDER_KEY_REQUIRED" else "PROVIDER_KEY_INVALID",
             )
         }
+        val speech = body.optJSONObject("speech")?.let { raw ->
+            parseSpeechSettings(raw, QuizSessionStore.loadSpeechSettings())
+                ?: return error(Response.Status.BAD_REQUEST, "INVALID_SPEECH_SETTINGS")
+        }
+        if (speech != null && speech.enabled && !speech.hasContent) {
+            return error(Response.Status.BAD_REQUEST, "SPEECH_CONTENT_REQUIRED")
+        }
         if (!QuizSessionStore.saveProviderMeta(QuizProviderMeta(base, model))) {
             return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
         }
         if (supplied.isNotEmpty() && !QuizSessionStore.saveProviderKey(key)) {
+            return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
+        }
+        if (speech != null && !QuizSessionStore.saveSpeechSettings(speech)) {
             return error(Response.Status.INTERNAL_ERROR, "STORAGE_ERROR")
         }
         return json(Response.Status.OK, providerJson())
@@ -1779,6 +1835,29 @@ object QuizWebAdmin {
         return key
     }
 
+    /**
+     * Strict boolean parsing for the speech settings. A malformed field must not
+     * silently become a default-on value that starts uploading quiz text.
+     */
+    private fun parseSpeechSettings(raw: JSONObject, current: QuizSpeechSettings): QuizSpeechSettings? {
+        fun value(key: String, fallback: Boolean): Boolean? = when {
+            !raw.has(key) || raw.isNull(key) -> fallback
+            raw.opt(key) is Boolean -> raw.getBoolean(key)
+            else -> null
+        }
+        val enabled = value("enabled", current.enabled) ?: return null
+        val prompt = value("readPrompt", current.readPrompt) ?: return null
+        val options = value("readOptions", current.readOptions) ?: return null
+        val answer = value("readAnswer", current.readAnswer) ?: return null
+        return QuizSpeechSettings(
+            initialized = true,
+            enabled = enabled,
+            readPrompt = prompt,
+            readOptions = options,
+            readAnswer = answer,
+        )
+    }
+
     private fun providerJson(): JSONObject {
         val meta = QuizSessionStore.loadProviderMeta()
         return JSONObject()
@@ -1788,6 +1867,7 @@ object QuizWebAdmin {
             .put("configured", QuizSessionStore.providerConfigured())
             .put("baseUrl", meta.baseUrl)
             .put("model", meta.model)
+            .put("speech", QuizSessionStore.loadSpeechSettings().toJson())
     }
 
     private fun generationJson(
@@ -1822,8 +1902,16 @@ object QuizWebAdmin {
                         .put("questionId", question.questionId)
                         .put("prompt", question.prompt)
                         .put("options", JSONArray(question.options))
+                        .put("type", question.answerKind.wire)
                         .put("answerIndex", question.answerIndex)
                         .put("answerText", question.options.getOrNull(question.answerIndex).orEmpty())
+                        .put("answerIndices", JSONArray(question.correctIndices))
+                        .put(
+                            "answerTexts",
+                            JSONArray(
+                                question.correctIndices.mapNotNull { question.options.getOrNull(it) },
+                            ),
+                        )
                         .put("explanation", question.explanation)
                         .put("subject", question.subject)
                         .put("grade", question.grade)
@@ -1852,27 +1940,211 @@ object QuizWebAdmin {
             .put("expired", counts.expired)
 
     /**
-     * The ordered levels plus a per-level availability count. The phone list
-     * uses the count to warn before a child picks a level the bank cannot fill.
+     * The editable level packages plus per-source stock. The phone list warns
+     * before a child picks a package the bank cannot fill, and the source
+     * picker shows the single/multiple split before a parent adds a course.
      */
-    private fun answerLevelsJson(levels: List<QuizLevel>): JSONArray =
-        JSONArray().apply {
-            levels.forEach { level ->
+    private fun levelPackagesJson(packages: List<QuizLevelPackage>): JSONArray {
+        val now = System.currentTimeMillis()
+        return JSONArray().apply {
+            packages.forEach { levelPackage ->
+                val availability = QuizQuestionCache.packageAvailability(levelPackage, now)
                 put(
                     JSONObject()
-                        .put("id", level.id)
-                        .put("name", level.name)
-                        .put("scope", level.scope.encode())
+                        .put("id", levelPackage.id)
+                        .put("name", levelPackage.name)
+                        .put("enabled", levelPackage.enabled)
+                        .put("available", availability.available)
                         .put(
-                            "available",
-                            QuizQuestionCache.availableCount(
-                                QuizQuestionCache.LOCAL_SCOPE,
-                                answerScope = level.scope,
-                            ),
+                            "sources",
+                            JSONArray().apply {
+                                levelPackage.sources.forEachIndexed { index, source ->
+                                    put(
+                                        packageSourceJson(
+                                            source,
+                                            availability.sourceCounts.getOrElse(index) { 0 },
+                                        ),
+                                    )
+                                }
+                            },
                         ),
                 )
             }
         }
+    }
+
+    private fun packageSourceJson(source: QuizPackageSource, available: Int): JSONObject =
+        when (source) {
+            is QuizPackageSource.Course -> {
+                val typeCounts = QuizQuestionCache.availableTypeCounts(
+                    answerScope = source.scope,
+                )
+                JSONObject()
+                    .put("type", "course")
+                    .put("scope", source.scope.encode())
+                    .put("answerKind", source.answerKind.wire)
+                    .put("available", available)
+                    .put(
+                        "typeCounts",
+                        JSONObject()
+                            .put("total", typeCounts.total)
+                            .put("single", typeCounts.single)
+                            .put("multiple", typeCounts.multiple),
+                    )
+            }
+            is QuizPackageSource.Collection -> JSONObject()
+                .put("type", "collection")
+                .put("collectionId", source.collectionId)
+                .put("collectionName", QuizCollectionStore.tagName(source.collectionId))
+                .put("available", available)
+            QuizPackageSource.WrongReview -> JSONObject()
+                .put("type", "wrong")
+                .put("available", available)
+        }
+
+    private sealed interface LevelPackagesResult {
+        data class Ok(val packages: List<QuizLevelPackage>) : LevelPackagesResult
+        data class Invalid(val code: String, val detail: String? = null) : LevelPackagesResult
+    }
+
+    /**
+     * Strict package parse with the plan's differentiated error codes. A
+     * missing id is assigned by [QuizLevelPackage.parse]; any other malformed
+     * row rejects the whole save instead of dropping part of a parent's list.
+     */
+    private fun parseLevelPackages(raw: JSONArray?): LevelPackagesResult {
+        if (raw == null) return LevelPackagesResult.Invalid("INVALID_LEVEL_PACKAGES")
+        if (raw.length() > QuizLevelPackage.MAX_LEVELS) {
+            return LevelPackagesResult.Invalid("TOO_MANY_LEVELS")
+        }
+        val knownTags = QuizCollectionStore.collections().mapTo(HashSet()) { it.id }
+        val packages = ArrayList<QuizLevelPackage>(raw.length())
+        val ids = HashSet<String>(raw.length())
+        for (index in 0 until raw.length()) {
+            val obj = raw.optJSONObject(index)
+                ?: return LevelPackagesResult.Invalid("INVALID_LEVEL_PACKAGES", "index:$index")
+            val sourceArray = obj.optJSONArray("sources")
+                ?: return LevelPackagesResult.Invalid("INVALID_LEVEL_PACKAGES", "sources:$index")
+            if (sourceArray.length() == 0) {
+                return LevelPackagesResult.Invalid("INVALID_LEVEL_SOURCE", "EMPTY")
+            }
+            if (sourceArray.length() > QuizLevelPackage.MAX_SOURCES) {
+                return LevelPackagesResult.Invalid("LEVEL_SOURCE_LIMIT")
+            }
+            val sources = ArrayList<QuizPackageSource>(sourceArray.length())
+            for (sourceIndex in 0 until sourceArray.length()) {
+                val source = QuizLevelPackage.parseSource(sourceArray.optJSONObject(sourceIndex))
+                    ?: return LevelPackagesResult.Invalid("INVALID_LEVEL_SOURCE", "MALFORMED")
+                if (source is QuizPackageSource.Collection && source.collectionId !in knownTags) {
+                    return LevelPackagesResult.Invalid(
+                        "INVALID_LEVEL_SOURCE",
+                        "UNKNOWN_COLLECTION",
+                    )
+                }
+                sources += source
+            }
+            when (val issue = QuizLevelPackage.sourceIssue(sources)) {
+                null -> Unit
+                SourceIssue.TOO_MANY ->
+                    return LevelPackagesResult.Invalid("LEVEL_SOURCE_LIMIT")
+                SourceIssue.EMPTY ->
+                    return LevelPackagesResult.Invalid("INVALID_LEVEL_SOURCE", "EMPTY")
+                else ->
+                    return LevelPackagesResult.Invalid("INVALID_LEVEL_SOURCE", issue.name)
+            }
+            val levelPackage = QuizLevelPackage.parse(obj)
+                ?: return LevelPackagesResult.Invalid("INVALID_LEVEL_PACKAGES", "level:$index")
+            if (!ids.add(levelPackage.id)) {
+                return LevelPackagesResult.Invalid("INVALID_LEVEL_PACKAGES", "DUPLICATE_ID")
+            }
+            packages += levelPackage
+        }
+        return LevelPackagesResult.Ok(packages)
+    }
+
+    /**
+     * Packages currently owned by [document]. An absent extension is migrated
+     * in memory for comparisons; this never writes, so a rules-only save stays
+     * a single revision.
+     */
+    private fun storedPackages(document: QuizConfigDocument): List<QuizLevelPackage> =
+        when (val extension = QuizLevelPackageStore.read(document)) {
+            is QuizLevelPackageStore.Extension.Present -> extension.packages
+            QuizLevelPackageStore.Extension.Absent -> QuizLevelPackageStore.migrate(
+                courseLevels = document.localLevels().orEmpty(),
+                customLevels = QuizCollectionStore.customLevels(),
+                wrongLevel = QuizWrongReviewLevelStore.level(),
+            )
+            is QuizLevelPackageStore.Extension.Broken -> emptyList()
+        }
+
+    private data class LegacyLevelProjection(
+        val answerScope: QuizAnswerScope?,
+        val answerScopes: JSONArray,
+        val customLevels: JSONArray,
+        val wrongLevel: JSONObject?,
+    )
+
+    /**
+     * Projects packages into the three old read-only shapes. A mixed package
+     * has no exact legacy equivalent, so it only contributes its first course
+     * scope to the single-scope fields. Saving through those old shapes is
+     * rejected; this keeps an old page readable without letting it edit.
+     */
+    private fun legacyLevelProjection(
+        packages: List<QuizLevelPackage>,
+    ): LegacyLevelProjection {
+        val answerScopes = JSONArray()
+        val customLevels = JSONArray()
+        var wrongLevel: JSONObject? = null
+        var answerScope: QuizAnswerScope? = null
+        packages.forEach { levelPackage ->
+            if (answerScope == null) {
+                answerScope = firstCourseIn(levelPackage.sources)
+            }
+            when (val only = levelPackage.sources.singleOrNull()) {
+                is QuizPackageSource.Course -> answerScopes.put(
+                    JSONObject()
+                        .put("id", levelPackage.id)
+                        .put("name", levelPackage.name)
+                        .put("scope", only.scope.encode())
+                        .put(
+                            "available",
+                            QuizQuestionCache.availableCount(
+                                QuizQuestionCache.LOCAL_SCOPE,
+                                answerScope = only.scope,
+                                answerKind = only.answerKind,
+                            ),
+                        ),
+                )
+                is QuizPackageSource.Collection -> customLevels.put(
+                    JSONObject()
+                        .put("id", levelPackage.id)
+                        .put("name", levelPackage.name)
+                        .put("collectionId", only.collectionId)
+                        .put("collectionName", QuizCollectionStore.tagName(only.collectionId))
+                        .put(
+                            "available",
+                            QuizQuestionCache.availableCollectionCount(only.collectionId),
+                        ),
+                )
+                QuizPackageSource.WrongReview -> if (wrongLevel == null) {
+                    wrongLevel = JSONObject()
+                        .put("id", levelPackage.id)
+                        .put("name", levelPackage.name)
+                        .put("available", QuizQuestionCache.wrongReviewCount())
+                }
+                null -> Unit
+            }
+        }
+        return LegacyLevelProjection(answerScope, answerScopes, customLevels, wrongLevel)
+    }
+
+    private fun firstCourseIn(sources: List<QuizPackageSource>): QuizAnswerScope? =
+        sources.firstNotNullOfOrNull { (it as? QuizPackageSource.Course)?.scope }
+
+    private fun firstCourseScope(packages: List<QuizLevelPackage>): QuizAnswerScope? =
+        packages.firstNotNullOfOrNull { firstCourseIn(it.sources) }
 
     /** The pre-V17 `cache` shape, kept so a cached page still renders counts. */
     private fun legacyCacheJson(counts: QuizQuestionCache.BankCounts): JSONObject =
@@ -1994,8 +2266,13 @@ object QuizWebAdmin {
     private fun json(status: Response.Status, body: JSONObject): Response =
         newResponse(status, "application/json; charset=utf-8", body.toString())
 
-    private fun error(status: Response.Status, code: String): Response =
-        json(status, JSONObject().put("ok", false).put("error", code))
+    private fun error(status: Response.Status, code: String, detail: String? = null): Response =
+        json(
+            status,
+            JSONObject().put("ok", false).put("error", code).apply {
+                if (detail != null) put("detail", detail)
+            },
+        )
 
     private fun newResponse(status: Response.Status, type: String, body: String): Response =
         NanoHTTPD.newFixedLengthResponse(status, type, body).apply {
@@ -2010,6 +2287,15 @@ object QuizWebAdmin {
         QuizSessionStatus.START_FAILED,
     )
     private val JOB_ID_RE = Regex("job_[0-9a-f]{20}")
+    /** The pre-V37 level editors; any of these means the page must reload. */
+    private val LEGACY_LEVEL_FIELDS = listOf(
+        "answerScopes",
+        "scopeMode",
+        "scopeProvided",
+        "scope",
+        "customLevels",
+        "wrongLevel",
+    )
     private val BANK_FILTERS = setOf("all", "unused", "answered", "wrong", "correct")
     private val FACET_DIFFICULTIES = setOf("EASY", "MEDIUM", "HARD")
 }

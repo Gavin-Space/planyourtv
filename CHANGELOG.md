@@ -3,6 +3,72 @@
 This changelog covers the community source snapshot. Official hosted builds may ship different
 artifacts with the same upstream Aerial base.
 
+## [1.97.003] - 2026-11-17
+
+Multiple-choice quiz rounds, optional DeepSeek voice reading, unlimited local wallpaper videos,
+kids-wallpaper sound and the temporary-unlock and timer-audio fixes, based on Aerial 1.97 /
+versionCode 142. Version code `142003`. The optional parent app is `1.2.2` / `8`.
+
+### Added
+
+- Quiz levels can mix single-choice and multiple-choice questions. A multiple-choice question needs
+  at least three options, at least two correct answers and one wrong option; the quiz screen marks
+  the question type and asks the child to confirm the selected set. Manual import accepts
+  `answer: "A、C"` or `answerIndices: [0,2]`, and import failures now name the exact item and reason.
+  The built-in bank adds 5,439 multiple-choice questions to the existing 5,500 single-choice ones.
+- Optional DeepSeek voice reading. After the parent enables it in the phone's AI settings, the quiz
+  reads the prompt and options, and reads the correct answer and explanation after a wrong or
+  timed-out reply. The spoken language follows the question, and the parent can choose whether to
+  read the prompt, options, answer and explanation. It uses the DeepSeek key and speech quota; a
+  speech failure never blocks the quiz.
+- Kids-mode wallpaper videos can play sound, on by default, only when the selected video has an
+  audio track the TV can decode. Parent mode stays muted, and the switch does not affect the quiz
+  intro or answer sounds.
+- The optional parent app can remember several TVs, switch between them from a device list, and
+  give each one a local name. Re-scanning after a DHCP address change updates the existing entry
+  instead of adding a duplicate; the TV token is the device identity. Names, the list and the
+  current selection stay on the phone.
+- The optional parent app checks the official release metadata and updates itself. The APK is
+  verified against its SHA-256, package name, version and signing certificate before Android's
+  installer asks the user to confirm; there is no silent install.
+- Release `notes.json` now carries a top-level `parent` object with the parent app's version,
+  minSdk, SHA-256 and size. The existing TV update parser ignores it, so older TVs are unaffected.
+
+### Changed
+
+- Local wallpaper videos no longer have a duration, count or total-size limit. Each file is still
+  capped at 128 MB, the TV keeps a free-space reserve, and several videos can be selected at once
+  from the system photo picker. Quiz intros keep their separate 15-second / 16 MB limit.
+- The parent app requests `REQUEST_INSTALL_PACKAGES` in addition to `INTERNET` and `CAMERA`; the
+  permission is used only for its own update. It still has no account, analytics or cloud storage.
+  Update checks contact the project site and, as a fallback, the project's GitHub Releases.
+- Logging out of the parent page now opens the saved device list instead of discarding the pairing.
+  Each TV keeps its own WebView session when switching.
+- An existing single saved TV address migrates automatically to the device list.
+- Parent app dialogs and the overflow menu use rounded cards, pill buttons and the shell's brand
+  colors instead of the stock square AppCompat panels. The Control page shows device and
+  service-configuration status, the update dialog shows the current and latest versions, and the
+  current TV link can be copied.
+- The parent app's Refresh action reloads the current document instead of re-opening the saved
+  `#parent` address. WebView treats that address as an in-page fragment once the page has consumed
+  it, so the old page and assets could stay on screen after a TV web update.
+- Quiz levels can be paused, and the quiz screen shows the question type and available counts. A
+  whole textbook bank can be cleared.
+
+### Fixed
+
+- Speech that is still playing stops when the answer timer ends, an answer is submitted, the
+  feedback page opens or the child leaves the quiz, instead of continuing into the next question
+  or the desktop.
+- Temporarily leaving kids mode no longer returns to kids mode after another app opens or the
+  launcher process is reclaimed. A live temporary unlock is restored within the same boot when the
+  screen has not been turned off and the TV has not gone into standby, and before its deadline; a
+  real reboot, screen-off or the parent returning to kids mode still restores the child guard.
+- The phone page's entertainment and learning app icons can be selected again, the local upload
+  button and the `.json` / `.txt` file picker respond, and level switches are tappable.
+- External playback pauses after the screen locks, and the lock-screen source entry opens the TV
+  input list only after a quiz round.
+
 ## [1.97.001] - 2026-11-16
 
 Kids-mode wallpaper import, quiz-entry and update-flow refinements, based on Aerial 1.97 /

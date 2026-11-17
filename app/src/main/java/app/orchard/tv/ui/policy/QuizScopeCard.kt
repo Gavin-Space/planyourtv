@@ -66,7 +66,7 @@ internal fun QuizScopeCard(scope: QuizAnswerScope?) {
             )
             Spacer(Modifier.width(6.dp))
             BasicText(
-                stringResource(R.string.policy_quiz_format_single),
+                stringResource(R.string.policy_quiz_format_mixed),
                 style = Type.Caption.copy(
                     color = Palette.Label,
                     fontWeight = FontWeight.W600,
@@ -233,8 +233,8 @@ private fun levelWheelLabel(level: QuizRuntime.LevelState): String =
     level.name.ifBlank { levelSummary(level) }
 
 /**
- * A custom level names its tag, wrong review has its own title, and only
- * course levels have a curriculum scope.
+ * A mixed package names its source count; a single custom level names its tag;
+ * wrong review has its own title; and only single course levels have a scope.
  */
 @Composable
 private fun levelSummary(level: QuizRuntime.LevelState?): String =
@@ -242,6 +242,8 @@ private fun levelSummary(level: QuizRuntime.LevelState?): String =
         level == null -> scopeSummary(null)
         // A cloud level has no local curriculum scope: the question bank owns it.
         level.isCloud -> stringResource(R.string.policy_quiz_scope_cloud_level)
+        level.packageSourceCount > 1 ->
+            stringResource(R.string.policy_quiz_scope_mixed_level, level.packageSourceCount)
         level.wrongReview -> stringResource(R.string.policy_quiz_scope_wrong_review)
         level.isCustom -> stringResource(R.string.policy_quiz_scope_custom_tag, level.tagName)
         else -> scopeSummary(level.scope)

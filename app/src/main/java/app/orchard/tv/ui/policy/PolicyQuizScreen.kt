@@ -11,6 +11,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
@@ -93,6 +95,7 @@ import app.orchard.tv.policy.media.PolicyVideoLibrary
 import app.orchard.tv.quiz.QuizRecovery
 import app.orchard.tv.quiz.QuizResultTone
 import app.orchard.tv.quiz.QuizRuntime
+import app.orchard.tv.quiz.QuizSpeechPlayer
 import app.orchard.tv.quiz.cloudPlanMessage
 import app.orchard.tv.system.Sounds
 import app.orchard.tv.ui.components.Pressable
@@ -137,6 +140,9 @@ import kotlin.math.sin
  */
 private val QuizGold = Color(0xFFFFD45A)
 private val QuizLoss = Palette.Green
+// Format is not a score, so it must not borrow the quiz's green loss or gold
+// reward colors. Blue marks single choice, orange marks multiple choice.
+private val QuizFormatSingle = Color(0xFF64D2FF)
 
 /**
  * The lock-screen quiz entry. It has three faces: the parent setup QR while a
@@ -170,7 +176,12 @@ fun PolicyQuizScreen(
     // then release it as soon as the child leaves the challenge.
     DisposableEffect(context) {
         QuizSfx.install(context)
-        onDispose { QuizSfx.release() }
+        onDispose {
+            QuizSfx.release()
+            // Leaving the challenge must not leave a synthesized question
+            // talking over the desktop or the target app.
+            QuizSpeechPlayer.stop()
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -187,6 +198,7 @@ fun PolicyQuizScreen(
     }
 
     fun closeCleanly() {
+        QuizSpeechPlayer.stop()
         onClose()
     }
 
@@ -198,6 +210,9 @@ fun PolicyQuizScreen(
     }
 
     BackHandler {
+        // Back may open the exit dialog before the child commits; stop the
+        // reading so it does not talk over the confirmation.
+        QuizSpeechPlayer.stop()
         when {
             confirmExit -> confirmExit = false
             state.sessionState == "running" -> confirmExit = true
@@ -1014,10 +1029,10 @@ private fun QuizBankEmptyScreen(
             Spacer(Modifier.height(10.dp))
             BasicText(
                 stringResource(
-                    if (state.bankState == "blocked") {
-                        R.string.policy_quiz_bank_blocked_title
-                    } else {
-                        R.string.policy_quiz_bank_empty_title
+                    when (state.bankState) {
+                        "blocked" -> R.string.policy_quiz_bank_blocked_title
+                        "paused" -> R.string.policy_quiz_bank_paused_title
+                        else -> R.string.policy_quiz_bank_empty_title
                     },
                 ),
                 style = Type.LargeTitle,
@@ -1025,10 +1040,10 @@ private fun QuizBankEmptyScreen(
             Spacer(Modifier.height(8.dp))
             BasicText(
                 stringResource(
-                    if (state.bankState == "blocked") {
-                        R.string.policy_quiz_bank_blocked_body
-                    } else {
-                        R.string.policy_quiz_bank_empty_body
+                    when (state.bankState) {
+                        "blocked" -> R.string.policy_quiz_bank_blocked_body
+                        "paused" -> R.string.policy_quiz_bank_paused_body
+                        else -> R.string.policy_quiz_bank_empty_body
                     },
                 ),
                 style = Type.Body.copy(color = Palette.SecondaryLabel),
@@ -1773,34 +1788,39 @@ private fun QuizQuestionPage(
     onExit: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     var submitting by remember(item.questionId) { mutableStateOf(false) }
     var remaining by remember(item.questionId, deadlineAt) {
         mutableLongStateOf(QuizChallenge.remainingSeconds())
     }
     var error by remember(item.questionId) { mutableStateOf(false) }
+    var needsSelection by remember(item.questionId) { mutableStateOf(false) }
+    // Multiple-choice options are a draft until the child confirms the whole
+    // set. Single-choice never populates this state and still commits on tap.
+    var selectedIndices by remember(item.questionId) { mutableStateOf(emptySet<Int>()) }
     val promptFocus = remember(item.questionId) { FocusRequester() }
     // One requester per option so Up/Left and Down/Right can walk the whole
     // answer list, then hand over to the prompt or the exit button at its ends.
     val optionFocuses = remember(item.questionId, item.options.size) {
         List(item.options.size) { FocusRequester() }
     }
-    val firstOptionFocus = optionFocuses.firstOrNull()
     val exitFocus = remember(item.questionId) { FocusRequester() }
-    val promptScroll = remember(item.questionId) { ScrollState(0) }
-    val optionsScroll = remember(item.questionId) { ScrollState(0) }
-    var promptFocused by remember(item.questionId) { mutableStateOf(false) }
-    val scrollStep = with(LocalDensity.current) { 80.dp.toPx() }
+    val confirmFocus = remember(item.questionId) { FocusRequester() }
 
-    fun submit(selectedIndex: Int?, timedOut: Boolean) {
+    fun submit(selected: List<Int>, timedOut: Boolean) {
         if (submitting) return
+        // Stop the read-aloud the moment an answer is committed, including a
+        // timeout, so the result cue and the next question start clean.
+        QuizSpeechPlayer.stop()
         submitting = true
         error = false
+        needsSelection = false
         // Use the press time, not the time after storage I/O, so a tap made
         // just before the deadline still counts.
         val answeredAt = System.currentTimeMillis()
         scope.launch {
             val outcome = withContext(Dispatchers.Default) {
-                QuizChallenge.answer(selectedIndex, timedOut, answeredAt)
+                QuizChallenge.answer(selected, timedOut, answeredAt)
             }
             when (outcome) {
                 QuizChallenge.AnswerOutcome.Answered -> {
@@ -1822,7 +1842,7 @@ private fun QuizQuestionPage(
             val left = QuizChallenge.remainingSeconds()
             remaining = left
             if (left <= 0L) {
-                submit(null, true)
+                submit(emptyList(), true)
                 break
             }
             delay(1_000)
@@ -1831,6 +1851,9 @@ private fun QuizQuestionPage(
     LaunchedEffect(item.questionId) {
         withFrameNanos { }
         runCatching { promptFocus.requestFocus() }
+    }
+    LaunchedEffect(item.questionId) {
+        QuizSpeechPlayer.speakQuestion(context, item)
     }
 
     Column(
@@ -1889,156 +1912,201 @@ private fun QuizQuestionPage(
                 )
             }
         }
-        Spacer(Modifier.height(10.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 190.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(if (promptFocused) Palette.FillStrong else Palette.Fill),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .onFocusChanged { promptFocused = it.isFocused }
-                    .focusRequester(promptFocus)
-                    .onKeyEvent { event ->
-                        val key = event.nativeKeyEvent.keyCode
-                        when (key) {
-                            NativeKeyEvent.KEYCODE_DPAD_UP,
-                            NativeKeyEvent.KEYCODE_DPAD_DOWN -> {
-                                val down = key == NativeKeyEvent.KEYCODE_DPAD_DOWN
-                                if (event.type == KeyEventType.KeyDown) {
-                                    if (down && promptScroll.value >= promptScroll.maxValue) {
-                                        if (event.nativeKeyEvent.repeatCount == 0) {
-                                            firstOptionFocus?.let { runCatching { it.requestFocus() } }
-                                        }
-                                    } else {
-                                        val delta = when {
-                                            down && promptScroll.value < promptScroll.maxValue -> scrollStep
-                                            !down && promptScroll.value > 0 -> -scrollStep
-                                            else -> 0f
-                                        }
-                                        if (delta != 0f) {
-                                            scope.launch {
-                                                promptScroll.animateScrollBy(
-                                                    delta,
-                                                    spring(dampingRatio = 1f, stiffness = 500f),
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                true
-                            }
-
-                            // The prompt keeps Up/Down for reading. Left/Right skip
-                            // straight to the answers, so the buttons are reachable
-                            // without scrolling a long prompt to its end.
-                            NativeKeyEvent.KEYCODE_DPAD_LEFT,
-                            NativeKeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                if (event.type == KeyEventType.KeyDown &&
-                                    event.nativeKeyEvent.repeatCount == 0
-                                ) {
-                                    firstOptionFocus?.let { runCatching { it.requestFocus() } }
-                                }
-                                true
-                            }
-
-                            else -> if (event.isSelect()) {
-                                if (event.type == KeyEventType.KeyDown) {
-                                    firstOptionFocus?.let { runCatching { it.requestFocus() } }
-                                }
-                                true
-                            } else {
-                                false
-                            }
-                        }
+        Spacer(Modifier.height(8.dp))
+        QuizFormatBanner(multiple = item.isMultipleChoice)
+        Spacer(Modifier.height(8.dp))
+        QuizQuestionBodyRouter(
+            item = item,
+            submitting = submitting,
+            selectedIndices = selectedIndices,
+            promptFocus = promptFocus,
+            optionFocuses = optionFocuses,
+            confirmFocus = confirmFocus,
+            exitFocus = exitFocus,
+            onOptionClick = { index ->
+                if (item.isMultipleChoice) {
+                    selectedIndices = if (index in selectedIndices) {
+                        selectedIndices - index
+                    } else {
+                        selectedIndices + index
                     }
-                    .focusProperties { canFocus = true }
-                    .focusable()
-                    .quizScrollBar(promptScroll, promptFocused)
-                    .verticalScroll(promptScroll)
-                    .padding(start = 18.dp, end = 24.dp, top = 12.dp, bottom = 12.dp),
-            ) {
-                BasicText(
-                    item.prompt,
-                    style = Type.Title,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-        Spacer(Modifier.height(12.dp))
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .quizScrollBar(optionsScroll, false),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(optionsScroll)
-                    .latestBringIntoView(optionsScroll)
-                    .padding(end = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                item.options.forEachIndexed { index, option ->
-                    QuizOptionButton(
-                        label = optionLabel(index) + "  " + option,
-                        onClick = { submit(index, false) },
-                        focusRequester = optionFocuses[index],
-                        enabled = !submitting,
-                        // Up/Left and Down/Right both walk the answer list. The
-                        // first answer returns to the prompt, the last hands over
-                        // to the exit button, so no arrow can lose focus.
-                        onKey = linearDpadFocus(
-                            previous = if (index == 0) promptFocus else optionFocuses[index - 1],
-                            next = if (index == item.options.lastIndex) exitFocus else optionFocuses[index + 1],
-                        ),
-                    )
+                    needsSelection = false
+                } else {
+                    submit(listOf(index), false)
                 }
-            }
-        }
+            },
+            modifier = Modifier.weight(1f),
+        )
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BasicText(
-                if (error) {
-                    stringResource(R.string.policy_quiz_error)
-                } else {
-                    stringResource(R.string.policy_quiz_question_scroll_hint)
+                when {
+                    error -> stringResource(R.string.policy_quiz_error)
+                    needsSelection -> stringResource(R.string.policy_quiz_select_at_least_one)
+                    else -> stringResource(R.string.policy_quiz_question_scroll_hint)
                 },
                 style = Type.Caption.copy(
-                    color = if (error) Palette.Orange else Palette.SecondaryLabel,
+                    color = if (error || needsSelection) {
+                        Palette.Orange
+                    } else {
+                        Palette.SecondaryLabel
+                    },
                 ),
                 modifier = Modifier.weight(1f),
             )
+            if (item.isMultipleChoice) {
+                LockButton(
+                    label = stringResource(R.string.policy_quiz_confirm_answer),
+                    onClick = {
+                        if (selectedIndices.isEmpty()) {
+                            error = false
+                            needsSelection = true
+                        } else {
+                            submit(selectedIndices.sorted(), false)
+                        }
+                    },
+                    width = 200.dp,
+                    focusRequester = confirmFocus,
+                    enabled = !submitting,
+                    primary = true,
+                    onKey = linearDpadFocus(
+                        previous = optionFocuses.lastOrNull() ?: promptFocus,
+                        next = exitFocus,
+                    ),
+                )
+                Spacer(Modifier.width(8.dp))
+            }
             LockButton(
                 label = stringResource(R.string.policy_quiz_exit),
-                onClick = onExit,
+                onClick = {
+                    QuizSpeechPlayer.stop()
+                    onExit()
+                },
                 width = 160.dp,
                 focusRequester = exitFocus,
                 enabled = !submitting,
                 // The exit button is the end of the chain: Up/Left goes back to
-                // the answers, Down/Right stays here.
+                // the answers (or confirmation), Down/Right stays here.
                 onKey = linearDpadFocus(
-                    previous = optionFocuses.lastOrNull() ?: promptFocus,
+                    previous = if (item.isMultipleChoice) {
+                        confirmFocus
+                    } else {
+                        optionFocuses.lastOrNull() ?: promptFocus
+                    },
                 ),
             )
         }
     }
 }
 
+/**
+ * The first row under the question header. The colored badge and the sentence
+ * both repeat the format, so a child can tell an immediate single-choice commit
+ * from a multi-select set that waits for the confirm button.
+ */
 @Composable
-private fun QuizOptionButton(
+private fun QuizFormatBanner(multiple: Boolean) {
+    val accent = if (multiple) Palette.Orange else Palette.Green
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(accent.copy(alpha = 0.16f))
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .background(accent)
+                .padding(horizontal = 8.dp, vertical = 2.dp),
+        ) {
+            BasicText(
+                stringResource(
+                    if (multiple) {
+                        R.string.policy_quiz_format_multiple
+                    } else {
+                        R.string.policy_quiz_format_single
+                    },
+                ),
+                style = Type.Caption.copy(
+                    color = Palette.OnFocus,
+                    fontWeight = FontWeight.W700,
+                ),
+            )
+        }
+        Spacer(Modifier.width(10.dp))
+        BasicText(
+            stringResource(
+                if (multiple) {
+                    R.string.policy_quiz_multiple_hint
+                } else {
+                    R.string.policy_quiz_single_hint
+                },
+            ),
+            style = Type.Caption.copy(color = Palette.Label),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+/**
+ * A radio ring for single choice and a square for multiple choice. The shape is
+ * visible before selection, so the answer format stays readable even when the
+ * first option already has focus.
+ */
+@Composable
+private fun QuizOptionMarker(multiple: Boolean, selected: Boolean, focused: Boolean) {
+    val accent = if (multiple) Palette.Orange else Palette.Green
+    val shape = if (multiple) RoundedCornerShape(5.dp) else CircleShape
+    val edge = when {
+        selected -> accent
+        focused -> Palette.OnFocus
+        else -> Palette.SecondaryLabel
+    }
+    Box(
+        modifier = Modifier
+            .size(20.dp)
+            .clip(shape)
+            .background(if (selected) accent else Color.Transparent)
+            .border(1.5.dp, edge, shape),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (selected) {
+            if (multiple) {
+                BasicText(
+                    "✓",
+                    style = Type.Caption.copy(
+                        color = Palette.OnFocus,
+                        fontWeight = FontWeight.W700,
+                    ),
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(Palette.OnFocus),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun QuizOptionButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester? = null,
     enabled: Boolean,
+    selected: Boolean = false,
+    multiple: Boolean = false,
     onKey: ((androidx.compose.ui.input.key.KeyEvent) -> Boolean)? = null,
 ) {
     Pressable(
@@ -2049,27 +2117,40 @@ private fun QuizOptionButton(
         focusedScale = 1.02f,
         onKey = onKey,
     ) { state ->
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 56.dp)
                 .clip(RoundedCornerShape(13.dp))
-                .background(if (state.focused) Palette.Focus else Palette.Fill)
+                .background(
+                    when {
+                        state.focused -> Palette.Focus
+                        selected -> Palette.FillStrong
+                        else -> Palette.Fill
+                    },
+                )
                 .padding(horizontal = 16.dp, vertical = 10.dp),
-            contentAlignment = Alignment.CenterStart,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            QuizOptionMarker(
+                multiple = multiple,
+                selected = selected,
+                focused = state.focused,
+            )
+            Spacer(Modifier.width(10.dp))
             BasicText(
                 label,
                 style = Type.Body.copy(
                     color = if (state.focused) Palette.OnFocus else Palette.Label,
                 ),
+                modifier = Modifier.weight(1f),
             )
         }
     }
 }
 
 /** A right-edge scroll bar drawn outside the scroll node, so it stays put. */
-private fun Modifier.quizScrollBar(scroll: ScrollState, focused: Boolean): Modifier = drawWithContent {
+internal fun Modifier.quizScrollBar(scroll: ScrollState, focused: Boolean): Modifier = drawWithContent {
     drawContent()
     if (scroll.maxValue <= 0) return@drawWithContent
     val track = size.height - 16.dp.toPx()
@@ -2545,6 +2626,7 @@ private fun QuizFeedbackPage(
     holdMs: Long,
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val scroll = rememberScrollState()
     var busy by remember(item.questionId, submission.answeredAt) { mutableStateOf(false) }
     var error by remember(item.questionId, submission.answeredAt) { mutableStateOf(false) }
@@ -2569,9 +2651,13 @@ private fun QuizFeedbackPage(
             delay(200)
         }
     }
-    val selectedText = submission.selectedIndex
-        ?.let { index -> item.options.getOrNull(index)?.let { optionLabel(index) + "  " + it } }
-    val correctText = optionLabel(item.answerIndex) + "  " + item.options[item.answerIndex]
+    val selectedText = optionLines(
+        item,
+        submission.selectedIndices.ifEmpty {
+            submission.selectedIndex?.let(::listOf) ?: emptyList()
+        },
+    )
+    val correctText = optionLines(item, item.correctIndices).orEmpty()
     val title = stringResource(
         when {
             correct -> R.string.policy_quiz_feedback_correct_title
@@ -2591,6 +2677,9 @@ private fun QuizFeedbackPage(
         // Recompute from the clock instead of trusting the last polled state, so
         // a Back press or a late UI frame cannot skip the minimum stay.
         if (busy || remainingHoldSeconds(holdDeadlineAt) > 0) return
+        // The next question's reading replaces the answer line; cut it here so
+        // the two voices never overlap during the transition.
+        QuizSpeechPlayer.stop()
         busy = true
         error = false
         scope.launch {
@@ -2607,6 +2696,12 @@ private fun QuizFeedbackPage(
     LaunchedEffect(item.questionId, submission.answeredAt) {
         withFrameNanos { }
         runCatching { bodyFocus.requestFocus() }
+    }
+    // Only a wrong or timed-out answer reaches this page for reading. The
+    // correct answer is never spoken: a correct submission advances straight
+    // away, and speaking it here would reveal it after the child already won.
+    LaunchedEffect(item.questionId, submission.answeredAt) {
+        if (!correct) QuizSpeechPlayer.speakAnswer(context, item)
     }
 
     Column(
@@ -2791,6 +2886,15 @@ private fun QuizFeedbackPage(
         }
     }
 }
+
+/** One option per line so a multiple-choice set stays readable on the TV. */
+private fun optionLines(item: QuizItem, indices: List<Int>): String? =
+    indices.distinct()
+        .mapNotNull { index ->
+            item.options.getOrNull(index)?.let { option -> optionLabel(index) + "  " + option }
+        }
+        .joinToString("\n")
+        .ifEmpty { null }
 
 /** Ceiling seconds so the countdown never shows 0 before the button is usable. */
 private fun remainingHoldSeconds(
@@ -3014,12 +3118,10 @@ private fun rejectText(code: String): String = when (code) {
     "ALREADY_RUNNING" -> stringResource(R.string.policy_quiz_running_title)
     "CACHE_EMPTY", "LOCAL_BANK_EMPTY" -> stringResource(R.string.policy_quiz_reason_cache_empty)
     "NO_LEVELS" -> stringResource(R.string.policy_quiz_reason_no_levels)
+    "LEVEL_PAUSED" -> stringResource(R.string.policy_quiz_reason_level_paused)
     "LOCAL_BANK_INSUFFICIENT" -> stringResource(R.string.policy_quiz_reason_cache_insufficient)
     "CACHE_UNAVAILABLE" -> stringResource(R.string.policy_quiz_reason_cache_unavailable)
     "SOURCE_DISABLED" -> stringResource(R.string.policy_quiz_reason_source_disabled)
     "SOURCE_UNSUPPORTED" -> stringResource(R.string.policy_quiz_reason_source_unsupported)
     else -> stringResource(R.string.policy_quiz_reason_generic)
 }
-
-private fun optionLabel(index: Int): String =
-    if (index in 0..5) ('A' + index).toString() else (index + 1).toString()

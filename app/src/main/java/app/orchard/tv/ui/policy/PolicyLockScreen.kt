@@ -1,7 +1,6 @@
 package app.orchard.tv.ui.policy
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.text.format.DateFormat
 import android.view.KeyEvent as NativeKeyEvent
@@ -91,15 +90,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import app.orchard.tv.CcPage
 import app.orchard.tv.HomeViewModel
+import app.orchard.tv.Overlay
 import app.orchard.tv.R
 import app.orchard.tv.apps.AppEntry
 import app.orchard.tv.policy.PolicyHomeReady
 import app.orchard.tv.policy.LockStudyLaunch
 import app.orchard.tv.policy.PolicyModeCoordinator
+import app.orchard.tv.policy.SourceEntrySettings
 import app.orchard.tv.policy.media.PolicyMediaKind
 import app.orchard.tv.policy.media.PolicyVideoLibrary
 import app.orchard.tv.policy.media.PolicyVideoSource
+import app.orchard.tv.quiz.QuizIntroVideo
 import app.orchard.tv.quiz.QuizLaunchTarget
 import app.orchard.tv.quiz.QuizRuntime
 import app.orchard.tv.ui.components.Pressable
@@ -252,7 +255,6 @@ fun PolicyHomeGate(
     state: PolicyUiState,
     vm: HomeViewModel,
     onLaunch: (AppEntry, Rect?) -> Unit,
-    onOpen: (Intent) -> Unit,
     home: @Composable () -> Unit,
 ) {
     val homeVisible = showsHome(state)
@@ -261,15 +263,16 @@ fun PolicyHomeGate(
     var preparing by remember { mutableStateOf(false) }
     var wasGate by remember { mutableStateOf(!homeVisible) }
     var lastDesired by remember { mutableStateOf(desired) }
-    // A quiz opened from an entertainment app confirms that app inside the settlement, not in
-    // the lock screen: the earned session disposes the lock screen before the review coroutine
-    // can call back, so the one-shot launch must live above it. Wait for the policy session,
-    // resolve the app again against the live scope and the current Home list, then open it once.
-    val quizTargetPackage by QuizLaunchTarget.confirmed.collectAsState()
+    // A quiz opened from an entertainment app or a TV input confirms the entry inside the
+    // settlement, not in the lock screen: the earned session disposes the lock screen before the
+    // review coroutine can call back, so the one-shot launch must live above it. Wait for the
+    // policy session, resolve the entry again against the live scope and the current Home list,
+    // then open it once.
+    val quizLaunch by QuizLaunchTarget.confirmed.collectAsState()
     val stateNow by rememberUpdatedState(state)
     val launchNow by rememberUpdatedState(onLaunch)
-    LaunchedEffect(quizTargetPackage) {
-        val target = quizTargetPackage ?: return@LaunchedEffect
+    LaunchedEffect(quizLaunch) {
+        val target = quizLaunch ?: return@LaunchedEffect
         val ready = withTimeoutOrNull(5_000L) {
             snapshotFlow {
                 stateNow.sessionState == SessionState.ACTIVE &&
@@ -277,18 +280,33 @@ fun PolicyHomeGate(
                     vm.loaded
             }.first { it }
         } != null
-        // The app may have been uninstalled or removed from the timed scope while the round
-        // ran; only an app the child can actually open now is launched.
-        val app = if (ready) {
-            vm.timedApps(stateNow.allowedPackages)
-                .firstOrNull { it.packageName == target }
-        } else {
-            null
+        when (target) {
+            is QuizLaunchTarget.Target.App -> {
+                // The app may have been uninstalled or removed from the timed scope while the
+                // round ran; only an app the child can actually open now is launched.
+                val app = if (ready) {
+                    vm.timedApps(stateNow.allowedPackages)
+                        .firstOrNull { it.packageName == target.packageName }
+                } else {
+                    null
+                }
+                QuizLaunchTarget.consume(target)
+                if (app == null) return@LaunchedEffect
+                PolicyFlowTrace.event("quiz.launch.target", "package" to app.packageName)
+                launchNow(app, null)
+            }
+            is QuizLaunchTarget.Target.Inputs -> {
+                // Like an app tile, the parent's source switch must still be on after the round.
+                // The earned session makes the normal Home input list the correct next step: the
+                // child picks the input there, under the same policy filter Control Center uses.
+                val allowed = ready && SourceEntrySettings.visible.value &&
+                    PolicyModeCoordinator.sourceEntriesAllowed()
+                QuizLaunchTarget.consume(target)
+                if (!allowed) return@LaunchedEffect
+                PolicyFlowTrace.event("quiz.launch.inputs")
+                vm.overlay = Overlay.ControlCenter(CcPage.Inputs)
+            }
         }
-        QuizLaunchTarget.consume(target)
-        if (app == null) return@LaunchedEffect
-        PolicyFlowTrace.event("quiz.launch.target", "package" to app.packageName)
-        launchNow(app, null)
     }
     // The child wallpaper owns every surface while child mode is enforced: the lock screen
     // before a session starts and the active session's Home. Study mode, parent override,
@@ -306,6 +324,7 @@ fun PolicyHomeGate(
             frosted = childWallpaper?.frosted,
             source = childWallpaper?.source,
             filmCover = childFilmCover,
+            soundEnabled = childWallpaper?.soundEnabled == true,
         )
     } else {
         null
@@ -355,7 +374,6 @@ fun PolicyHomeGate(
                 state = state,
                 vm = vm,
                 onLaunch = onLaunch,
-                onOpen = onOpen,
                 childWallpaper = childWallpaper,
             )
         // Study mode also lands here. The executor publishes the study list as the APPS scope,
@@ -416,7 +434,6 @@ private fun PolicyLockScreen(
     state: PolicyUiState,
     vm: HomeViewModel,
     onLaunch: (AppEntry, Rect?) -> Unit,
-    onOpen: (Intent) -> Unit,
     childWallpaper: PolicyChildWallpaper?,
 ) {
     // Read in the draw phase below: a remote AUTO/MANUAL switch during the TV's idle standby
@@ -585,6 +602,7 @@ private fun PolicyLockScreen(
             // guard change alone does not dismiss them.
             quizMode = false
             quizTarget = null
+            QuizLaunchTarget.clear()
             recoveryMode = false
             promptMessage = null
         }
@@ -848,6 +866,24 @@ private fun PolicyLockScreen(
         quizMode = true
     }
 
+    /**
+     * The lock screen's top-right 信号源 button is the same kind of TV-use entry as an
+     * entertainment icon: the child answers the challenge first, and the earned session opens
+     * Home's input list. Outside the lock screen, source entries keep their normal behaviour.
+     */
+    fun openGatewayInputs() {
+        actionMessage = null
+        // A new round owns the launch; drop a stale confirmation whose launch never happened.
+        QuizLaunchTarget.clear()
+        focusedAction = null
+        focusedStudyPackage = null
+        focusedGatewayPackage = null
+        QuizLaunchTarget.armInputs()
+        PolicyFlowTrace.event("quiz.entry.inputs", "session" to state.sessionState)
+        quizTarget = null
+        quizMode = true
+    }
+
     // A remote switch must not inject BACK into a flow that BACK would dismiss; PolicyPanelRefresh
     // wakes the panel with BACK only when the lock screen's normal sheet is showing.
     SideEffect {
@@ -971,14 +1007,16 @@ private fun PolicyLockScreen(
     // parent center is an overlay) refreshes it without waiting for the next lock entry.
     val context = LocalContext.current
     var lockSource by remember(context) { mutableStateOf<PolicyVideoSource?>(null) }
+    var lockSound by remember(context) { mutableStateOf(false) }
     var lockSourceTick by remember(context) { mutableStateOf(0) }
     LaunchedEffect(context, lockSourceTick) {
         lockSource = withContext(Dispatchers.IO) { PolicyVideoLibrary.lockSource(context) }
+        lockSound = runCatching { QuizIntroVideo.lockSound(context) }.getOrDefault(true)
     }
     DisposableEffect(context) {
         val prefs = context.getSharedPreferences("quiz-intro", Context.MODE_PRIVATE)
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == null || key == "lock_id") lockSourceTick++
+            if (key == null || key == "lock_id" || key == "lock_sound") lockSourceTick++
         }
         prefs.registerOnSharedPreferenceChangeListener(listener)
         onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
@@ -1060,7 +1098,13 @@ private fun PolicyLockScreen(
     ) {
         if (v10) {
             val film = lockSource?.takeIf { it.kind == PolicyMediaKind.VIDEO }
-            if (film != null) PolicyLockFilm(source = film, cover = lockFilmCover)
+            if (film != null) {
+                PolicyLockFilm(
+                    source = film,
+                    cover = lockFilmCover,
+                    soundEnabled = lockSound && film.hasAudio,
+                )
+            }
         }
         if (desktopMenu) {
             val resting = state.lockReason == LockReason.RESTING &&
@@ -1299,6 +1343,7 @@ private fun PolicyLockScreen(
                         LockDockId.QUIZ -> {
                             focusedAction = null
                             quizTarget = null
+                            QuizLaunchTarget.clear()
                             quizMode = true
                         }
                         LockDockId.START -> when {
@@ -1384,7 +1429,7 @@ private fun PolicyLockScreen(
                 visible = guardPanelOpen,
                 vm = vm,
                 onDismiss = { guardPanelOpen = false },
-                onOpenSource = onOpen,
+                onSourceEntry = ::openGatewayInputs,
                 onExitChildMode = {
                     guardPanelOpen = false
                     focusedAction = null
@@ -1706,6 +1751,7 @@ private fun PolicyLockScreen(
                                         label = quizLabel,
                                         onClick = {
                                             quizTarget = null
+                                            QuizLaunchTarget.clear()
                                             quizMode = true
                                         },
                                         width = 320.dp,
@@ -1784,6 +1830,7 @@ private fun PolicyLockScreen(
                                             // the question pool lives in the same cache, so the
                                             // entry itself is unconditional.
                                             quizTarget = null
+                                            QuizLaunchTarget.clear()
                                             quizMode = true
                                         },
                                         width = 320.dp,
@@ -3201,6 +3248,8 @@ private fun lockFooterText(
             )
         quizState.bankState == "blocked" ->
             stringResource(R.string.policy_lock_quiz_blocked_footer)
+        quizState.bankState == "paused" ->
+            stringResource(R.string.policy_lock_quiz_paused_footer)
         quizState.bankState != "ready" -> stringResource(R.string.policy_lock_quiz_empty_footer)
         quizState.source == QuizSource.CLOUD -> stringResource(R.string.policy_lock_quiz_remote_footer)
         else -> stringResource(R.string.policy_lock_quiz_local_footer)

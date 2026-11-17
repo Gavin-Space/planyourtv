@@ -55,6 +55,8 @@ object PolicyProduct {
             context,
             debugPin = if (BuildConfig.DEBUG) "123456" else null,
         )
+        // Stop media an app left playing once the lock desktop is in front.
+        LockAudioGate.install(context.applicationContext)
         ParentWebCenter.install(context.applicationContext)
         // Ship a usable local bank so the quiz works before an AI key or the
         // network exists. After the coordinator because the durable marker
